@@ -1,0 +1,380 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="keywords" content="Computer">
+<meta name="keywords" content="Parallel Processing">
+<meta name="keywords" content="High Performance Computing">
+<meta name="keywords" content="Networking">
+<meta name="keywords" content="Grid">
+<meta name="keywords" content="MPI">
+<meta name="keywords" content="Message Passing Interface">
+<meta name="keywords" content="GridMPI">
+
+<link rel="stylesheet" type="text/css" href="../psyche.css">
+<title>GridMPI</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody>
+<tr align="left" valign="top">
+<td class="topmenu">
+   <a href="../index.html">Home</a>
+ | <a href="../gridmpi.html">GridMPI</a>
+ | <a href="../gridtcp.html">GridTCP</a>
+ | <a href="../publications/">Publications</a>
+ | Download
+<tr><td class="topmenu2">
+<tr><td height="4pt">
+</tbody></table>
+
+<table class="wholepage">
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<td class="maincolumn">
+<table class=banner><tbody>
+<tr><td class=banner11><td class=banner12>&nbsp;GridMPI&trade;
+<td class=banner13>&nbsp;</tr>
+<tr><td class=banner21 colspan=2><td class=banner22></tr>
+<tr><td class=banner31><td class=banner32 colspan=2><i>A Project of the
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid Technology
+Research Center, AIST</a>&nbsp;</i></tr>
+</tbody></table>
+<br>
+
+</tr>
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<p align=center><font color=red>Curret Release: GridMPI-2.1.3</font></p>
+<ul class="sidebar">
+<li class="sidebartitle">Contents
+<li class="section"><a href="../index.html">Home</a>
+<li class="section"><a href="../gridmpi.html">Project GridMPI</a>
+<li class="subsection"><a href="../gridmpi-2-x/index.html">GridMPI 2.1</a><br>
+<li class="subsection"><a href="../gridmpi-2-x/faq.html">GridMPI 2.1 FAQ</a><br>
+<li class="subsection"><a href="../gridmpi-1-1/index.html">GridMPI 1.1</a>
+<li class="subsection"><a href="../gridmpi-1-1/faq.html">GridMPI FAQ</a>
+<li class="section"><a href="../gridtcp.en.html">Project GridTCP</a>
+<li class="subsection"><a href="../pspacer/index.en.html">PSPacer 3.0</a>
+<li class="subsection"><a href="../pspacer-ht/index.html">PSPacer/HT 1.0</a>
+<!--<li class="subsection"><a href="../pspacer-2.1/index.en.html">PSPacer 2.1.2</a>-->
+<!--<li class="subsection"><a href="../pspacer-1.0/index.en.html">PSPacer 1.2</a>-->
+<li class="subsection"><a href="../pspacer/faq.en.html">PSPacer FAQ</a>
+<li class="section"><a href="../publications/index.html">Publications</a>
+<li class="section">Download
+<!--<li class="section"><a href="/related.html">Related Links</a>-->
+<li class="section"><a href="../contact.html">Contact</a>
+</ul>
+
+<td class="maincolumn">
+
+
+<!-- $Id: faq.en.jsp,v 1.2 2012-03-19 02:11:31 takano Exp $ -->
+
+<!-- **** BODY PART **** -->
+<div align="right">
+English | <a href="faq.ja.html">Japanese</a>
+</div>
+
+<h1>GridTCP FAQ</h1>
+
+<h2>PSPacer</h2>
+<ul>
+<li><a href="#requirement">What is the requirement for the PC and the network
+interface hardware to run PSPacer?</a>
+<li><a href="#LFNs">How can I achieve Gigabit speeds on Long Fat Networks
+using TCP/IP?</a>
+<li><a href="#targetrate">Why <tt>iperf</tt> shows bandwidth lower than
+the target rate I set using <tt>tc</tt> command?</a>
+<li><a href="#pspbox">Can I use PSPacer as an intermediate network box
+which regulates bandwidth of through traffic?</a>
+<li><a href="#trouble.unknownpsp">When I install PSPacer, <tt>tc</tt> command fails with an error message "Unknown qdisc "psp", hence option "default" is unparsable"</a>
+<li><a href="#trouble.tso">When I install PSPacer, <tt>tc</tt> command fails with an error message "RTNETLINK answers: Invalid argument"</a>
+<li><a href="#trouble.v24">I can not compile PSPacer on the Linux kernel 2.4</a>
+</ul>
+
+<!-- ================ -->
+<a name="requirement"></a>
+<h3>What is the requirement for the PC and the network interface hardware
+to run PSPacer?</h3>
+<p>The system should have capability to transmit packets at the maximum
+rate of the connected network link to realize precise pacing.
+
+<p>If your PC is cabled by Gigabit Ethernet, your network interface should
+be connected to the PC by PCI-Express, PCI-X, 66MHz/64bit PCI, or CSA.
+Otherwise, the I/O bus becomes a bottleneck, and maximum transmission
+rate can not be achieved. The processor itself may have enough
+performance if it is Pentium 4 or above.
+
+<p>If your PC is cabled by Fast Ethernet, most of today's PCs may have
+enough performance.
+
+<!-- ================ -->
+<a name="LFNs"></a>
+<h3>How can I achieve Gigabit speeds on Long Fat Networks using TCP/IP?</h3>
+<p>This is an independent matter from PSPacer. Here are some tips.
+
+<p>Modify kernel parameters using <tt>sysctl</tt>(8) command.
+To change TCP settings, add the entries below to the file
+/etc/sysctl.conf, and then run "sysctl -p".
+
+<h4>Socket buffer size</h4>
+<p>The optimal socket buffer size is twice the size of the bandwidth * delay
+product (BDP) of the link.
+However, the default max TCP buffer size is too small on long fat
+networks.  For example, to fill a 125MB/s (i.e. 1Gbps) pipe with 100ms
+one-way latency requires 125 * 0.2 = 25MB of data.
+To change the socket buffer size, do the following:
+<pre>
+  # increase max TCP buffer size to 32MB (32 * 1024 * 1024)
+  net.core.rmem_max = 33554432
+  net.core.wmem_max = 33554432
+</pre>
+
+Notice: Linux doubles the requested buffer size.  So the above setting means
+that the max TCP buffer size is set to 64MB.
+
+<h4>Interface queue size</h4>
+<p>Another thing you can try is to increase the size of the interface queue
+(i.e. the transmit queue of the network interface).
+To do this, issue the following using <tt>ifconfig</tt>(8) command:
+<pre>
+  # ifconfig eth0 txqueuelen 10000
+</pre>
+
+<h4>Input queue size</h4>
+<p>netdev_max_backlog specifies the maximum length of the input queues for
+the processors.  The default value is 300 (packets).
+Linux has to wait up to scheduling time to flush buffers (due to bottom half
+mechanism).  Therefore, this value can limit the network bandwidth
+when receiving packets as follows:
+
+<pre>
+  300       *      1,000     =      300,000
+  packets          HZ               packets/s
+
+  300,000   *      1,000     =      300 M
+  packets    averate (bytes/packet) throughput (Bytes/s)
+</pre>
+
+If you want to get higher throughput, you need to increase netdev_max_backlog:
+
+<pre>
+  net.core.netdev_max_backlog = 2500
+</pre>
+
+Notice: In the kernel 2.4.x, HZ is 100.
+
+<h4>Turn off caching metrics</h4>
+<p>When you run benchmarks and other experiments, it is often useful not to
+save the route metrics (cwnd, rtt, etc) from each connection.
+You can turn off caching the metrics:
+<pre>
+  net.ipv4.tcp_no_metrics_save = 1
+</pre>
+
+The same effect can be achieved by executing this before each TCP session:
+<pre>
+  # echo 1 > /proc/sys/net/ipv4/route/flush
+</pre>
+
+<!-- ================ -->
+
+<a name="targetrate"></a>
+<h3>Why <tt>iperf</tt> shows bandwidth lower than the target rate I set using
+<tt>tc</tt> command?</h3>
+<p>PSPacer uses raw bandwidth (i.e. data link layer bandwidth) which
+includes IP, TCP or UDP headers as the target rate. On the other hand,
+<tt>iperf</tt> shows payload bandwidth. Therefore, <tt>iperf</tt> shows lower
+bandwidth than the target rate.
+
+<p>In addition, especially when TCP/IP is used, the bandwidth may be regulated
+by congestion control or buffer size, etc.  See "<a href="#LFNs">How can I
+achieve Gigabit speeds on Long Fat Networks using TCP/IP?</a>".
+
+<!--
+When the target rate is set to 500Mbps, <tt>Iperf</tt> may result in
+as follows:
+<pre>
+  $ iperf -c 192.168.2.1 -i 10 -t 60 -w 32M
+  ------------------------------------------------------------
+  Client connecting to 192.168.2.1, TCP port 5001
+  TCP window size: 64.0 MByte (WARNING: requested 32.0 MByte)
+  ------------------------------------------------------------
+  [  3] local 192.168.1.1 port 32771 connected with 192.168.2.1 port 5001
+  [  3]  0.0-10.0 sec    463 MBytes    388 Mbits/sec
+  [  3] 10.0-20.0 sec    571 MBytes    479 Mbits/sec
+  [  3] 20.0-30.0 sec    572 MBytes    480 Mbits/sec
+  [  3] 30.0-40.0 sec    572 MBytes    480 Mbits/sec
+  [  3] 40.0-50.0 sec    553 MBytes    464 Mbits/sec
+  [  3] 50.0-60.0 sec    572 MBytes    480 Mbits/sec
+  [  3]  0.0-60.1 sec  3.23 GBytes    461 Mbits/sec
+</pre>
+-->
+
+<!-- ================ -->
+
+<a name="pspbox"></a>
+<h3>Can I use PSPacer as an intermediate network box which regulates bandwidth
+of through traffic?</h3>
+<p>Here we call a Linux PC on which a PSPacer installed a PSP box.
+The example below uses a PSP box to smooth traffic from LAN (1Gbps) to
+WAN (100Mbps, 20ms).
+
+<h4>Network Configuration</h4>
+<p>The network configuration is as follows:
+<pre>
+                    +-------+
+                    |  PC1  | 192.168.1.2
+                    +-------+
+                        |         192.168.1.0/24
+         ----------------------------------
+                 |<-- 1Gbps (LAN)
+                 |
+                 | eth0 192.168.1.1
+           +-----------+
+           |           |
+           |  PSP Box  |
+           |           |
+           +-----------+
+                 | eth0 192.168.2.1
+                 |
+                 |<-- 100Mbps, 20ms (WAN)
+         ----------------------------------
+                        |          192.168.2.0/24
+                    +-------+
+                    |  PC2  | 192.168.2.2
+                    +-------+
+</pre>
+
+<h4>Setup PC1 and PC2</h4>
+<p>If PC1 and PC2 are Linux boxes, configurations are as below. Of course
+you can use other network connected PCs or equipments.
+<pre>
+  PC1:
+  # ifconfig eth0 192.168.1.2
+  # route add -net 192.168.2.0 netmask 255.255.255.0 \
+    gw 192.168.1.1
+
+  PC2:
+  # ifconfig eth0 192.168.2.2
+  # route add -net 192.168.1.0 netmask 255.255.255.0 \
+    gw 192.168.2.1
+</pre>
+
+<h4>Setup PSP Box</h4>
+<p>To enable IP forwarding, issue the following command:
+<pre>
+  # echo 1 > /proc/sys/net/ipv4/ip_forward
+</pre>
+
+<h4>Setup PSPacer</h4>
+<p>In the PSP box, issue commands as follows:
+<pre>
+  # tc qdisc add dev eth0 root handle 1: psp default 2
+  # tc class add dev eth0 parent 1: classid 1:1 psp rate 100mbit
+  # tc class add dev eth0 parent 1: classid 1:2 psp mode 0
+  # tc qdisc add dev eth0 parent 1:1 handle 10: pfifo
+  # tc qdisc add dev eth0 parent 1:2 handle 20: pfifo
+  # tc filter add dev eth0 protocol ip parent 1: pref 1 u32 \
+    match ip dst 192.168.1.0/24 classid 1:1
+</pre>
+
+<p><b>[Contribution]</b> For your information, <a href="http://mahatma.bspu.unibel.by/download/psp-shaper/">psp-shaper</a> script has been released by Mr. Denis Kaganovich, which may help for the above configuration.
+
+<!-- ================ -->
+<a name="trouble.unknownpsp"></a>
+<h3>When I install PSPacer, <tt>tc</tt> command fails with an error message "Unknown qdisc "psp", hence option "default" is unparsable"</h3>
+<p>tc dynamically loads a shared library q_psp.so at the startup time. If this library cannot be found, this error occurs. Make sure q_psp.so is installed to /usr/lib/tc.
+
+<p><b>NOTE:</b> The Linux system run on 64 bit architecture search the shared library from /usr/lib64 instead of /usr/lib.  In some distributions (e.g., Ubuntu 8.10), /usr/lib64 is just a symbolic link to /usr/lib.  Please move q_psp.so to /usr/lib64/tc by hand, if you need.
+
+<p><b>NOTE:</b> The CentOS version 6 and later install tc shared libraries into /usr/share/tc instead of /usr/lib/tc or /usr/lib64/tc.  This problem will be fixed in the netxt release.
+
+Please check the "--with-tclib-dir" from messages of the configure script:
+<pre>
+  $ ./configure
+  :
+  Configuration
+    --enable-debug                  no
+    --with-iproute2-dir             /opt/iproute2
+    --with-tclib-dir                /usr/share/tc
+  :
+</pre>
+
+<p> Also, if the version of tc and that of q_psp.so are mismatched, this error may occur. Make sure the current working version of iproute2 is available in your Linux box. To check the version, issue the following command:
+<pre>
+  $ /sbin/tc -V
+  tc utility, iproute2-ss040831
+</pre>
+
+To build the PSPacer, use the proper version of iproute2.
+
+<!-- ================ -->
+<a name="trouble.tso"></a>
+<h3>When I install PSPacer, <tt>tc</tt> command fails with an error message "RTNETLINK answers: Invalid argument"</h3>
+<p>This error message implies that TCP Segmentation Offloading (TSO) is enabled.
+Because PSPacer is not supporting TSO, you have to disable TSO
+before you install it.
+
+<p>If you can see the following message by looking at the output of <tt>dmesg</tt>
+command, TSO is enabled.
+<pre>
+  psp: sch_psp does not support TSO.  You must disable it:
+  "ethtool -K eth0 tso off"
+</pre>
+If so, you have to disable TSO by using <tt>ethtool</tt>(8) command
+and retry <tt>tc qdisc add</tt> as follows:
+<pre>
+  # /sbin/ethtool -K eth0 tso off
+  # /sbin/tc qdisc add dev eth0 ...
+</pre>
+
+<!-- ================ -->
+<a name="trouble.v24"></a>
+<h3>I can not compile PSPacer on the Linux kernel 2.4</h3>
+The compilation of PSPacer 1.2 failed on the Linux kernel 2.4, and error
+messages are shown as follows:
+<pre>
+make[1]: Entering directory `/home/takano/works/pspacer-1.2/pspd'
+cc -g -Wall -I /lib/modules/`uname -r`/build/include -I ../kernel -c -o conf.o conf.c
+In file included from /lib/modules/2.4.22-gridmpi/build/include/linux/rtnetlink.h:4,
+                 from conf.c:29:
+/lib/modules/2.4.22-gridmpi/build/include/linux/netlink.h:25: parse error before "__u32"
+/lib/modules/2.4.22-gridmpi/build/include/linux/netlink.h:25: warning: no semicolon at end of struct or union
+	... snip ...
+make[1]: *** [conf.o] Error 1
+make[1]: Leaving directory `/home/takano/works/pspacer-1.2/pspd'
+make: *** [all] Error 2
+</pre>
+You need to fix pspd/conf.c as follows:
+<pre>
+--- conf.orig.c 2006-04-26 11:40:03.000000000 +0900
++++ conf.c      2006-04-26 11:41:41.000000000 +0900
+@@ -26,6 +26,7 @@
+ #include &lt;string.h&gt;
+ #include &lt;arpa/inet.h&gt;
+ #include &lt;netinet/in.h&gt;
++#include &lt;linux/types.h&gt;
+ #include &lt;linux/rtnetlink.h&gt;
+ #include &lt;sys/socket.h&gt;
+</pre>
+PSPacer 2.x does not support the Linux kernel 2.4.
+
+<br>
+<br>
+<br>
+<p>Return to the <a href="../gridtcp.html">GridTCP Project Page</a>.
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2012-03-19 02:11:31 $)</i></font>
+
+<!-- **** BODY PART **** -->
+
+<td width="20%">
+
+</td>
+</table>
+</body>
+

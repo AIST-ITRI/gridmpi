@@ -1,0 +1,187 @@
+--- mg.f	Sun Feb 12 03:31:15 2006
++++ mg.f	Mon Feb 20 14:23:52 2006
+@@ -345,7 +345,7 @@
+       common /grid/ is1,is2,is3,ie1,ie2,ie3
+ 
+       integer n1,n2,n3,k
+-      integer dx, dy, log_p, d, i, j
++      integer dx, dy, log_p, d, i, j, kk
+ 
+       integer ax, next(3),mi(3,10),mip(3,10)
+       integer ng(3,10)
+@@ -352,11 +352,13 @@
+       integer idi(3), pi(3), idin(3,-1:1)
+       integer s, dir,ierr
+ 
++      do  kk=1,maxlevel,1
+       do  j=-1,1,1
+          do  d=1,3
+-            msg_type(d,j) = 100*(j+2+10*d)
++            msg_type(d,j,kk) = 100*(j+2+10*d)+kk + 1000
+          enddo
+       enddo
++      enddo
+ 
+       ng(1,lt) = nx(lt)
+       ng(2,lt) = ny(lt)
+@@ -1069,8 +1074,8 @@
+          do  axis = 1, 3
+             if( nprocs .ne. 1) then
+    
+-               call ready( axis, -1 )
+-               call ready( axis, +1 )
++               call ready( axis, -1, kk )
++               call ready( axis, +1, kk )
+    
+                call give3( axis, +1, u, n1, n2, n3, kk )
+                call give3( axis, -1, u, n1, n2, n3, kk )
+@@ -1111,8 +1116,8 @@
+       do  axis = 1, 3
+          if( nprocs .ne. 1 ) then
+             if( take_ex( axis, kk ) )then
+-               call ready( axis, -1 )
+-               call ready( axis, +1 )
++               call ready( axis, -1, kk )
++               call ready( axis, +1, kk )
+                call take3_ex( axis, -1, u, n1, n2, n3 )
+                call take3_ex( axis, +1, u, n1, n2, n3 )
+             endif
+@@ -1132,7 +1137,7 @@
+ c---------------------------------------------------------------------
+ c---------------------------------------------------------------------
+ 
+-      subroutine ready( axis, dir )
++      subroutine ready( axis, dir, kk )
+ 
+ c---------------------------------------------------------------------
+ c---------------------------------------------------------------------
+@@ -1145,7 +1150,7 @@
+       include 'mpinpb.h'
+       include 'globals.h'
+ 
+-      integer axis, dir
++      integer axis, dir, kk
+       integer buff_id,buff_len,i,ierr
+ 
+       buff_id = 3 + dir
+@@ -1159,10 +1164,10 @@
+ c---------------------------------------------------------------------
+ c     fake message request type
+ c---------------------------------------------------------------------
+-      msg_id(axis,dir,1) = msg_type(axis,dir) +1000*me
++      msg_id(axis,dir,1) = msg_type(axis,dir,kk) +1000*me
+ 
+       call mpi_irecv( buff(1,buff_id), buff_len,
+-     >     dp_type, mpi_any_source, msg_type(axis,dir), 
++     >     dp_type, mpi_any_source, msg_type(axis,dir,kk), 
+      >     mpi_comm_world,msg_id(axis,dir,1),ierr)
+       return
+       end
+@@ -1204,7 +1209,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          else if( dir .eq. +1 ) then
+@@ -1218,7 +1223,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          endif
+@@ -1236,7 +1241,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          else if( dir .eq. +1 ) then
+@@ -1250,7 +1255,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          endif
+@@ -1268,7 +1273,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          else if( dir .eq. +1 ) then
+@@ -1282,7 +1287,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          endif
+@@ -1425,7 +1430,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          else if( dir .eq. +1 ) then
+@@ -1441,7 +1446,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          endif
+@@ -1459,7 +1464,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          else if( dir .eq. +1 ) then
+@@ -1475,7 +1480,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          endif
+@@ -1493,7 +1498,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          else if( dir .eq. +1 ) then
+@@ -1509,7 +1514,7 @@
+ 
+             call mpi_send( 
+      >           buff(1, buff_id ), buff_len,dp_type,
+-     >           nbr( axis, dir, k ), msg_type(axis,dir), 
++     >           nbr( axis, dir, k ), msg_type(axis,dir,k), 
+      >           mpi_comm_world, ierr)
+ 
+          endif

@@ -1,0 +1,56 @@
+/* clustercolor.c  (2006-07-27) */
+
+#include <mpi.h>
+#include <assert.h>
+
+#define MAX_NCLUSTERS 32
+
+/* Retrieves the number of clusters and fills an array by the number
+   of procs in each cluster.  {nclusters} points to an int, and
+   {nnodes} points to an array of 32 ints. (The number of clusters is
+   limited to 32 in IMPI). */
+
+void
+getnnodes(int *nclusters, int *nnodes)
+{
+    int color, *attr, flag;
+
+    MPI_Attr_get(MPI_COMM_WORLD, IMPI_CLIENT_SIZE, &attr, &flag);
+    assert(flag != 0);
+    *nclusters = *attr;
+    assert((*nclusters) < MAX_NCLUSTERS);
+
+    MPI_Attr_get(MPI_COMM_WORLD, IMPI_CLIENT_COLOR, &attr, &flag);
+    assert(flag != 0);
+    color = *attr;
+    assert(color >= 0 && color < (*nclusters));
+
+    memset(nnodes, 0, (sizeof(int) * (*nclusters)));
+    nnodes[color] = 1;
+    MPI_Allreduce(MPI_IN_PLACE, nnodes, (*nclusters),
+		  MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+}
+
+int
+main(int argc, char *argv[])
+{
+    int nclusters;
+    int self, nprocs, i;
+    int nnodes[MAX_NCLUSTERS];
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &self);
+    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+
+    getnnodes(&nclusters, nnodes);
+
+    if (self == 0) {
+	printf("nclusters=%d\n", nclusters);
+	for (i = 0; i < nclusters; i++) {
+	    printf("nnodes[%02d]=%d\n", i, nnodes[i]);
+	}
+    }
+
+    MPI_Finalize();
+    return 0;
+}

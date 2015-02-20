@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="keywords" content="Computer">
+<meta name="keywords" content="Parallel Processing">
+<meta name="keywords" content="High Performance Computing">
+<meta name="keywords" content="Networking">
+<meta name="keywords" content="Grid">
+<meta name="keywords" content="MPI">
+<meta name="keywords" content="Message Passing Interface">
+<meta name="keywords" content="GridMPI">
+
+<link rel="stylesheet" type="text/css" href="../psyche.css">
+<title>GridMPI</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody>
+<tr align="left" valign="top">
+<td class="topmenu">
+   <a href="../index.html">Home</a>
+ | <a href="../gridmpi.html">GridMPI</a>
+ | <a href="../gridtcp.html">GridTCP</a>
+ | <a href="../publications/index.html">Publications</a>
+ | Download
+<tr><td class="topmenu2">
+<tr><td height="4pt">
+</tbody></table>
+
+<table class="wholepage">
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<td class="maincolumn">
+<table class=banner><tbody>
+<tr><td class=banner11><td class=banner12>&nbsp;GridMPI&trade;
+<td class=banner13>&nbsp;</tr>
+<tr><td class=banner21 colspan=2><td class=banner22></tr>
+<tr><td class=banner31><td class=banner32 colspan=2><i>A Project of the
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid Technology
+Research Center, AIST</a>&nbsp;</i></tr>
+</tbody></table>
+<br>
+
+</tr>
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<p align=center><font color=red>Curret Release: GridMPI-2.1.3</font></p>
+<ul class="sidebar">
+<li class="sidebartitle">Contents
+<li class="section"><a href="../index.html">Home</a>
+<li class="section"><a href="../gridmpi.html">Project GridMPI</a>
+<li class="subsection"><a href="../gridmpi-2-x/index.html">GridMPI 2.1</a><br>
+<li class="subsection"><a href="../gridmpi-2-x/faq.html">GridMPI 2.1 FAQ</a><br>
+<li class="subsection"><a href="../gridmpi-1-1/index.html">GridMPI 1.1</a>
+<li class="subsection"><a href="../gridmpi-1-1/faq.html">GridMPI FAQ</a>
+<li class="section"><a href="../gridtcp.en.html">Project GridTCP</a>
+<li class="subsection"><a href="../pspacer/index.en.html">PSPacer 3.0</a>
+<li class="subsection"><a href="../pspacer-ht/index.html">PSPacer/HT 1.0</a>
+<!--<li class="subsection"><a href="../pspacer-2.1/index.en.html">PSPacer 2.1.2</a>-->
+<!--<li class="subsection"><a href="../pspacer-1.0/index.en.html">PSPacer 1.2</a>-->
+<li class="subsection"><a href="../pspacer/faq.en.html">PSPacer FAQ</a>
+<li class="section"><a href="../publications/index.html">Publications</a>
+<li class="section">Download
+<!--<li class="section"><a href="/related.html">Related Links</a>-->
+<li class="section"><a href="../contact.html">Contact</a>
+</ul>
+
+<td class="maincolumn">
+
+
+<!-- **** BODY PART **** -->
+
+<!-- ================================================================ -->
+<h2>PSPacer/HT version 1.0</h2>
+
+<p>
+Precise Software Pacer (PSPacer)/High-resolution Timer version 1.0 is released on Oct. 22, 2010.
+</p>
+
+<!-- ================================================================ -->
+<h3>What is PSPacer/HT?</h3>
+
+<p>
+PSPacer/HT is a new derived version of <a href="../pspacer/index.en.html">
+PSPacer</a> which is a qdisc module which realizes precise
+transmission bandwidth control.
+
+<p>
+PSPacer is a very useful tool to fully utilize the network bandwidth.
+However, PSPacer has the following limitations in general use.  (1)
+PSPacer essentially requires the system to fully fill the network pipe
+with packets.  Therefore, the system has to have the capability to
+transmit packets at the wire rate.  For instance, if a Gigabit
+Ethernet NIC is connected through a 33MHz/32bit PCI bus, the
+bottleneck is thus PCI bus, and then the system can not transmit
+packets at 1 gigabit per second.  As a result, the output traffic
+becomes imprecise.  (2) PSPacer uses the IEEE 802.3x PAUSE frame as a
+gap packet.  Therefore, PSPacer only works on Ethernet.  And also,
+PAUSE frames can not be used for the original purpose.  Therefore, the
+IEEE 802.3x flow control can not stop transmission from the switch
+and/or router to the PC.  (3) PSPacer can not support pseudo network
+devices such as bonding and tap devices, because these devices can not
+properly handle gap packets.
+
+<p>
+In order to resolve the above limitations of the original PSPacer,
+PSPacer/HT (High-resolution Timer) controls inter packet gaps by
+using a high-resolution timer (hrtimer) instead of gap packets.
+PSPacer/HT determines the transmission timing of a packet and then
+registers the timing as a high-resolution timer event.  When the event
+is activated, the packet is transmitted.
+
+<p>
+NOTE: We recommend to <font color="red">use Linux kernel 2.6.31 and
+later</font>. In Linux kernel 2.6.21 and earlier, the packet
+scheduling subsystem used the low-resolution timer with a jiffies
+resolution. In Linux kernel 2.6.22 and later, it was changed to use
+hrtimer.  After kernel 2.6.31, the timer resolution improved from 1
+microsecond to 1/16 microsecond.
+
+<!-- ================================================================ -->
+<h3>Tested Environment</h3>
+
+<p>
+We have tested this package in the following environments:
+<ul>
+ <li> CentOS 5 (kernel 2.6.31.13 + iproute2 ss061002)
+ <li> Ubuntu 9.04 (kernel 2.6.27 + iproute2 ss080417)
+ <li> Debian GNU/Linux (kernel 2.6.34 + iproute2 ss100519)
+</ul>
+
+<!-- ================================================================ -->
+<h3>Software Distribution</h3>
+
+<p>
+PSPacer/HT is released under the GNU GPL license, and you can get it
+from the <a href="/software/downloads.jsp">download</a> page.
+</p>
+
+<p>
+Return to the <a href="../gridtcp.html">GridTCP Project Page</a>.
+</p>
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2010-10-22 09:44:37 $)</i></font>
+<!-- $Id: index.jsp,v 1.2 2010-10-22 09:44:37 takano Exp $ -->
+
+<!-- **** BODY PART **** -->
+
+<td width="20%">
+
+</td>
+</table>
+</body>
+

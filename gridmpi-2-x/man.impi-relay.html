@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Commands
+<td align="right">impi-relay (1MPI)
+</tr></tbody></table>
+
+<h3>NAME</h3>
+
+<p>impi-relay - IMPI relay
+
+<h3>SYNOPSIS</h3>
+
+<p>impi-relay 
+-relay <i>relay id</i> <i>address:port</i>
+[-net <i>address</i>] [-port <i>:port</i>] [-fork] [-v] [-h]
+
+<h3>DESCRIPTION</h3>
+
+<p>This starts the IMPI relay, which allows a private address cluster
+to exchange IMPI messages across the other clusters.
+It prints the IP address and the port number at startup, which will 
+be given to the mpirun command as an argument to the -client option.
+See also <b>mpirun</b>(1MPI) and <b>impi-server</b>(1MPI).
+
+<h3>OPTIONS</h3>
+
+<p>The following options are supported:
+
+<dl>
+
+<dt><b>-net</b> <i>network-address</i>
+
+<dd>Specifies a private network address on which impi-relay services.
+It is used to establish a connection from an IMPI agent on a private 
+address cluster.
+
+<dt><b>-port</b> <i>port-number</i>
+
+<dd>Specifies a port number on which impi-relay services.  It is used to 
+establish a connection from an IMPI agent on a private address cluster.
+An arbitrary port is selected if it is not specified.
+
+<dt><b>-fork</b>
+
+<dd>Forks myself and let the child process be a background process.
+
+<dt><b>-v</b>
+
+<dd>Prints verbose messages to the stderr.
+
+<dt><b>-h</b>
+
+<dd>Prints simple help.
+
+</dl>
+
+<h3>ENVIRONMENT VARIABLES</h3>
+
+<dl>
+
+<dt><b>IMPI_NETWORK</b>=<i>network-address</i>
+
+<dd>Specifies the network interface by the network address. It is used
+when the machines have multiple network interfaces and the global connection
+is on other than the primary interface. It is specified by the format of
+the address like "172.16.1.0", and it is matched after masking by the netmask.
+
+<dt><b>IMPI_RELAY_SOCBUF</b>=<i>number</i>
+
+<dd>Specifies a buffer size of sockets (SNDBUF/RCVBUF) in decimal bytes.
+It calls sockopt with a specified value. (1) Specifying a number sets 
+the value.  If the value is non-numerical or negative, it sets the OS 
+default.  (2) Empty string or "0" sets the OS default.
+
+<dt><b>IMPI_RELAY_STDERR_LOGGING</b>=<i>0 or 1</i>
+
+<dd>Specifies to redirect stderr to a log file.  The file name is specified
+by the environment variable <b>IMPI_RELAY_LOGFILE</b>.  The default is 
+/tmp/impi-relay.$PID.
+
+<dt><b>IMPI_RELAY_LOGFILE</b>=<i>filename</i>
+
+<dd>Specifies log file name.
+
+<dt><b>IMPI_RELAY_PORT_RANGE</b>=<i>n0</i>:<i>n1</i>
+
+<dd>Specifies port range to listen.  Port number from <i>n0</i> to
+<i>n1</i> (inclusive) is tried.
+
+</dl>
+
+<h3>EXAMPLES</h3>
+
+<h4>Example 1</h4>
+<pre class="screen">
+host1% impi-server -server 2 &
+addr1:port1
+host1% mpirun -np 4 -client 0 addr1:port1 -c mpi_conf1 ./a.out
+
+hostR% impi-relay -relay 0 addr1:port1
+addr2:port2
+
+host2% mpirun -np 4 -client 1 addr2:port2 -c mpi_conf2 ./a.out
+</pre>
+
+This starts two sets of four processes each (total eight).
+Two runs of mpirun are started on different clusters.  The one is a privately
+addressed cluster, the other is a globally addressed cluster.
+<b>impi-relay</b> must be invoked on a host which is reachable to both
+clusters.
+
+<h4>Example 2: Run with gridmpirun script</h4>
+<pre class="screen">
+host1% cat gridmpirun.conf
+0 -submit ssh -target host1 -relay hostR -wdir /tmp -n 4 ./a.out
+1 -submit ssh -target host2 -wdir /tmp -n 4 ./a.out
+
+host1 gridmpirun ./gridmpirun.conf
+</pre>
+
+This starts a same job of Example 1 by using gridmpirun script.
+See also <i>gridmpirun -h</i>.
+
+<hr>
+<font size=-2><i>($Date: 2007/08/20 10:51:42 $)</i></font>
+<!-- $Id: man.impi-relay.html,v 1.7 2007/08/20 10:51:42 matu Exp $ -->
+
+</body></html>

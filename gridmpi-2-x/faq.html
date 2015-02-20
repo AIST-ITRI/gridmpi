@@ -1,0 +1,852 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="faq.css">
+</head>
+<body>
+
+<!-- $Id: faq.html,v 1.31 2008/04/22 07:43:14 takano Exp $ -->
+
+<h1>FAQ, Tips, and Trouble Shooting</h1>
+
+<p>Contents:
+<ul>
+<li><a href="#faq">FAQ</a>
+	<ul>
+	<li><a href="#faq.ipaddress">Do all hosts need global IP
+	addresses?</a>
+	<li><a href="#faq.netifs">How do I select one from multiple
+	network interfaces?</a>
+	<li><a href="#faq.netifs.impi">Do I need to specify a network
+	interface for IMPI&nbsp;server?</a>
+	<li><a href="#faq.portrange">How do I limit a port range?</a>
+	<li><a href="#faq.config.cc">Can I change CC in compiling
+	GridMPI?</a>
+	<li><a href="#faq.changecc">Can I change a compiler for
+	application programs?</a>
+	<li><a href="#faq.abort.cores">Can I stop dumping cores at
+	abortion?</a>
+	<li><a href="#faq.aix.core">Can I change naming of core
+	files in AIX IBM?</a>
+	<li><a href="#faq.clustercolor">Can I get the configuration of
+	wide-area networks?</a>
+	<li><a href="#faq.newattrkey">What are the new attribute keys?</a>
+	<li><a href="#faq.tmp.files">Some files are created in /tmp.
+	What are they?</a>
+	<li><a href="#faq.ckpt">How do I checkpoint and restart a MPI job?</a>
+	</ul>
+<li><a href="#help">Trouble Shooting</a>
+	<ul>
+	<li><a href="#help.mpirun">MPIRUN Says "mpifork: Command not found"</a>
+	<li><a href="#help.ssh">SSH Says "Permission denied"</a>
+	<li><a href="#help.fujitsu.aprun"><b>mpirun</b> on Fujitsu
+	Solaris8/SPARC64V stops with a message
+	"/opt/FJSVmpi2/bin/mpiexec[15]:	aplpg: not found".</a>
+	<li><a href="#help.somaxconn">When I launch a large MPI job, mpirun
+	stops with a message "TCPActiveOpen: read() failed on (aa.bb.cc.dd;xxxx):
+	Connection reset by peer."</a>
+	</ul>
+<li><a href="#tips">Tips</a>
+	<ul>
+	<!--<li><a href="#faq.envs">Important Environment Variables</a>-->
+	<!--<li><a href="#faq.impl">Implementation Specifics</a>-->
+	<li><a href="#tip.pit">Pitfalls in Heterogeneous Environment</a>
+	<li><a href="#tip.64bit">Compiling for Large Data</a>
+	<li><a href="#tip.npb">Running NPB (NAS Parallel Benchmarks)</a>
+	<li><a href="#tip.perftest">Running the MPICH Performance Test</a>
+	<li><a href="#tip.param">Performance Parameters</a>
+	<li><a href="#tip.condor">Using with Condor</a>
+	</ul>
+<li><a href="#platforms">Odds on Specific Platforms</a>
+	<ul>
+	<li><a href="#odds.aix">Compiler Options to IBM AIX and
+	Hitachi SR11000</a>
+	<li><a href="#odds.fujitsu">Compiler Options to Fujitsu
+	Solaris/SPARC64</a>
+	<li><a href="#odds.sx">Compiler Options to NEC SX</a>
+	<li><a href="#odds.sun">Compiler Options to SPARC</a>
+	<li><a href="#odds.misc">Other Problems (on Compilers)</a>
+	</ul>
+</ul>
+
+<!-- ================================================================ -->
+<a name="faq"></a>
+<h2>Frequently Asked Questions</h2>
+
+<!--
+<h3>GridMPI General</h3>
+-->
+
+<!-- ================ -->
+<h3>Configuration</h3>
+
+<dl class="faq">
+
+<dt><a name="faq.ipaddress"></a>
+<i>Do all hosts need global IP addresses?</i>
+
+<dd>No.  GridMPI-2.x and later provides the <b>IMPI Relay</b>.
+Earlier versions needed that each host in the cluster should have an
+IP global address and be IP reachable.
+
+<p>See the description of the Relay: <a
+href="whatisrelay.html">Overview of IMPI Relay</a> and <a
+href="usingrelay.html">Using Relay</a>.
+
+<p><i>Obsolete rationale: Requiring global addresses is because the
+GridMPI implementors judged that relaying/forwarding of messages has
+impact on performance with the current technology.  Also, it is too
+restricted a relaying/forwarding topology to provide a variety of
+collective algorithms for experiments.</i>
+
+<dt><a name="faq.netifs"></a>
+<i>How do I select one from multiple network interfaces?</i>
+
+<dd>GridMPI uses the default network interface for global
+communication by default (the default network interface is the one
+assoicated with a hostname, normally).  An interface can be selected
+by a network address using the environment variable
+<b>IMPI_NETWORK</b>, in case a host has multiple network interfaces.
+It is specified by the format of a network address like "163.220.2.0".
+
+<p>Inside a cluster, having multiple interfaces is not a problem
+because the cluster MPI (YAMPI) uses ones specified in a configuration
+file, where an interface is selected by a given hostname.
+
+<dt><a name="faq.netifs.impi"></a>
+<i>Do I need to specify a network interface of IMPI&nbsp;server?</i>
+
+<dd>No. IMPI&nbsp;server listens on an "any-address" port, and thus,
+selecting a network interface is not necessary.  Note that setting of
+<b>IMPI_NETWORK</b> [<a href="#faq.netifs">FAQ</a>] is for clients
+(MPI processes), and not for IMPI&nbsp;server.  Printed address from
+IMPI&nbsp;server can simply be ignored, or it can be changed by the
+command line option <b>-host</b> <i>hostname</i> to the
+<b>impi-server</b> command.  Passing <b>-host</b> just makes the
+printed address as specifed.
+
+<dt><a name="faq.portrange"></a>
+<i>How do I limit a port range?</i>
+
+<dd>Ports for communication can be limited to a specified range by two
+environment variables: <b>IMPI_PORT_RANGE</b> and
+<b>IMPI_SERVER_PORT_RANGE</b>.  <b>IMPI_PORT_RANGE</b> specifies a
+range of ports to listen to for IMPI connections.  Similarly,
+<b>IMPI_SERVER_PORT_RANGE</b> specifies a range of ports to listen to
+for IMPI&nbsp;server.  See <a href="envvarlist.html">Environment
+Variables</a>.
+
+<blockquote><pre class="screen">
+IMPI_PORT_RANGE=<i>start:end</i>
+IMPI_SERVER_PORT_RANGE=<i>start:end</i>
+</pre></blockquote>
+
+<p><i>start</i> and <i>end</i> are inclusive.
+
+<dt><a name="faq.config.cc"></a>
+<i>Can I change CC in compiling GridMPI?</i>
+
+<dd>Yes.  To compile GridMPI with a non-default C/C++ compiler,
+specify the environment variables (<b>CC</b> and others) and invoke
+"configure".  Specify the Fortran and C++ compilers, too, because the
+compiler driver uses ones found at configuration time.  Use
+<b>CFLAGS</b> to pass options to CC.  For example, the following line
+suffices for using GCC.
+
+<blockquote><pre class="screen">
+CC=gcc CXX=g++ F77=g77 F90=g77 ./configure (for sh/ksh/bash)
+env CC=gcc CXX=g++ F77=g77 F90=g77 ./configure (for csh/tcsh)
+</pre></blockquote>
+
+<p>See <a href="install.html">Installation Procedure</a>, which
+includes some examples as "Configuration Templates".
+
+<dt><a name="faq.changecc"></a>
+<i>Can I change a compiler for application programs?</i>
+
+<dd>Yes.  It is possible to compile application programs using a
+compiler different from the one used to compile the GridMPI library.
+They can be changed by the environment variables <b>_YAMPI_CC</b>,
+<b>_YAMPI_CXX</b>, <b>_YAMPI_F77</b>, and <b>_YAMPI_F90</b>.  The
+default compilers are set at configuration time.
+
+<p>The below table lists the related environment variables.
+
+<blockquote><table>
+<tr><th>Fujitsu Compiler against GCC-Compiled GridMPI
+<tr><td>
+<pre class="screen">
+# For Solaris/SPARC
+_YAMPI_CC='c99'
+_YAMPI_CXX='FCC'
+_YAMPI_F77='frt'
+_YAMPI_F90='f90'
+_YAMPI_EXTCOPT=' -Knouse_rodata -mt -D_REENTRANT'
+_YAMPI_EXTFOPT=' -Ar -f2004,1321 -mt -D_REENTRANT'
+_YAMPI_EXTLIBS=' -L/usr/local/gcc-3.4.3/lib/ -lgcc_s \
+	 -lnsl -lsocket -lpthread -ldl'
+_YAMPI_CC64FLAG='-KV9'
+_YAMPI_LD64FLAG='-64'
+</pre>
+
+<pre class="screen">
+# For Linux/IA32
+_YAMPI_CC='fcc'
+_YAMPI_CXX='FCC'
+_YAMPI_F77='frt'
+_YAMPI_F90='f90'
+_YAMPI_EXTCOPT=' -Knouse_rodata -mt -D_REENTRANT'
+_YAMPI_EXTFOPT=' -Ar -f2004,1321 -mt -D_REENTRANT'
+_YAMPI_EXTLIBS=' /usr/FCC/lib/libgcccompat.a \
+	 -lnsl -lpthread -ldl'
+</pre>
+
+<p>Note that <b>-D_REENTRANT</b> and <b>-lpthread</b> are not
+necessary if the Fujitsu compiler supported <b>-mt</b>.
+
+<p>You can store the settings in $HOME/.yampirc, from which
+<b>mpicc</b> read and execute commands.
+
+</table>
+</blockquote>
+
+<p>Note that the settings above may change w.r.t. the configuration of
+GridMPI.  For example, if thread support is disabled in configuring
+GridMPI (with <b>-disable-threads</b>), the options such as
+<b>-lpthread</b> should be omitted.
+
+<dt><a name="faq.abort.cores"></a>
+<i>Can I stop dumping cores at abortion?</i>
+
+<dd>The behavior at abortion is controllable by the environment
+variable <b>_YAMPI_DUMPCORE</b>.  Setting <b>_YAMPI_DUMPCORE=0</b>
+calls <b>exit&nbsp;(3c)</b> at aborting situation, and setting
+<b>_YAMPI_DUMPCORE=1</b> calls <b>abort&nbsp;(3c)</b>.  GridMPI dumps
+cores by default, because abortion is an irregular condition.  Also,
+setting <b>_YAMPI_ABORT_ON_CLOSE=0/1/2</b> may help to suppress
+dumping cores.  See the <a href="envvarlist.html">Environment
+Variables</a> for the full list of environment variables.
+
+<dt><a name="faq.aix.core"></a>
+<i>Can I change naming of core files in IBM AIX?</i>
+
+<dd>The naming of core files (such as appending PID and date) can be
+changed by setting environment variable "CORE_NAMING" in AIX 5.2, or
+using "chcore" command in AIX5.3.  (Setting "CORE_NAMING=true" is
+enough to generate separate cores for processes).
+
+<p>To make full core dump (not only stack, but include data) in AIX,
+set "_YAMPI_AIX_FULLCORE" environment variable.
+
+<dt><a name="faq.clustercolor"></a>
+<i>Can I get the configuration of wide-area networks?</i>
+
+<dd>No.  But you can retrieve the number of clusters and the number of
+processes in each cluster.  IMPI defines two attribute keys of cluster
+configuration in MPI_COMM_WORLD (IMPI_CLIENT_SIZE and
+IMPI_CLIENT_COLOR).  They indicate which cluster the process (myrank)
+belongs.  Counting the number of processes in clusters is simple (just
+do allreduce).
+
+See <a href="faq.clustercolor.c.txt">faq.clustercolor.c.txt</a>
+or <a href="faq.clustercolorf.f.txt">faq.clustercolorf.f.txt</a>.
+
+<dt><a name="faq.newattrkey"></a>
+<i>What are the new attribute keys?</i>
+
+<dd>GridMPI added new predefined attribute keys in the header files
+("mpi.h" and "mpif.h").  Four are defined in the IMPI specification,
+and two are GridMPI extension.
+
+<p>IMPI specifies the following: <b>IMPI_CLIENT_SIZE</b>,
+<b>IMPI_CLIENT_COLOR</b>, <b>IMPI_HOST_SIZE</b>, and
+<b>IMPI_HOST_COLOR</b>.  They are defined in the IMPI specification.
+
+<p>GridMPI extends the following: <b>YAMPI_PSP_MAXRATE</b> and
+<b>YAMPI_PSP_MATB</b>.  These are related to the PSPacer IP packet
+pacing module.  See <a
+href="../pspacer-2.1/index.en.jsp">pspacer-2.1</a> for PSPacer.
+Briefly, <b>YAMPI_PSP_MAXRATE</b> takes the bandwidth of the network
+for inter-cluster communication (ie, physically available bandwidth).
+<b>YAMPI_PSP_MATB</b> tells PSPacer about the share of the bandwidth
+allowed to this local node (ie, limit of the bandwidth).
+
+<dt><a name="faq.tmp.files"></a>
+<i>Some files are created in /tmp.  What are they?</i>
+
+<dd>GridMPI may leave some files in /tmp.  All can be safely removed
+even during MPI processes are running.
+
+<p><b>/tmp/yampi<i>port</i>_<i>uid</i></b> is a unix domain socket.
+It is removed after initialization, but it may remain on errors in
+initialization.  <b>/tmp/yampimem.<i>uid</i>.<i>key</i></b> is a file
+for mapping shared memory.  It is removed after initialization, but it
+may remain on errors in initialization.
+<b>/tmp/mpifork.<i>uid</i></b> is fatal error logging.  It will
+contain some messages which are lost in failing to print on
+stdout/stderr (due to killing <b>mpirun</b>).  It is empty, normally.
+
+<dt><a name="faq.ckpt"></a>
+<i>How do I checkpoint and restart a MPI job?</i>
+
+<dd>The checkpointing is enabled by setting the environment variable
+<b>_YAMPI_CKPT</b> to 1.
+If the version of Linux kernel is 2.6.x, the sysctl parameter
+kernel.randomized_va_space should be 0.
+
+<p>To checkpoint a MPI job, press Ctrl-\, which causes a SIGQUIT signal.
+When checkpointing is done, ckpt.*.out and ckpt.*.out.img files are
+generated.
+<blockquote><pre class="screen">
+$ mpirun -np 2 ./a.out
+[Ctrl-\]
+</pre></blockquote>
+
+<p> To restart the MPI job, <b>-restart</b> is passed to mpirun.
+<blockquote><pre class="screen">
+$ mpirun -restart -np 2 ./a.out
+</pre></blockquote>
+
+<p>NOTE (IA32) If you want to use checkpoint with enabling threads,
+the kernel module proc_ckpt.ko is required to install. This module does
+not be compiled by default, so you need to compile it manually at
+a checkpoint/src/module directory.
+
+<p>For more information, see the <a href="impl-status-ckpt.html">
+Checkpoint/Restart Implementation Status</a> page.
+
+<!--
+<a name="faq.envs"></a>
+<h3>Important Environment Variables</h3>
+-->
+<!--
+<a name="faq.impl"></a>
+<h3>Implementation Specifics</h3>
+-->
+
+</dl>
+
+<!-- ================================================================ -->
+<a name="help"></a>
+<h2>Trouble Shooting</h2>
+
+<dl class="faq">
+
+<!-- ================ -->
+
+<dt><a name="help.mpirun"></a>
+<i>MPIRUN Says "mpifork: Command not found".</i>
+
+<dd><b>CASE</b>: Remote shell fails to start <b>mpifork</b> at a
+remote node.
+
+<blockquote><pre class="screen">
+% mpirun -np 4 ./a.out
+mpifork[0000]: mpifork: Command not found.
+</pre></blockquote>
+
+<p><b>FIX</b>: <b>mpirun</b> is a script, and it calls the
+<b>mpifork</b> command.  <b>mpifork</b> spreads itself via the remote
+shell on the remote nodes before starting the application.  The above
+line claims the remote shell failed to exec <b>mpifork</b>.  Add
+setting to the path in an rc-file where the remote shell loads.
+
+<p>There are few environment variables <a
+href="envvarlist.html#_YAMPI_MPIFORK"><b>_YAMPI_MPIFORK</b></a> and <a
+href="envvarlist.html#_YAMPI_MPIRUN_USE_MPIROOT_BIN">
+<b>_YAMPI_MPIRUN_USE_MPIROOT_BIN</b></a>, which have control on the
+behavior.
+
+<p><b>HINT</b>: Try <b>mpirun -np <i>n</i> hostname</b>.
+<b>mpirun</b> can start ordinary commands.  Or, try <b>mpifork -v -np
+<i>n</i> hostname</b>.  The option <b>-v</b> lets <b>mpifork</b> print
+trace output.  Use <b>-vv</b> or <b>-vvv</b> to make more verbose.
+
+<!-- ================ -->
+
+<dt><a name="help.ssh"></a>
+<i>SSH Says "Permission denied".</i>
+
+<dd><b>CASE</b>: ssh seems to fail to start processes.
+
+<blockquote><pre class="screen">
+$ gridmpirun gridmpirun.conf
+Permission denied (publickey,keyboard-interactive).
+Permission denied (publickey,keyboard-interactive).
+Permission denied (publickey,keyboard-interactive).
+Permission denied (publickey,keyboard-interactive).
+</pre></blockquote>
+
+<p><b>FIX</b>: If you are using <b>ssh-agent</b> to avoid typing a
+passphase, then you need to allow forwarding of a secret for ssh.  Add
+the following lines in "~/.ssh/config" or "/etc/ssh/ssh_config":
+
+<blockquote><pre class="screen">
+Host *
+   ForwardAgent yes
+</pre></blockquote>
+
+To verify the setting, issue the following command:
+
+<blockquote><pre class="screen">
+ssh localhost ssh localhost date
+</pre></blockquote>
+
+<p><b>RATIONALE</b>: This happens because <b>mpirun</b> forks
+processes as a tree via rsh/ssh, and thus a secret needs to be
+forwarded.  The name of the forker program is <b>mpifork</b>.
+Directly calling <b>mpifork -v -np <i>n</i> hostname</b> may print
+helpful messages.
+
+<!-- ================ -->
+
+<dt><a name="help.fujitsu.aprun"></a>
+<i><b>mpirun</b> on Fujitsu Solaris8/SPARC64V stops with a message
+"/opt/FJSVmpi2/bin/mpiexec[15]: aplpg: not found".</i>
+
+<dd><b>CASE</b>: GridMPI on Fujitsu Solaris8/SPARC64V uses Fujitsu MPI
+as an underlying transport (known as Vendor&nbsp;MPI).  <b>mpirun</b>
+invokes <b>mpiexec</b> of Fujitsu MPI, and <b>mpiexec</b> subsequently
+invokes <b>aplpg</b> and <b>aprun</b> commands, both of which should
+be found in the PATH.
+
+<p><b>FIX</b>: Add <b>/opt/FSUNaprun/bin</b> to the PATH.
+
+<!-- ================ -->
+
+<dt><a name="help.somaxconn"></a>
+<i>When I launch a large MPI job, <b>mpirun</b> stops with a message
+"TCPActiveOpen: read() failed on (aa.bb.cc.dd;xxxx): 
+Connection reset by peer."</i>
+
+<dd><b>CASE</b>: mpirun seems to fail to start processes.
+
+<blockquote><pre class="screen">
+[xx] YAMPI: fatal error (0x340f): TCPActiveOpen: read() failed on (aa.bb.cc.dd;xxxx):
+Connection reset by peer.
+IOT Trap
+</pre></blockquote>
+
+<p><b>FIX</b>: Increase the number of listen backlog on the compute nodes.
+The default value is 128. If you increase it to 10000, issue the following
+commands:
+
+<blockquote><pre class="screen">
+# echo 10000 > /proc/sys/net/core/somaxconn
+
+export _YAMPI_SOMAXCONN=10000
+</pre></blockquote>
+
+</dl>
+
+
+<!-- ================================================================ -->
+<a name="tips"></a>
+<h2>Tips</h2>
+
+<a name="tip.pit"></a>
+<h3>Pitfalls in Heterogeneous Environment</h3>
+
+<dl class="faq">
+
+<dt><i>Machines have different precision in floating point.</i>
+
+<dd>Communicating floating point data may cause mismatch in precision,
+because some processors divert from the IEEE floating format.  Intel
+IA32 (32bit) has extra precision due to its 80bit register format.
+Intel IA64, IBM Power, Fujitsu SPARC64V, and other have extra
+precision in the multiply-add (fma) operation.  Thus, errors occur in
+precision in a heterogeneous environment.
+
+<p>The IEEE conforming behavior is the compiler option.  Use the
+following:
+
+<ul>
+<li>Intel IA32 32bit (with GCC): <b>-msse2 -mfpmath=sse</b>
+<li>Intel IA64 (with GCC): <b>NO CONTROL</b>
+<li>Intel IA64 (with Intel CC): <b>-mp</b>
+<li>IBM Power (with XLC): <b>-qfloat=nomaf -qstrict</b>
+<li>Fujitsu SPARC64V (with Fujitsu compilers): <b>-Kfast_GP=0</b>
+<li>NEC SX series: <b>NO CONTROL</b> (up to SX-8; SX-9 unknown)
+</ul>
+
+<p>Other processors: Ultra-SPARC follows the IEEE.  x86_64 uses the
+SSE registers by default and follows the IEEE.
+
+<p>GCC/IA64 (version 3) does not have control over the precision and
+cannot be IEEE conforming.  Also note that, Intel CC/IA64 has an
+option <b>-no-IPF-fma</b>, but it alone does not suffice at
+<b>-O3</b>.
+
+<p>IBM XLC aggressively optimizes and <b>-qfloat=nomaf</b> alone does
+not work except at <b>-O (-O2)</b>.  <b>-qstrict</b> is also needed
+for <b>-O3</b> or above (for XLC Version 6).
+
+<p><b>CG from the NPB (NAS Parallel Benchmarks) fails without these
+options (verification fails)</b>.
+
+<dt><i>Long integer types are packed in 64bits.</i>
+
+<dd>GridMPI packs <b>long</b> data in 64bits in the <i>external32
+format</i>, whereas the MPI-2 standard specifies it should be packed
+in 32bits.  The default non-standard behavior is chosen because
+sending/receiving using long data (<b>MPI_LONG</b> and
+<b>MPI_UNSIGNED_LONG</b>) may loose bits on 64bit machines.  The
+standard behavior is selected by setting the environment variable
+<b>_YAMPI_COMMON_PACK_SIZE</b>.
+
+<!--
+<h4><b>MPI_Aint</b> is defined as <b>long long</b> in GridMPI</h4>
+The size of <b>MPI_Aint</b> of GridMPI is 64 bits even on 32 bits
+machines.  MPI programs sometimes assume <b>MPI_Aint</b> is of the
+same size as pointers, but it is not the case for GridMPI.
+-->
+
+</dl>
+
+<!-- ================ -->
+<a name="tip.64bit"></a>
+<h3>Compiling for Large Data</h3>
+
+<p>Since x86_64 works with small address offsets even though it is run
+in the 64bit mode by default, GCC and Intel CC on x86_64 needs an
+option <b>-mcmodel=medium</b> to use 64bit addressing in data
+accesses.
+
+<p>Recompilation/reinstallation of GridMPI is needed with GCC&nbsp;3.x
+to use this option.  Otherwise, linking the MPI library fails.  It is
+not needed with Intel CC and GCC&nbsp;4.x.  Disable the PSPacer
+support (--without-libpsp) when you encounter a failure in compiling
+"libpsp.c" in the PIC mode.  Use the below line for reconfiguration.
+
+<blockquote><pre class="screen">
+# With GCC&nbsp;3.x
+CFLAGS="-mcmodel=medium" ./configure --without-libpsp (for sh/ksh/bash)
+env CFLAGS="-mcmodel=medium" ./configure --without-libpsp (for csh/tcsh)
+</pre></blockquote>
+
+<!-- ================ -->
+<a name="tip.npb"></a>
+<h3>Running NPB (NAS Parallel Benchmarks)</h3>
+
+<h4>CG Benchmark (NPB2.3/NPB2.4/NPB3.2)</h4>
+
+<p>CG Benchmark does not converge in a heterogeneous environment, with
+any combinations of Intel IA32, IA64, IBM Power, Sun SPARC.  It is due
+to the floating precision of the processors which have more precision
+than specified by the IEEE float.  Also, some aggressive optimizations
+need be disabled.
+
+See <a href="#tip.pit">Pitfalls in Heterogeneous Environment</a>.
+
+<h4>LU Benchmark (NPB2.3/NPB2.4/NPB3.2)</h4>
+
+<p>LU Benchmark badly uses datatypes.  It is a simple mistake.
+Integers are exchanged as double floats.  Fix is the following:
+
+<a href="faq.lu.diff.txt">faq.lu.diff.txt</a>
+
+<h4>FT Benchmark (NPB3.2)</h4>
+
+<p>FT Benchmark fails due to duplicate declaration generated by
+"sys/setparams.c" with GNU g77.  It is a simple mistake.  Fix is the
+following:
+
+<a href="faq.ft.diff.txt">faq.ft.diff.txt</a>
+
+<h4>MG Benchmark (NPB2.3/NPB2.4/NPB3.2)</h4>
+
+<p>MG Benchmark uses ambiguous message tags for NPROCS&ge;16.  Tags
+are assigned for a pair of dimension and direction, but they do not
+uniquely determine the processes when the mesh structure collapses at
+the lowest-level.  Fix is the following:
+
+<a href="faq.mg.diff.bar.txt">faq.mg.diff.bar.txt</a> or
+<a href="faq.mg.diff.tag.txt">faq.mg.diff.tag.txt</a> 
+(the first one adds extra barriers, and the other one uses properly
+fixed tags).
+
+<h4>Running CLASS=D Benchmarks</h4>
+
+<p><b>CLASS=D</b> benchmarks are too large for 32bit addressing even
+on 64bit machines, when the benchmarks are run with a relatively small
+number of processes.  GCC and Intel CC on x86_64 needs an option
+<b>-mcmodel=medium</b> to use 64bit addressing for data accesses.
+
+See <a href="#tip.64bit">Compiling for Large Data</a>.
+
+<h4>Running Open MP (NPB-MZ) Benchmarks</h4>
+
+<p>It is required to enable threads to run the code for Open MP.  But,
+the NPB code fails to use <b>MPI_Init_thread</b> (it uses
+<b>MPI_Init</b> which is not thread-enabling), because the benchmarks
+would run without properly enabling threads.  GridMPI has an option to
+make <b>MPI_Init</b> work as though <b>MPI_Init_thread</b> were
+called.  The feature is enabled by setting the environment variable
+<b>_YAMPI_THREADS</b> to non-zero value.
+
+<blockquote><pre class="screen">
+_YAMPI_THREADS=1; export _YAMPI_THREADS
+</pre></blockquote>
+
+<p><b>MEMO</b>: Compiling benchmarks needs <b>-openmp</b>, and static
+linking is needed when using GCC.  The environment variable
+<b>OMP_NUM_THREADS</b> specifies the number of threads on a process.
+
+<!--
+IBM AIX
+OS Parameters: maxuproc
+-->
+
+<!-- ================ -->
+<a name="tip.perftest"></a>
+<h3>Running the MPICH Performance Test</h3>
+
+<p>Performance Test Suites (mpptest/perftest) from MPICH at ANL fail
+by timeout.  It is because the loop count is set to a too large value
+in GridMPI/YAMPI.  It is calculated depending on the value returned by
+MPI_Wtick to get a reasonable precision.  However, MPI_Wtick of MPICH
+returns 1e-6, but GridMPI/YAMPI returns a value like 1e-2 (the inverse
+of HZ).  The easiest fix is to replace a call to MPI_Wtick by a small
+constant in "mpptest.c".
+
+<blockquote><pre class="screen">
+#if 0
+    wtick = MPI_Wtick();
+#else
+    wtick = 1e-6;
+#endif
+</pre></blockquote>
+
+<p>See <a href="http://www-unix.mcs.anl.gov/mpi/mpich1/download.html">
+http://www-unix.mcs.anl.gov/mpi/mpich1/download.html</a> for
+downloading the Performance Test Suites.
+
+<!-- ================ -->
+<a name="tip.param"></a>
+<h3>Performance Parameters</h3>
+
+<p>GridMPI exactly follows the IMPI specification, and uses the wire
+protocol and the collective algorithms as defined there.  Some
+parameters can be controlled by the environment variables.  Note that
+the default parameters of TCP/IP and the wire protocol are not suitable
+for large latency.
+
+<h4>Protocol Switch</h4>
+
+<blockquote><pre class="screen">
+_YAMPI_RSIZE=1024
+</pre></blockquote>
+
+<p>It specifies the message size to switch protocol inside a cluster.
+<b>_YAMPI_RSIZE</b> makes <b>MPI_Send</b> switched to
+<b>MPI_Rsend</b>, when the message size equals to the value or larger.
+GridMPI/YAMPI uses the <i>eager protocol</i> in <b>MPI_Send</b> and
+uses the <i>rendezvous protocol</i> in <b>MPI_Rsend</b>.  Note that
+the rendezvous protocol uses hand-shaking and starts sending when both
+the sender and the receiver are ready.  It may avoid copying once in a
+temporary buffer.
+
+<h4>Socket Buffer</h4>
+
+<blockquote><pre class="screen">
+_YAMPI_SOCBUF=65536
+IMPI_SOCBUF=20000000
+</pre></blockquote>
+
+<p>These are the numbers of bytes passed to setsockopt (for both send
+and receive).  These values are used for YAMPI and IMPI sockets,
+respectively.  _YAMPI_SOCBUF controls the YAMPI/TCP connections, and
+IMPI_SOCBUF controls the IMPI connections.  When _YAMPI_SOCBUF is
+specified but not IMPI_SOCBUF, _YAMPI_SOCBUF is used for both.  The
+default is (64*1024) bytes.
+
+<h4>IMPI Wire Protocol</h4>
+
+<blockquote><pre class="screen">
+IMPI_C_DATALEN=2147483647
+</pre></blockquote>
+
+<p>IMPI sends messages as chunks (IMPI packets).  IMPI_C_DATALEN is
+the maximum chunk size in bytes.  IMPI uses a rendezvous protocol if
+an MPI message size is larger than this value.  Rendezvous means
+handshaking between the sender and the receiver, and the latency
+affects the performance very much.  Rendezvous can be disabled in
+effect by making IMPI_C_DATALEN infinitely large
+(2147483647=0x7fffffff).  The default is (64*1024) bytes.
+
+<blockquote><pre class="screen">
+IMPI_H_HIWATER=4000
+IMPI_H_ACKMARK=10
+</pre></blockquote>
+
+<p>IMPI also uses flow control of chunks.  These specify the number of
+chunks sent before getting ACKs.  IMPI_H_HIWATER specifies the maximum
+of the number of chunks.  The defaults are IMPI_H_ACKMARK=10 and
+IMPI_H_HIWATER=20.  This value does not have much importance when
+IMPI_C_DATALEN is set infinitely large.
+
+<h4>IMPI Collective Algorithms</h4>
+
+<blockquote><pre class="screen">
+IMPI_COLL_XSIZE
+IMPI_COLL_MAXLINEAR
+</pre></blockquote>
+
+<p>IMPI switches the collective algorithms depending on the message
+size and the number of processes.  The decision is made by these.
+
+<p>The parameters here prefixed by "IMPI_" are defined in the IMPI
+specification.  So, please check the specification, too.  Also, the
+full list of environment variables to control GridMPI are shown in <a
+href="envvarlist.html">Environment Variables</a>
+
+<!-- ================ -->
+<a name="tip.condor"></a>
+<h3>Using with Condor</h3>
+
+<p>GridMPI needs some settings to run with Condor, a workload
+management system for high throughput computing
+(http://www.cs.wisc.edu/condor/).  Following environment variables are
+at least necessary.
+
+<blockquote><pre class="screen">
+_YAMPI_RSH=$CONDOR_SSH
+_YAMPI_MPIRUN_SPREAD=0
+_YAMPI_MPIRUN_CHDIR=0
+</pre></blockquote>
+
+<p><b>_YAMPI_RSH</b> is needed, because Condor uses their own SSH
+script and using it is necessary.
+
+<p><b>_YAMPI_MPIRUN_SPREAD=0</b> disables forking as a tree (it sets
+spreading factor at the root to infinity).  Condor places a
+configuration file on a starting node, and it reads the configuration
+file for each invocation of SSH.  It means invoking SSH is restricted
+on the starting node, and forking as a tree cannot be used.
+
+<p><b>_YAMPI_MPIRUN_CHDIR=0</b> disables chdir at a node invoked by
+SSH.  GridMPI tries to chdir to the current directory where mpirun is
+invoked.  However, Condor assigns a different working directory for
+each node and chdirs in their SSH script.  Thus, GridMPI need not to
+chdir by itself.
+
+<p>See <a href="faq.condor.txt">faq.condor.txt</a>, the modified
+script "mp1script" for GridMPI.
+
+<!-- ================================================================ -->
+<a name="platforms"></a>
+<h2>Odds on Specific Platforms</h2>
+
+<a name="odds.aix"></a>
+<h4>Compiler Options to IBM AIX and Hitachi SR11000</h4>
+
+<dl class="faq">
+
+<dt><i>Why <b>-qstaticinline</b> is passed to the IBM XL compilers in
+mpicc?</i>
+
+<dd>It suppresses warning "WARNING: Duplicate symbol" while linking
+C++ programs.  GridMPI defines inline methods in the C++ binding,
+which generate many warnings at linking.  The XL C++ compiler emits an
+associated external definition for each inline method (it is an ISO
+specified behavior).  See
+<a href="http://www-1.ibm.com/support/docview.wss?uid=swg21044588">
+IBM support document</a>.
+
+<dt><i>Why <b>-parallel=0</b> is passed to the Hitachi f90 compiler in
+mpicc?</i>
+
+<dd>It disables auto-parallelization which is enabled by default
+(default can be set by site).  Aggressive setting makes many programs
+fail.
+
+</dl>
+
+<a name="odds.fujitsu"></a>
+<h4>Compiler Options to Fujitsu Solaris/SPARC64</h4>
+
+<dl class="faq">
+
+<dt><i>Why <b>-Knouse_rodata</b> or <b>-Ar</b> is passed to the
+Fujitsu compilers in mpicc?</i>
+
+<dd><b>-Knouse_rodata</b> (in C) or <b>-Ar</b> (in Fortran) disables
+to place constants in read-only area.  They are necessary to use
+Fujitsu MPI and should always be specified.
+
+<dt><i>Why <b>-f2004,1321</b> is passed to the Fujitsu Fortran in
+mpicc?</i>
+
+<dd>It is just to suppress many warnings in Fortran.
+
+</dl>
+
+<a name="odds.sx"></a>
+<h4>Compiler Options to NEC SX</h4>
+
+<dl class="faq">
+
+<dt><i>What options can I use, when a vectorized program aborts on the
+limit of the number of loops with the message like the following:</i>
+
+<dd>
+<blockquote><pre class="screen">
+**** 96 Loop count is greater than that assumed by the compiler:
+loop-count=274625 eln=2342 PROG=input ELN=2366(40004064c) TASKID=1
+Called from main_ ELN=275(40000654c)
+</pre></blockquote>
+
+The options <b>-Wf,-pvctl,loopcnt=2147483647</b> or
+<b>-Wf,-pvctl,vwork=stack</b> to <b>f90/sxf90</b> may work (note that
+2147483647=0x7fffffff).  Here, <b>-Wf</b> is a prefix to pass complex
+options to the compiler.
+
+</dl>
+
+<a name="odds.sun"></a>
+<h4>Compiler Options to SPARC</h4>
+
+<dl class="faq">
+
+<dt><i>Why <b>-xmemalign=8s</b> is passed to the Sun CC (SPARC) in
+mpicc?</i>
+
+<dd><b>-xmemalign=8s</b> makes doubles aligned at eight byte boundary.
+Optimization (with <b>-fast</b>) can potentially make MPI library and
+user programs incompatible when they are compiled with different
+optimization levels.  It is added to avoid this incompatibility.
+<b>-mno-unaligned-doubles</b> is passed to GCC.
+
+</dl>
+
+<a name="odds.misc"></a>
+<h4>Other Problems (on Compilers)</h4>
+
+<ul>
+
+<li>PGI CC 6.x is not C99.  GridMPI needs C99 features, such as named
+structure initializer, restrict keyword, and complex types.  PGI CC
+7.x will work (we have not tested it yet).
+
+<li>We have encountered a problem with Intel CC IA64 9.1.039 (icc 9.1
+20060523).  It fails simple conditionals with optimization.  Recent
+versions (9.1.047) are fine.  (2007-03-13)
+
+<li>We have encountered a problem with GCC 3.3.3 IA64.  It fails to
+define _REENTRANT when compiling with -pthreads.  Intel CC is fine.
+(gcc (GCC) 3.3.3 (SuSE Linux), SUSE LINUX Enterprise Server 9 (ia64),
+VERSION = 9, PATCHLEVEL = 3).  (2007-04-21)
+
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2008/04/22 07:43:14 $)</i></font>
+
+<!--
+Local Variables:
+mode: Fundamental
+End:
+-->
+</body></html>

@@ -1,0 +1,393 @@
+diff -ur npb3.2/BT/Makefile npb3.2-psp/BT/Makefile
+--- npb3.2/BT/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/BT/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -9,7 +9,8 @@
+ OBJS = bt.o make_set.o initialize.o exact_solution.o exact_rhs.o \
+        set_constants.o adi.o define.o copy_faces.o rhs.o      \
+        x_solve.o y_solve.o z_solve.o add.o error.o verify.o setup_mpi.o \
+-       ${COMMON}/print_results.o ${COMMON}/timers.o ${COMMON}/${RAND}.o
++       ${COMMON}/print_results.o ${COMMON}/timers.o ${COMMON}/${RAND}.o \
++       ${COMMON}/psp.o
+ 
+ include ../sys/make.common
+ 
+diff -ur npb3.2/BT/setup_mpi.f npb3.2-psp/BT/setup_mpi.f
+--- npb3.2/BT/setup_mpi.f	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/BT/setup_mpi.f	2007-05-02 15:23:28.000000000 +0900
+@@ -15,12 +15,16 @@
+       include 'mpinpb.h'
+       include 'npbparams.h'
+       integer error, color, nc
++      integer n
+ 
+       call mpi_init(error)
+       
+       call mpi_comm_size(MPI_COMM_WORLD, total_nodes, error)
+       call mpi_comm_rank(MPI_COMM_WORLD, node, error)
+ 
++      call nhosts_in_client(n)
++      call psp_change_nconns(n / 2)
++
+       if (.not. convertdouble) then
+          dp_type = MPI_DOUBLE_PRECISION
+       else
+diff -ur npb3.2/CG/Makefile npb3.2-psp/CG/Makefile
+--- npb3.2/CG/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/CG/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -5,7 +5,7 @@
+ include ../config/make.def
+ 
+ OBJS = cg.o ${COMMON}/print_results.o  \
+-       ${COMMON}/${RAND}.o ${COMMON}/timers.o
++       ${COMMON}/${RAND}.o ${COMMON}/timers.o ${COMMON}/psp.o
+ 
+ include ../sys/make.common
+ 
+diff -ur npb3.2/CG/cg.f npb3.2-psp/CG/cg.f
+--- npb3.2/CG/cg.f	2007-04-23 17:12:55.000000000 +0900
++++ npb3.2-psp/CG/cg.f	2007-05-02 15:23:28.000000000 +0900
+@@ -609,6 +609,7 @@
+       include 'mpinpb.h'
+ 
+       integer   ierr
++      integer   n
+ 
+ 
+       call mpi_init( ierr )
+@@ -616,6 +617,8 @@
+       call mpi_comm_size( mpi_comm_world, nprocs, ierr )
+       root = 0
+ 
++      call nhosts_in_client(n)
++      call psp_change_nconns(n / 2)
+ 
+       return
+       end
+diff -ur npb3.2/EP/Makefile npb3.2-psp/EP/Makefile
+--- npb3.2/EP/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/EP/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -4,7 +4,8 @@
+ 
+ include ../config/make.def
+ 
+-OBJS = ep.o ${COMMON}/print_results.o ${COMMON}/${RAND}.o ${COMMON}/timers.o
++OBJS = ep.o ${COMMON}/print_results.o ${COMMON}/${RAND}.o ${COMMON}/timers.o \
++       ${COMMON}/psp.o
+ 
+ include ../sys/make.common
+ 
+diff -ur npb3.2/EP/ep.f npb3.2-psp/EP/ep.f
+--- npb3.2/EP/ep.f	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/EP/ep.f	2007-05-02 15:23:28.000000000 +0900
+@@ -72,6 +72,7 @@
+       external         randlc, timer_read
+       double precision randlc, qq
+       character*14     size
++      integer          n
+ 
+       parameter (mk = 16, mm = m - mk, nn = 2 ** mm,
+      >           nk = 2 ** mk, nq = 10, epsilon=1.d-8,
+@@ -84,6 +85,9 @@
+       call mpi_comm_rank(MPI_COMM_WORLD,node,ierr)
+       call mpi_comm_size(MPI_COMM_WORLD,no_nodes,ierr)
+ 
++      call nhosts_in_client(n)
++      call psp_change_nconns(n)
++
+       root = 0
+ 
+       if (.not. convertdouble) then
+diff -ur npb3.2/FT/Makefile npb3.2-psp/FT/Makefile
+--- npb3.2/FT/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/FT/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -6,7 +6,8 @@
+ 
+ include ../sys/make.common
+ 
+-OBJS = ft.o ${COMMON}/${RAND}.o ${COMMON}/print_results.o ${COMMON}/timers.o
++OBJS = ft.o ${COMMON}/${RAND}.o ${COMMON}/print_results.o ${COMMON}/timers.o \
++       ${COMMON}/psp.o
+ 
+ ${PROGRAM}: config ${OBJS}
+ 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} ${FMPI_LIB}
+diff -ur npb3.2/FT/ft.f npb3.2-psp/FT/ft.f
+--- npb3.2/FT/ft.f	2007-04-23 17:54:35.000000000 +0900
++++ npb3.2-psp/FT/ft.f	2007-05-02 15:23:28.000000000 +0900
+@@ -115,9 +115,13 @@
+       double precision total_time, mflops
+       logical verified
+       character class
++      integer n
+ 
+       call MPI_Init(ierr)
+ 
++      call nhosts_in_client(n)
++      call psp_change_nconns(n)
++
+ c---------------------------------------------------------------------
+ c Run the entire problem once to make sure all data is touched. 
+ c This reduces variable startup costs, which is important for such a 
+diff -ur npb3.2/IS/Makefile npb3.2-psp/IS/Makefile
+--- npb3.2/IS/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/IS/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -6,7 +6,7 @@
+ 
+ include ../sys/make.common
+ 
+-OBJS = is.o ${COMMON}/c_print_results.o ${COMMON}/c_timers.o
++OBJS = is.o ${COMMON}/c_print_results.o ${COMMON}/c_timers.o ${COMMON}/c_psp.o
+ 
+ 
+ ${PROGRAM}: config ${OBJS}
+diff -ur npb3.2/IS/is.c npb3.2-psp/IS/is.c
+--- npb3.2/IS/is.c	2007-11-07 11:37:04.000000000 +0900
++++ npb3.2-psp/IS/is.c	2007-06-04 15:12:23.000000000 +0900
+@@ -244,6 +244,7 @@
+ void    timer_start( int n );
+ void    timer_stop( int n );
+ double  timer_read( int n );
++int	psp_change_nconns( int n );
+ 
+ 
+ 
+@@ -877,6 +878,7 @@
+     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+ 
++    psp_change_nconns(nhosts_in_client());
+ 
+ /*  Initialize the verification arrays if a valid class */
+     for( i=0; i<TEST_ARRAY_SIZE; i++ )
+diff -ur npb3.2/LU/Makefile npb3.2-psp/LU/Makefile
+--- npb3.2/LU/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/LU/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -8,7 +8,8 @@
+        nodedim.o subdomain.o setcoeff.o sethyper.o setbv.o exact.o setiv.o \
+        erhs.o ssor.o exchange_1.o exchange_3.o exchange_4.o exchange_5.o \
+        exchange_6.o rhs.o l2norm.o jacld.o blts.o jacu.o buts.o error.o \
+-       pintgr.o verify.o ${COMMON}/print_results.o ${COMMON}/timers.o
++       pintgr.o verify.o ${COMMON}/print_results.o ${COMMON}/timers.o \
++       ${COMMON}/psp.o
+ 
+ include ../sys/make.common
+ 
+diff -ur npb3.2/LU/init_comm.f npb3.2-psp/LU/init_comm.f
+--- npb3.2/LU/init_comm.f	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/LU/init_comm.f	2007-05-02 15:23:28.000000000 +0900
+@@ -23,6 +23,7 @@
+ 
+       integer nodedim
+       integer IERROR
++      integer n
+ 
+ 
+ c---------------------------------------------------------------------
+@@ -44,6 +45,9 @@
+      >                     num,
+      >                     IERROR )
+ 
++      call nhosts_in_client(n)
++      call psp_change_nconns(n)
++
+       ndim   = nodedim(num)
+ 
+       if (.not. convertdouble) then
+diff -ur npb3.2/MG/Makefile npb3.2-psp/MG/Makefile
+--- npb3.2/MG/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/MG/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -5,7 +5,7 @@
+ include ../config/make.def
+ 
+ OBJS = mg.o ${COMMON}/print_results.o  \
+-       ${COMMON}/${RAND}.o ${COMMON}/timers.o
++       ${COMMON}/${RAND}.o ${COMMON}/timers.o ${COMMON}/psp.o
+ 
+ include ../sys/make.common
+ 
+diff -ur npb3.2/MG/mg.f npb3.2-psp/MG/mg.f
+--- npb3.2/MG/mg.f	2007-04-23 19:59:13.000000000 +0900
++++ npb3.2-psp/MG/mg.f	2007-05-02 15:23:28.000000000 +0900
+@@ -81,10 +81,15 @@
+       integer ierr,i, fstatus
+       integer T_bench, T_init
+       parameter (T_bench=1, T_init=2)
++      integer n
+ 
+       call mpi_init(ierr)
+       call mpi_comm_rank(mpi_comm_world, me, ierr)
+       call mpi_comm_size(mpi_comm_world, nprocs, ierr)
++
++      call nhosts_in_client(n)
++      call psp_change_nconns(n)
++
+       root = 0
+       if (.not. convertdouble) then
+          dp_type = MPI_DOUBLE_PRECISION
+diff -ur npb3.2/SP/Makefile npb3.2-psp/SP/Makefile
+--- npb3.2/SP/Makefile	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/SP/Makefile	2007-05-02 15:23:28.000000000 +0900
+@@ -9,7 +9,7 @@
+        set_constants.o adi.o define.o copy_faces.o rhs.o      \
+        lhsx.o lhsy.o lhsz.o x_solve.o ninvr.o y_solve.o pinvr.o    \
+        z_solve.o tzetar.o add.o txinvr.o error.o verify.o setup_mpi.o \
+-       ${COMMON}/print_results.o ${COMMON}/timers.o
++       ${COMMON}/print_results.o ${COMMON}/timers.o ${COMMON}/psp.o
+ 
+ include ../sys/make.common
+ 
+diff -ur npb3.2/SP/setup_mpi.f npb3.2-psp/SP/setup_mpi.f
+--- npb3.2/SP/setup_mpi.f	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/SP/setup_mpi.f	2007-05-02 15:23:28.000000000 +0900
+@@ -15,12 +15,16 @@
+       include 'mpinpb.h'
+       include 'npbparams.h'
+       integer error, nc, color
++      integer n
+ 
+       call mpi_init(error)
+       
+       call mpi_comm_size(MPI_COMM_WORLD, total_nodes, error)
+       call mpi_comm_rank(MPI_COMM_WORLD, node, error)
+ 
++      call nhosts_in_client(n)
++      call psp_change_nconns(n / 2)
++
+       if (.not. convertdouble) then
+          dp_type = MPI_DOUBLE_PRECISION
+       else
+diff -urN npb3.2/common/c_psp.c npb3.2-psp/common/c_psp.c
+--- npb3.2/common/c_psp.c	1970-01-01 09:00:00.000000000 +0900
++++ npb3.2-psp/common/c_psp.c	2008-01-17 10:05:20.000000000 +0900
+@@ -0,0 +1,58 @@
++#include <mpi.h>
++#include <assert.h>
++
++#define MAX_NCLUSTERS 32
++
++int
++nhosts_in_client(void)
++{
++    int color, *attr, flag;
++    int nclusters;
++    int nnodes[MAX_NCLUSTERS];
++
++    MPI_Attr_get(MPI_COMM_WORLD, IMPI_CLIENT_SIZE, &attr, &flag);
++    assert(flag != 0);
++    nclusters = *attr;
++    assert(nclusters < MAX_NCLUSTERS);
++
++    MPI_Attr_get(MPI_COMM_WORLD, IMPI_CLIENT_COLOR, &attr, &flag);
++    assert(flag != 0);
++    color = *attr;
++    assert(color >= 0 && color < nclusters);
++
++    memset(nnodes, 0, (sizeof(int) * nclusters));
++    nnodes[color] = 1;
++    MPI_Allreduce(MPI_IN_PLACE, nnodes, nclusters,
++		  MPI_INT, MPI_SUM, MPI_COMM_WORLD);
++
++    return nnodes[color];
++}
++
++int
++psp_change_nconns(int n)
++{
++    int *rate;
++    int flag;
++    int cc = -1;
++
++    assert(n > 0);
++#if 0
++    MPI_Attr_get(MPI_COMM_WORLD, YAMPI_PSP_MAXRATE, (void *)&rate, &flag);
++    if (flag) {
++	int matb = (*rate) / (n * 2);
++	MPI_Attr_put(MPI_COMM_WORLD, YAMPI_PSP_MATB, (void *)&matb);
++	cc = 0;
++    }
++#else
++    MPI_Attr_get(MPI_COMM_WORLD, YAMPI_PSP_MAXRATE, &rate, &flag);
++    if (flag) {
++	int *matb;
++	MPI_Attr_get(MPI_COMM_WORLD, YAMPI_PSP_MATB, (void *)&matb, &flag);
++	*matb = (*rate) / (n * 2);
++	MPI_Attr_put(MPI_COMM_WORLD, YAMPI_PSP_MATB, (void *)matb);
++	cc = 0;
++    }
++#endif
++
++    return cc;
++}
+diff -urN npb3.2/common/psp.f npb3.2-psp/common/psp.f
+--- npb3.2/common/psp.f	1970-01-01 09:00:00.000000000 +0900
++++ npb3.2-psp/common/psp.f	2007-06-04 15:05:32.000000000 +0900
+@@ -0,0 +1,54 @@
++c---------------------------------------------------------------------
++      subroutine nhosts_in_client(nhosts)
++c---------------------------------------------------------------------
++      implicit none
++      include 'mpif.h'
++
++      integer nhosts
++      integer nnodes(32)
++      integer nclusters
++      integer color, attr, ierr, i
++      logical flag
++
++      call MPI_Attr_get(MPI_COMM_WORLD, IMPI_CLIENT_SIZE,
++     &     nclusters, flag, ierr)
++      if (.NOT. flag) then
++        print *, 'MPI_ATTR_GET FAILED'
++        call exit(1)
++      end if
++      call MPI_Attr_get(MPI_COMM_WORLD, IMPI_CLIENT_COLOR,
++     &     color, flag, ierr)
++      if (.NOT. FLAG) then
++        print *, 'MPI_ATTR_GET FAILED'
++        call exit(1)
++      end if
++
++      do i = 1, 32
++         nnodes(i) = 0
++      end do
++      nnodes(color + 1) = 1
++      call MPI_Allreduce(MPI_IN_PLACE, nnodes, nclusters,
++     &     MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD, ierr)
++
++      nhosts = nnodes(color + 1)
++      return
++      end
++
++c---------------------------------------------------------------------
++      subroutine psp_change_nconns(n)
++c---------------------------------------------------------------------
++      implicit none
++      include 'mpif.h'
++
++      integer n
++      integer v, rate, ierr
++      logical flag
++
++      call MPI_Attr_get(MPI_COMM_WORLD, YAMPI_PSP_MAXRATE, v, flag,
++     >     ierr)
++      if ( .NOT. flag ) return
++
++      rate = v / n
++      call MPI_Attr_put(MPI_COMM_WORLD, YAMPI_PSP_MATB, rate, ierr)
++
++      end
+diff -ur npb3.2/sys/make.common npb3.2-psp/sys/make.common
+--- npb3.2/sys/make.common	2005-03-30 18:11:02.000000000 +0900
++++ npb3.2-psp/sys/make.common	2007-05-02 15:23:30.000000000 +0900
+@@ -39,6 +39,12 @@
+ ${COMMON}/c_timers.o: ${COMMON}/c_timers.c
+ 	cd ${COMMON}; ${CCOMPILE} c_timers.c
+ 
++${COMMON}/psp.o: ${COMMON}/psp.f
++	cd ${COMMON}; ${FCOMPILE} psp.f
++
++${COMMON}/c_psp.o: ${COMMON}/c_psp.c
++	cd ${COMMON}; ${CCOMPILE} c_psp.c
++
+ # Normally setparams updates npbparams.h only if the settings (CLASS/NPROCS)
+ # have changed. However, we also want to update if the compile options
+ # may have changed (set in ../config/make.def). 

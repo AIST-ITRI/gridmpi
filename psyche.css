@@ -1,0 +1,199 @@
+BODY {
+	font-family: verdana,arial,helvetica,sans-serif;
+	color: #333333;
+}
+
+H2 {
+	width: 90%;
+	font-family: verdana,arial,helvetica,sans-serif;
+	font-weight: bold;
+	color: white;
+	background-color: slateblue;
+	padding: 5px 3px 3px 0.5em;
+}
+
+H3 {
+	width: 90%;
+	font-family: verdana,arial,helvetica,sans-serif;
+	color: white;
+	background-color: gray;
+	padding: 5px 3px 3px 0.5em;
+}
+
+H4 {
+	text-decoration: underline;
+	color: black;
+	background-color: white;
+	padding: 5px 3px 3px 0.5em;
+}
+
+P {
+	text-indent: 1em;
+}
+
+TD.topmenu {
+	font: 100 80% sans-serif;
+	width: 100%;
+	text-align: right;
+	text-valign: top;
+	color: white;
+	background-color: lightgrey;
+	padding: 5px 20px 3px 0.5em;
+}
+TD.topmenu2 {
+	width: 100%;
+	height: 4px;
+	background-color: gray;
+}
+
+TABLE.wholepage {
+	table-layout: fixed;
+	width: 100%;
+	border-collapse: collapse;
+	cellpadding: 40pt;
+	cellspacing: 40pt;
+}
+
+TD.leftcolumn {
+	width: 25%;
+	font-family: verdana,arial,sans-serif,helvetica;
+	/*background-color: mistyrose;*/
+	background-color: lightskyblue;
+	padding: 0px 5px 0px 5px;
+}
+
+TD.maincolumn {
+	width: 70%;
+	font-family: verdana,arial,sans-serif,helvetica;
+	border-width: 1 1 1 1;
+	border-style: none none none solid;
+	padding: 0px 5px 0px 5px;
+}
+
+ul.sidebar {
+	margin: 5px 0px 5px 0px;
+	padding: 0px;
+	font-weight: bold;
+	list-style-type: none;
+	border-width: 1px 1px 0px 1px;
+	border-style: solid;
+	border-color: black;
+	text-align: left;
+}
+ul.sidebar li.sidebartitle { 
+	color: white;
+	background-color: tomato;
+}
+ul.sidebar li.section { 
+	/*background-color: bisque;*/
+}
+ul.sidebar li.subsection { 
+	padding-left: 2em;
+}
+ul.sidebar li {
+	/*display: block;*/
+	padding: 6px 0px 6px 10px;
+	border-width: 0px 0px 1px 0px;
+	border-style: solid;
+	border-color: black;
+}
+ul.sidebar li.topics { 
+	color: white;
+	background-color: lightgreen;
+}
+
+dl.faq dt {
+	background-color: lavender;
+	margin: 1em 0% 1em 0%;
+}
+
+TABLE.banner {
+	table-layout: fixed;
+	width: 80%;
+	background-color: black;
+	border-style: solid;
+	border-collapse: collapse;
+	border-width: 6px;
+	border-color: black;
+}
+TD.banner11 {
+	width: 3%;
+	background-color: firebrick;
+	border-style: solid;
+	border-collapse: separate;
+	border-width: 6px;
+	border-color: black;
+}
+TD.banner12 {
+	width: 85%;
+	height: 65pt;
+	font-family: "Arial Black",verdana,arial,sans-serif,helvetica;
+	font-weight: 900;
+	font-size: 200%;
+	color: white;
+	background-color: firebrick;
+	text-align: left;
+	vertical-align: top;
+	border-style: solid;
+	border-collapse: separate;
+	border-width: 6px;
+	border-color: black;
+}
+TD.banner13 {
+	width: 10%;
+	height: 65pt;
+	background-color: orange;
+	border-style: solid;
+	border-collapse: separate;
+	border-width: 6px;
+	border-color: black;
+}
+TD.banner21 {
+	width: 90%;
+	height: 14pt;
+	background-color: lawngreen;
+	border-style: solid;
+	border-collapse: separate;
+	border-width: 6px;
+	border-color: black;
+}
+TD.banner22 {
+	width: 10%;
+	height: 14pt;
+	background-color: pink;
+	border-style: solid;
+	border-collapse: separate;
+	border-width: 6px;
+	border-color: black;
+}
+TD.banner31 {
+	width: 3%;
+	background-color: lightcyan;
+	border-style: solid;
+	border-collapse: separate;
+	border-width: 6px;
+	border-color: black;
+}
+TD.banner32 {
+	width: 97%;
+	height: 10pt;
+	font-family: verdana,arial,sans-serif,helvetica;
+	font-size: 50%;
+	color: blue;
+	text-align: right;
+	background-color: lightcyan;
+	border-style: solid;
+	border-collapse: separate;
+	border-width: 6px;
+	border-color: black;
+}
+PRE.screen {
+	color: black;
+	background: lavender;
+	border: 1px solid blue;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	margin-left: 2em;
+	margin-right: 2em;
+	padding: 1ex;
+}

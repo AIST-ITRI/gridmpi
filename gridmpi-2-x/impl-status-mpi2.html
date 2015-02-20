@@ -1,0 +1,389 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="ref.css">
+</head>
+<body>
+
+<h1>MPI Implementation Status</h1>
+
+<p><font size=-2><i>($Date: 2007/11/12 06:11:59 $)</i></font>
+
+<p>This document describes the implementation status and the notes on
+the use of MPI-2 features.
+
+<h3>Contents</h3>
+
+<ul>
+<li><a href="#issues">1. Known Problems and Compatibility Issues</a>
+<li><a href="#status">2. Implementation Status Summary</a>
+<li><a href="#threads">3. Threads</a>
+<li><a href="#onesided">4. Onesided</a>
+<li><a href="#spawn">5. Spawn</a>
+<li><a href="#connect">6. Connect/Accept</a>
+<li><a href="#io">7. IO</a>
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="issues"></a>
+<h2>1. Known Problems and Compatibility Issues</h2>
+
+<table border="1" rules="all" cellpadding="5">
+<tr bgcolor=lightgrey><td colspan=2 align=center>Known Problems
+
+<tr><td>threads support<td>Communicator creation functions are not
+thread-safe in GridMPI, while the other functions are thread-safe.
+Extending the IMPI protocol for thread-safety is still under design.
+Note, in contrast, communicator creation functions in YAMPI are
+thread-safe.
+
+<tr><td>pack_external<br>unpack_external<td><b>long double</b> is not
+properly packed/unpacked in architecture neutral format, because of
+the diversity of long double formats -- Intel uses 96bits, IBM/Power
+uses a pair of doubles, and so on.
+
+<tr bgcolor=lightgrey><td colspan=2 align=center>Compatibility Issues
+
+<tr><td>pack_external<br>unpack_external<td><b>long</b> data are
+packed into 64bit whereas MPI-2 specifies they are in 32bits.  This
+non-standard behavior is for 64bit machines (most programs will fail
+with using 32bits for long data).  Setting environment variable
+<b>_YAMPI_COMMON_PACK_SIZE</b> makes them to the standard behavior.
+
+<tr><td>MPI_Cancel<td>Cancellation is a non-local operation, opposed
+to the MPI specification in which MPI_Wait after MPI_Cancel is a local
+operation (MPI-1 &sect;3.8).  GridMPI/YAMPI may wait at MPI_Wait for
+the response from the peer receiver in order to check the status of a
+send request.  Note that this behavior is compatible to many other MPI
+implementations.
+
+<tr><td>MPI_Comm_free<td>Communicators should not be freed before
+completion of send/recv, because they are not reference-counted in
+GridMPI/YAMPI.  However, proper (non-erroneous) send/recv will be
+completed without communicators, because CIDs (communicator IDs) are
+valid after MPI_Comm_free (ie, they are not checked of their
+validity).  Errors may not properly be handled after communicators are
+freed.  Note, in contrast, datatypes are reference-counted.
+
+<tr><td>mpi.h (headers)<td>The header file definitions of
+GridMPI/YAMPI are almost compatible to the ones of MPICH-1 (but not
+identical).
+
+<!--
+<tr bgcolor=lightgrey><td colspan=2 align=center>Open Issues
+<tr><td>
+-->
+
+</table>
+
+<p>See <a href="impl-status-mx.html">MX Implementation Status</a> for
+support levels of Myrinet/MX.
+
+<p>See <a href="impl-status-ckpt.html">Checkpoint/Restart
+Implementation Status</a> for support levels of checkpointing feature.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="status"></a>
+<h2>2. Implementation Status Summary</h2>
+
+<p>
+<i>This part of the document roughly follows the format of the memo <a
+href="http://www-unix.mcs.anl.gov/mpi/mpich/mpi2-status.html">
+<b>Status of the MPICH implementation of MPI-1 and MPI-2.</b></a>
+It is organized by sections of the
+<a href="http://www.mpi-forum.org/docs/docs.html">MPI-2 Standard</a>.</i>
+
+<p>
+<table border="1" rules="all" cellpadding="5">
+<thead><tr bgcolor="darkblue">
+<th colspan="2" align="center" width="40%">
+<font color="white"><b>Section</b></font></th>
+<th align="center" width="60%">
+<font color="white"><b>Support</b></font></th>
+</tr>
+</thead>
+<tbody>
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-1.2</b>
+<tr><td><br><td>All<td>Yes</tr>
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Miscellany</b></tr>
+<tr><td>4.1<td>Portable MPI Process Startup (mpiexec)
+	<td><font color=red>No</font>
+<tr><td>4.2<td>Passing NULL to MPI_Init<td>Yes
+<tr><td>4.4<td>MPI_TYPE_CREATE_INDEXED_BLOCK<td>Yes
+<tr><td>4.5<td>MPI_STATUS_IGNORE<br>MPI_STATUSES_IGNORE<td>Yes
+<tr><td>4.6<td>Error Class for Invalid Keyval
+	<td><font color=red>No</font>. GridMPI/YAMPI does not
+	distinguish target objects of keyvals.
+<tr><td>4.7<td>Committing a Committed Datatype
+	<td>Yes.  GridMPI/YAMPI does nothing by commit.
+<tr><td>4.8<td>Allowing User Functions at Process Termination<td>Yes
+<tr><td>4.9<td>Determining Whether MPI Has Finished<td>Yes
+<tr><td>4.10<td>The Info Object<td>Yes
+<tr><td>4.11<td>Memory Allocation
+	<td>Yes.  GridMPI/YAMPI implements memory allocators by malloc/free.
+<tr><td>4.12<td>Language Interoperability
+	<td><font color=red>No</font>.
+	Fortran KIND is not yet	implemented.
+<tr><td>4.13<td>Error Handlers (on communicators, windows, and datatypes)
+	<td>Yes.  Note that GridMPI/YAMPI does not distinguish target
+	objects of error handlers, and no errors are signaled when an
+	error handler is set to an inappropriate object.
+<tr><td>4.14<td>New Datatype Manipulation Functions<td>Yes
+<tr><td>4.15<td>New Predefined Datatypes<td>Yes
+<tr><td>4.16<td>Canonical MPI_PACK and MPI_UNPACK<td>Yes
+<tr><td>4.17<td>Functions and Macros
+	<td>Yes.  GridMPI/YAMPI implements all interfaces as functions.
+<tr><td>4.18<td>Profiling Interface<td>Yes
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Process Creation and Management</b>
+<tr><td>5.3<td>Process Manager Interface
+	<td>Yes (lightly tested). (*NOTE1)
+<tr><td>5.4<td>Establishing Communication
+	<td>Yes (lightly tested). (*NOTE1)
+<tr><td>5.5<td>Other Functionality
+	<td>Yes (lightly tested). (*NOTE1)
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: One-Sided Communications</b>
+<tr><td>6.2<td>Initialization
+	<td>Yes (lightly tested). (*NOTE2)
+<tr><td>6.3<td>Communication Calls
+	<td>Yes (lightly tested). (*NOTE2)
+<tr><td>6.4<td>Synchronization Calls
+	<td>Yes (lightly tested). (*NOTE2)
+<tr><td>6.6<td>Error Handling
+	<td>Yes (lightly tested). (*NOTE2)
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Extended Collective Operations</b>
+<tr><td>7.2<td>Intercommunucator Constructors<td>Yes
+<tr><td>7.3<td>Extended Collective Operations<td>Yes
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: External Interfaces</b>
+<tr><td>8.2<td>Generalized Requests<td>Yes
+<tr><td>8.3<td>Associating Information with Status<td>Yes
+<tr><td>8.4<td>Naming Objects<td>Yes
+<tr><td>8.5<td>Error Classes, Codes, and Handlers<td>Yes
+<tr><td>8.6<td>Decoding a Datatype<td>Yes
+<tr><td>8.7<td>MPI and Threads
+	<td>Yes (lightly tested). (*NOTE2)
+<tr><td>8.8<td>New Attribute Caching Functions<td>Yes
+<tr><td>8.9<td>Duplicating a Datatype<td>Yes
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: MPI-I/O</b>
+<tr><td>9.2<td>File Manipulation
+	<td>Yes (lightly tested). (*NOTE2, *NOTE3)
+<tr><td>9.3<td>File Views
+	<td>Yes (lightly tested). (*NOTE2, *NOTE3)
+<tr><td>9.4<td>Data Access
+	<td>Yes (lightly tested). (*NOTE2, *NOTE3)
+<tr><td>9.5<td>File Interoperability
+	<td>Yes (lightly tested). (*NOTE2, *NOTE3)
+<tr><td>9.6<td>Consistency and Semantics
+	<td>Yes (lightly tested). (*NOTE2, *NOTE3)
+<tr><td>9.7<td>I/O Error Handling
+	<td>Yes (lightly tested). (*NOTE2, *NOTE3)
+<tr><td>9.8<td>I/O Error Classes
+	<td>Yes (lightly tested). (*NOTE2, *NOTE3)
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Language Bindings</b>
+<tr><td>10.1<td>C++ <td>Yes
+<tr><td>10.2<td>Fortran Support
+	<td><font color=red>No</font>.  MPI module is not supported.
+</tbody>
+</table>
+
+<p>NOTES:
+<ul>
+
+<li>NOTE1: Spawning is only supported for the TCP (sockets)
+p2p-transport layer in GridMPI/YAMPI.  In GridMPI, new processes are
+only spawned inside a cluster in which spawning is issued.
+
+<li>NOTE2: It needs threads for using one-sided communication and
+MPI-I/O.  Using MPI_Init_thread or setting an environment variable
+_YAMPI_THREADS is needed to enable thread support.  Most p2p-transport
+layers support threads, including TCP (socket), IMPI, PM/SCore, MX,
+and Vendor-MPI p2p-layers.  Reconfiguration with threads may be
+necessary if thread support were not configured (it is by default).
+
+<li>NOTE3: It only supports NFS mounted file systems or similar ones
+with POSIX semantics, currently.  NFS4 is required for proper cache
+coherency behavior.
+
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="threads"></a>
+<h2>3. Threads</h2>
+
+<p>GridMPI/YAMPI supports multiple-threads (mostly).  Thread support
+is configuration option and it is enabled by default.  The thread
+model is MPI_THREAD_MULTIPLE (in the MPI-2 terminology).  There are no
+implicit <i>progress threads</i> in GridMPI/YAMPI.  Thus, at least one
+thread is needed in the polling routine (and may be in the wait state)
+to assure progress and to consume incoming messages.
+
+<p>Thread support is enabled when a program calls
+<b>MPI_Init_thread</b> for initialization as defined by MPI-2.  Or,
+GridMPI/YAMPI provides an environment variable <b>_YAMPI_THREADS</b>,
+setting one to it makes thread support be enabled even when a program
+calls <b>MPI_Init</b> for initialization.
+
+<p>Put the setting of the environment variable in ".profile",
+".bashrc", or ".cshrc" when a program uses <b>MPI_Init</b>.
+
+<pre class="screen">
+(For sh/ksh/bash)
+_YAMPI_THREADS=1; export _YAMPI_THREADS
+(For csh/tcsh)
+setenv _YAMPI_THREADS 1
+</pre>
+
+<p><font color=red>Communicator creation operations are not
+thread-safe in GridMPI.</font> (It has still a bug left).  Ones in
+YAMPI are thread-safe.  Note also that the collectives are not
+thread-safe by definition of the MPI standard, when the same
+communicators are used.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="onesided"></a>
+<h2>4. Onesided</h2>
+
+<p>Onesided in GridMPI/YAMPI (in GridMPI-2.0) is written with MPI and
+threads.  It is not optimized for particular communication medium.
+
+<p>It needs MPI to enable threads by using <b>MPI_Init_thread</b> or
+using the environment variable <b>_YAMPI_THREADS=1</b> when
+applications do use <b>MPI_Init</b>.  Put the setting of the
+environment variable in ".profile", ".bashrc", or ".cshrc" when a
+program uses <b>MPI_Init</b>.
+
+<pre class="screen">
+(For sh/ksh/bash)
+_YAMPI_THREADS=1; export _YAMPI_THREADS
+(For csh/tcsh)
+setenv _YAMPI_THREADS 1
+</pre>
+
+<p>NOTE: The implementation of <b>MPI_Win_fence</b> in GridMPI/YAMPI
+(GridMPI-2.0) is slow which uses barriers three times.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="spawn"></a>
+<h2>5. Spawning</h2>
+
+<p>Spawning in GridMPI/YAMPI (GridMPI-2.0) needs to pass the reserved
+number of processes to <b>mpirun</b> by the <b>-nr</b> argument.  The
+number passed to <b>-nr</b> includes statically started processes,
+thus it should not be less than <b>-np</b>.
+
+<pre class="screen">
+$ mpirun -np 4 -nr 8 ./a.out
+</pre>
+
+<p>Spawning in GridMPI/YAMPI (GridMPI-2.0) is only supported for the
+TCP p2p-transport layer, currently.  The other p2p-layers such as
+Myrinet/MX, PM/SCore, and Vendor-MPI do not support spawning.  For
+Vendor-MPI, it is because not all commercial MPI do support spawning.
+SCore does not support spawning, either.  The Myrinet/MX p2p-layer can
+support spawning but it is simply not implemented yet.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="connect"></a>
+<h2>6. Connect/Accept</h2>
+
+<p>Connecting/accepting in GridMPI/YAMPI (GridMPI-2.0) needs to pass
+the distinguishing ID of the worlds to <b>mpirun</b> by the
+<b>-wid</b> argument.  The WID (World ID) is any distinct integer
+other than -1 (-1 is used for WID disabled to use connecting).  Each
+invocation of <b>mpirun</b> should be given a distinct value, when the
+processes are to be connected.  Otherwise, GridMPI/YAMPI confuses the
+processes are local or remote.  Care be taken because the error is
+hard to diagnose.
+
+<pre class="screen">
+$ mpirun -wid 10 -np 4 ./a.out &amp;
+$ mpirun -wid 11 -np 4 ./a.out
+</pre>
+
+<p>A name server is needed to service functions
+<b>MPI_Publish_name</b>, <b>MPI_Unpublish_name</b>, and
+<b>MPI_Lookup_name</b>.  GridMPI/YAMPI includes a very poor name
+server <b>mpinamed</b>.  It is run with an environment variable
+<b>_YAMPI_NAMESERVER</b>, which specifies the <i>hostname:port</i> to
+listen to.  <b>mpinamed</b> ignores the hostname part and just uses
+the port number.
+
+<pre class="screen">
+(For sh/ksh/bash)
+_YAMPI_NAMESERVER=<i>hostname:port</i>; export _YAMPI_NAMESERVER
+$ mpinamed &amp;
+(For csh/tcsh)
+setenv _YAMPI_NAMESERVER <i>hostname:port</i>
+% mpinamed &amp;
+</pre>
+
+<p>Connecting in GridMPI/YAMPI (GridMPI-2.0) is only through the IMPI
+p2p-transport layer.  When IMPI is used, each world is given a WID
+which is a client ID.  Since the client IDs cannot be used to
+distinguish multiple instances of IMPI invocations, <b>-wid</b> should
+be given to override WID taken from the client ID.
+
+<p>NOTE: The world of GridMPI (using the IMPI protocol) is created as
+one that is considered to be connected, merged, and its ranks are
+reordered during <b>MPI_Init</b>.  Each run of <b>mpirun</b> should be
+given distinct WIDs.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="io"></a>
+<h2>7. IO</h2>
+
+<p>MPI-IO in GridMPI/YAMPI (GridMPI-2.0) is written with MPI and
+threads.
+
+<p>It needs MPI to enable threads by using <b>MPI_Init_thread</b> or
+using the environment variable <b>_YAMPI_THREADS=1</b> when
+applications do use <b>MPI_Init</b>.  Put the setting of the
+environment variable in ".profile", ".bashrc", or ".cshrc" when a
+program uses <b>MPI_Init</b>.
+
+<pre class="screen">
+(For sh/ksh/bash)
+_YAMPI_THREADS=1; export _YAMPI_THREADS
+(For csh/tcsh)
+setenv _YAMPI_THREADS 1
+</pre>
+
+<p>Currently, it only supports shared file systems, such as NFS.  It
+assumes POSIX semantics of file locking to mutex accesses, and
+normally works with NFS4.  Note that file caching is not strictly
+consistent in NFS3.
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2007/11/12 06:11:59 $)</i></font>
+<!-- $Id: impl-status-mpi2.html,v 1.11 2007/11/12 06:11:59 matu Exp $ -->
+
+<!--
+Local Variables:
+Mode: Fundamental
+End:
+-->
+
+</body>
+</html>

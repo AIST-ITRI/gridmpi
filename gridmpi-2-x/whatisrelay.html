@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<title>Overview of IMPI Relay</title>
+<link rel="stylesheet" type="text/css" href="ref.css">
+</head>
+<body>
+
+<h2>Overview of IMPI Relay: Private Address Support for GridMPI</h2>
+
+<h3>0. Glossary</h3>
+
+<p>The following terms are used in this document (and others), which
+are based on the terms defined in the IMPI specification.
+
+<dl>
+
+<dt><b>Client</b></dt><dd>An instance of a cluster in a single MPI
+application.</dd>
+
+<dt><b>Host</b></dt><dd>An entity in a client which has an IP address.
+It normally corresponds to a node in a cluster.
+
+<dt><b>Process</b></dt><dd>An MPI process, in a host.  It is uniquely
+identified by a process ID in a host.  Host and Process are identical
+entity in the GridMPI-2.0 implementation.
+
+<dt><b>IMPI Server</b></dt><dd>A server used to exchange IP
+address/port and other information among the hosts in the clients.
+Clients contact it and exchange information through it at start-up of
+an MPI application.
+
+<dt><b>Agent</b></dt><dd>An entity in a client, which contacts IMPI
+server.  A process in a client with the smallest rank acts as an agent
+in the implementation of GridMPI-2.0.
+
+</dl>
+
+<h3>1. Overview</h3>
+
+<p><b>IMPI Relay</b> is a forwarding mechanism transparently by IMPI
+protocol, to bridge nodes in a cluster private address to global
+address.  Relay be run on a node with both a private address and a
+global address.  It forwards only data in the IMPI protocol, and it is
+not a general mechanism such as NAT (Network Address Translation).
+
+<p>Its work is transparent to the IMPI clients when using a single
+Relay, and any implementation of the IMPI protocol should work with
+Relay.  Sharing traffic by multiple Relay needs distributing traffic
+and it makes discrepancy to the IMPI protocol and needs slight
+modifications to the IMPI implementation.
+
+<h3>2. Processing flow</h3>
+
+<p>Without IMPI Relay, one process is paired with one host 
+(one-to-one mapping).
+On the other hand, IMPI Relay acts as a host, and all processes 
+in the cluster are dangling it (one-to-many mapping).
+
+<p>IMPI Relay does two kind of works.  The first one is relaying IMPI
+command messages between the IMPI Server and the Agent.  The second
+one is relaying data messages between hosts in each cluster.
+In the first half of the initialization phase, a client which has the 
+smallest rank number becomes a Agent of each cluster. The Agent communicates 
+the IMPI Server to gather and distribute the client information, as shown 
+in Figure 1 and 2.  In the second half of the initialization phase,
+each host establishes all-to-all connections, and rank numbers are
+renumbered, as shown in Figure 3 and 4.
+And then, MPI messages are sent and received over those connections.
+
+<h4>2.1. Initialization (first half)</h4>
+
+<p>IMPI Relay forwards communications between the IMPI Server and 
+the Agent in the private address cluster.
+
+<div class="figure">
+<img src="impi.init.png"><br />
+Figure 1. Initialization (w/o IMPI relay)<br />
+</div>
+
+<div class="figure">
+<img src="impi-relay.init.png"><br />
+Figure 2. Initialization (w/ IMPI relay)<br />
+</div>
+
+<h4>2.2. Initialization (second half)</h4>
+
+<p>IMPI Relay forwards communications between the private address 
+cluster and the external cluster.
+
+<div class="figure">
+<img src="impi.dance.png"><br />
+Figure 3. After Initialization (w/o IMPI relay)<br />
+</div>
+
+<div class="figure">
+<img src="impi-relay.dance.png"><br />
+Figure 4. After Initialization (w/ IMPI relay)<br />
+</div>
+
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="structure"></a>
+<h3>3. Info: Structure of IMPI Relay Execution</h3>
+
+<p>See <a href="install.html#gridmpi">Structure of GridMPI Execution</a>
+on a normal GridMPI execution.
+
+<p>The IMPI Relay is a proxy process of the IMPI protocol which
+is used for inter-cluster communication.
+MPI processes on <i>client1</i> communicate with IMPI server and
+MPI processes on <i>client0</i> via IMPI Relay.  In this case,
+IMPI Relay provides a view as one host have two processes 
+(<i>rank2, rank3</i>) to <i>client0</i>; it also provides a view 
+as one host have two processes (<i>rank0, rank1</i>) to the <i>client1</i>.
+
+<center><table border=1 rules=none cellpadding=5>
+<tr><td><pre>
+                        IMPI Protocol
+          +---------+========================+
+          |         |                        |
+    +-----|---------|-----+       +----------|----------+	+--------+
+    |     |         |     |       |      +-------+      |	| impi-	 |
+    |     |         |     |       |      | relay |      |	| server |
+    |     |         |     |       |      +-------+      |	+--------+
+    |     |         |     |       |      /       \      |
+    | +-------+ +-------+ |       | +-------+ +-------+ |
+    | | rank0 | | rank1 | |       | | rank2 | | rank3 | |
+    | +-------+ +-------+ |       | +-------+ +-------+ |
+    |     |         |     |       |     |         |     |
+    |     +=========+     |       |     +=========+     |
+    |   YAMPI Protocol    |       |   YAMPI Protocol    |
+    +---------------------+       +---------------------+
+       mpirun -client 0		     mpirun -client 1
+</pre>
+</table></center>
+
+<!-- ================================================================ -->
+<hr>
+
+<h3>4. Usage</h3>
+You can find the usage at "<a href="usingrelay.html">How to use
+IMPI Relay</a>".
+
+<!-- $Id: whatisrelay.html,v 1.6 2007/10/29 06:32:32 takano Exp $ -->
+
+</body>
+</html>

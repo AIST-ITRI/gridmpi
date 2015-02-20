@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Commands
+<td align="right">mpicc (1MPI)
+</tr></tbody></table>
+
+<h3>NAME</h3>
+
+<p>mpicc - MPI compiler frontend
+
+<h3>SYNOPSIS</h3>
+
+<p>mpicc/mpic++/mpif77/mpif90 [-q32/-q64] [-qdryrun/-show/-showme]
+[<i>compiler options</i>] ...
+<i>files</i> ...
+
+<h3>DESCRIPTION</h3>
+
+<p>The synopsis runs a compiler with inclusion and libraries for
+GridMPI.  Specifically $MPIROOT/include and $MPIROOT/lib/libmpi.a
+$MPIROOT/lib/libmpif.a are appended.
+
+<h3>OPTIONS</h3>
+
+<p>The following options are supported:
+
+<dl>
+
+<dt><b>-q32</b> or <b>-q64</b>
+
+<dd>Specifies the binary bit length of the target.  It is necessary to
+configure using "--with-binmode" to use -q32/-q64 (configure, make,
+and make-install procedure be run twice).  Do not specify them when
+configured without "--with-binmode".
+
+<dt><b>-qdryrun</b> or <b>-show</b> or <b>-showme</b>
+
+<dd>Prints the command that would be used without running them.
+
+</dl>
+
+<h3>EXIT STATUS</h3>
+
+<p>The mpicc returns a status from the invoked compiler.
+
+<h3>ENVIRONMENT VARIABLES</h3>
+
+<dl>
+
+<dt><b>MPIROOT</b>=<i>path-to-the-installation</i>
+
+<dd>Specifies the directory of GridMPI installation.  The mpicc
+command itself can be found in $MPIROOT/bin.  The include and library
+pathes are $MPIROOT/include and $MPIROOT/lib.
+
+<dt><b>_YAMPI_CC</b>
+<dd>specifies C compiler if defined.
+
+<dt><b>_YAMPI_CXX</b>
+<dd>specifies C++ compiler if defined.
+
+<dt><b>_YAMPI_F77</b>
+<dd>specifies f77 compiler if defined.
+
+<dt><b>_YAMPI_F90</b>
+<dd>specifies f90 compiler if defined.
+
+<dt><b>_YAMPI_EXTCOPT</b>
+<dd>is passed to C/C++ compiler if defined.
+
+<dt><b>_YAMPI_EXTFOPT</b>
+<dd>is passed to f77/f90 compiler if defined.
+
+<dt><b>_YAMPI_EXTLDOPT</b>
+<dd>is passed to compiler if defined when "-c" does not appear in the
+options.
+
+<dt><b>_YAMPI_EXTLIBS</b>
+<dd>is appended to the library list and passed to compiler if defined,
+when "-c" does not appear in the options.
+
+<dt><b>_YAMPI_CKPTLIBS</b>
+<dd>is appended to the library list and passed to compiler if defined,
+when "-c" does not appear in the options.
+
+<dt><b>_YAMPI_SCORELIB</b>
+<dd>is appended to the library list and passed to compiler if defined,
+when "-c" does not appear in the options.
+
+<dt><b>_YAMPI_MXLIB</b>
+<dd>is appended to the library list and passed to compiler if defined,
+when "-c" does not appear in the options.
+
+<dt><b>_YAMPI_CC32FLAG</b>
+<dd>is a compiler option to be passed when compiling with -q32.
+
+<dt><b>_YAMPI_CC64FLAG</b>
+<dd>is a compiler option to be passed when compiling with -q64.
+
+<dt><b>_YAMPI_LD64FLAG</b>
+<dd>is a compiler option to be passed when compiling with -q64.
+
+</dl>
+
+<h3>EXAMPLES</h3>
+
+<h4>Example</h4>
+
+<blockquote><pre>
+mpicc -g pi.c
+</pre></blockquote>
+
+<h3>RESTRICTIONS</h3>
+
+<p>mpicc/mpic++/mpif77/mpif90 are links to the same file.  It is a
+simple script.  It records the options for a compiler found at
+configuration time, and thus, reconfiguration with specifying
+compilers is needed to recreate the options.  Copy and modify it when
+complex compiling/linking is needed.
+
+<hr>
+<font size=-2><i>($Date: 2007/08/20 10:51:42 $)</i></font>
+<!-- $Id: man.mpicc.html,v 1.3 2007/08/20 10:51:42 matu Exp $ -->
+
+</body></html>

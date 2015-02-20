@@ -1,0 +1,12 @@
+<blockqouote><pre>
+*** NPB3.2/sys/setparams.c
+*** 778,784 ****
+    if (ny > maxdim) maxdim = ny;
+    if (nz > maxdim) maxdim = nz;
+    fprintf(fp, "%sinteger nx, ny, nz, maxdim, niter_default, ntdivnp, np_min\n", FINDENT);
+-   fprintf(fp, "%sinteger nx, ny, nz, maxdim, niter_default, ntdivnp, np_min\n", FINDENT);
+    fprintf(fp, "%sparameter (nx=%d, ny=%d, nz=%d, maxdim=%d)\n", 
+            FINDENT, nx, ny, nz, maxdim);
+    fprintf(fp, "%sparameter (niter_default=%d)\n", FINDENT, niter);
+--- 778,783 ----
+</pre></blockqouote>

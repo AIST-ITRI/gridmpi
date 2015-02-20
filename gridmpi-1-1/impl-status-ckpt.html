@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="man.css">
+</head>
+<body>
+
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">Checkpoint/Restart Implementation Status</td>
+<td align="right">
+</table>
+
+<h2>Checkpoint/Restart Implementation Status</h2>
+
+<p>
+<table border=1 rules=all cellpadding=5>
+<thead>
+<tr bgcolor="darkblue">
+<th align=center width="20%"><font color="white"><b>OS</b>
+<th align=center width="20%"><font color="white"><b>CPU</b>
+<th align=center width="60%"><font color="white"><b>Support</b>
+<tbody>
+<tr><td>Linux 2.4<td>IA32<td>Yes
+<tr><td>Linux 2.6<td>IA32<td>Yes
+<tr><td>Linux 2.?<td>EM64T<td>Experimental (only static linked executable)
+<tr><td>Solaris 8<td>SPARC<td>Experimental (only static linked executable)
+<tr><td>FreeBSD<td>IA32<td>Experimental
+<tr><td colspan=2>others<td>No
+</table>
+
+<p>
+<table border=1 rules=all cellpadding=5>
+<thead>
+<tr bgcolor="darkblue">
+<th colspan=2 align=center width="40%"><font color="white"><b>Resource</b>
+<th align=center width="60%"><font color="white"><b>Support</b>
+
+<tbody>
+<tr bgcolor=lavender><td colspan=3><b>Identity</b>
+<tr><td><td>pid<td>No
+<tr><td><td>ppid<td>No
+<tr><td><td>pgpid<td>No
+<tr><td><td>sid<td>No
+<tr><td><td>thread id<td>No
+
+<tr bgcolor=lavender><td colspan=3><b>Multi-thread</b>
+<tr><td><td>Linux 2.6/IA32<td>Yes (only NPTL)
+    (you must install the kernel module proc_ckpt.ko)
+<tr><td><td>others<td>Never
+
+<tr bgcolor=lavender><td colspan=3><b>Memory</b>
+<tr><td><td>text<td>Yes
+<tr><td><td>data<td>Yes
+<tr><td><td>bss<td>Yes
+<tr><td><td>stack<td>Yes (you must disable ExecShield)
+<tr><td><td>mmaped segment<td>Yes
+<tr><td><td>mprotect<td>Yes
+<tr><td><td>mlock<td>No
+<tr><td><td>madvice<td>No
+<tr><td><td>dlopen<td>Yes
+
+<tr bgcolor=lavender><td colspan=3><b>File</b>
+<tr><td><td>file pointer<td>Yes
+<tr><td><td>file contents<td>No
+<tr><td><td>open mode<td>Yes
+<tr><td><td>fcntl option<td>Yes
+<tr><td><td>file lock<td>No
+<tr><td><td>dup<td>Yes
+<tr><td><td>regular file<td>Yes (Linux), Maybe (Solaris,FreeBSD)
+<tr><td><td>pipe<td>No
+<tr><td><td>fifo<td>No
+<tr><td><td>device<td>Yes
+<tr><td><td>socket<td>Yes
+<tr><td><td>aio<td>Yes
+<tr><td><td>current working directory<td>No
+<tr><td><td>root directory (chroot)<td>No
+
+<tr bgcolor=lavender><td colspan=3><b>Signal</b>
+<tr><td><td>handler<td>Yes
+<tr><td><td>signal mask<td>Yes
+<tr><td><td>pending signal<td>Yes
+<tr><td><td>signal stack<td>No
+<tr><td><td>signal queue<td>No
+
+<tr bgcolor=lavender><td colspan=3><b>IPC</b>
+<tr><td><td>shared memory<td>No
+<tr><td><td>message queue<td>No
+<tr><td><td>semaphore<td>No
+
+<tr bgcolor=lavender><td colspan=3><b>Socket</b>
+<tr><td><td>IPv4<td>Yes
+<tr><td><td>IPv6<td>Yes
+<tr><td><td>TCP<td>Yes (except half-close socket)
+<tr><td><td>UDP<td>Yes
+<tr><td><td>UNIX domain<td>Yes
+<tr><td><td>migration<td>Yes (if you write a addr/port translation table)
+
+<tr bgcolor=lavender><td colspan=3><b>Misc</b>
+<tr><td><td>environment variable<td>Yes
+<tr><td><td>process argument<td>Yes
+<tr><td><td>rlimit<td>Yes
+<tr><td><td>rusage<td>No
+<tr><td><td>alarm<td>No
+<tr><td><td>setitimer<td>No
+<tr><td><td>nice<td>No
+<tr><td><td>sched parameters<td>No
+
+</table>
+
+<hr>
+<font size=-2><i>($Date: 2006/06/07 15:56:42 $)</i></font>
+<!-- $Id: impl-status-ckpt.html,v 1.1 2006/06/07 15:56:42 matu Exp $ -->
+
+</body>
+</html>

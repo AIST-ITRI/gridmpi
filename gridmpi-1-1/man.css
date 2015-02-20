@@ -1,0 +1,17 @@
+h3 {
+	text-decoration: underline; 
+}
+
+pre.screen {
+	color: black;
+	background: lavender;
+	margin-top: 0.2em;
+ 	margin-bottom: 0.2em;
+	margin-left: 2em;
+	margin-right: 2em;
+	padding: 1ex;
+}
+
+th {
+	background: lightgrey;
+}

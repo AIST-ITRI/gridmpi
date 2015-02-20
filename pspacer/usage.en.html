@@ -1,0 +1,1408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.5.2" />
+<title>PSPace User Guide</title>
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revnumber, span#revdate, span#revremark {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #dddddd;
+  color: #777777;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toc {
+  margin-bottom: 2.5em;
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+
+div.exampleblock-content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([2-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  var cont = document.getElementById("content");
+  var noteholder = document.getElementById("footnotes");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      // Use [\s\S] in place of . so multi-line matches work.
+      // Because JavaScript has no s (dotall) regex flag.
+      note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      spans[i].innerHTML =
+        "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+        "' title='View footnote' class='footnote'>" + n + "</a>]";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+}
+
+}
+/*]]>*/
+</script>
+</head>
+<body>
+<div id="header">
+<h1>PSPace User Guide</h1>
+<span id="author">Version 3.0</span><br />
+<span id="revdate">2010-03-31</span>
+</div>
+<div id="content">
+<h2 id="_introduction">1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document describes the usage of PSPacer (Precise Software Pacer),
+which achieves precise network bandwidth control and smoothing of bursty
+traffic without any special hardware.  PSPacer is implemented based on
+the iproute2 which is the traffic control framework for the Linux platform.
+This framework provides three basic elements: queueing discipline (qdisc),
+class, and filter <a href="#lartc">[lartc]</a>.  PSPacer consists of two parts: a loadable
+kernel module and a user-level library.  The former (i.e. sch_psp) is
+a classful qdisc, and the latter (i.e. q_psp.so) communicates with this
+module for control and monitoring it via the tc (8) command.</p></div>
+<div class="paragraph"><p>PSPacer uses the IEEE 802.3x PAUSE frame as a gap between packets.
+Therefore, you can not use the PAUSE frame to stop transmission from the
+switch/router to which the system is connected.  It is recommended to
+disable IEEE802.3x flow control function of the network switch (to which
+a PC with PSPacer is connected) in order to avoid unexpected behavior.
+For your information, see our PFLDnet2005 paper <a href="#PFLDnet05">[PFLDnet05]</a>, and the Web
+page <a href="http://www.gridmpi.org/pspacer.jsp">http://www.gridmpi.org/pspacer.jsp</a>.</p></div>
+</div>
+<h2 id="_compilation">2. Compilation</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Since the kernel and the iproute2 package are tightly coupled, you must use
+a proper combination.  We have tested this package using the FedoraCore 3
+on IA32 machines with the Intel PRO/1000, and the FedoraCore 5 on x86_64
+machines with Broadcom BCM5704.
+The complete list of tested environments is in the <a href="#appTest">Appendix B</a>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">PSPacer version 2.x does not support the Linux kernel 2.4!</td>
+</tr></table>
+</div>
+<h3 id="_preparation">2.1. Preparation</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The following source codes are required for the compilation:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Linux kernel 2.6.x
+</p>
+</li>
+<li>
+<p>
+iproute2
+</p>
+</li>
+</ul></div>
+<h4 id="_linux_kernel">2.1.1. Linux kernel</h4>
+<div class="paragraph"><p>The kernel re-compilation is not required, however the compilation of the
+sch_psp module requires the kernel source code.  If you use the RedHat Linux
+based distribution, install the kernel-devel (or kernel-smp-devel) RPM.
+For your information, if you have built the custom kernel, make sure that
+the CONFIG_NET_SCHED and CONFIG_NET_CLS options have been selected.</p></div>
+<h4 id="_iproute2">2.1.2. iproute2</h4>
+<div class="paragraph"><p>Make sure the current working version of iproute2 is available in your Linux
+box.  To check the version, issue the following command:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$ /sbin/tc -V
+tc utility, iproute2-ss040831</tt></pre>
+</div></div>
+<div class="paragraph"><p>Get the iproute2 archive file from the iproute2 web page <a href="#iproute2">[iproute2]</a>,
+and extract it to /opt/iproute2 directory.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$ cd /opt
+$ wget http://developer.osdl.org/dev/iproute2/download/iproute2-2.6.9-ss040831.tar.gz
+$ tar zxvf iproute2-2.6.9-ss040831.tar.gz
+$ ln -s iproute2-2.6.9 iproute2</tt></pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">If you extract the iproute2 archive to the other directory, do configure
+with the option --with-iproute2-dir to specify the directory (see the next
+section).</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">In the FedoraCore 3 after &#8220;yum update&#8221;, the kernel and the iproute2
+will have mismatching versions.  You have to choose either downgrading the
+kernel to version 2.6.9 or upgrading the iproute2 to version ss050330 manually.</td>
+</tr></table>
+</div>
+<h4 id="_libnl">2.1.3. libnl</h4>
+<div class="paragraph"><p>(EXPERIMENTAL) On version 2.1 or later, it provides to support libnl
+- netlink library for applications to set parameters of PSPacer.
+To enable libnl with PSPacer support, get the libnl library from libnl
+web page <a href="#libnl">[libnl]</a>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">PSPacer 2.1 provides the patch for libnl-1.0-pre6.</td>
+</tr></table>
+</div>
+<h3 id="_make_and_install">2.2. Make and install</h3><div style="clear:left"></div>
+<div class="paragraph"><p>To make and install this software, issue the following commands:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$ tar zxvf pspacer-&lt;version&gt;.tar.gz
+$ cd pspacer-&lt;version&gt;
+$ ./configure
+(or $./configure --with-iproute2-dir=/&lt;path&gt;/iproute2-2.6.9-ss040831.tar.gz
+$ make
+$ su
+# make install</tt></pre>
+</div></div>
+<div class="paragraph"><p><em>'./configure --help</em>' shows all options.</p></div>
+<div class="paragraph"><p>&#8220;make install&#8221; will install the following files.  Please check these files.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>/lib/modules/`uname -r`/kernel/net/sched/sch_psp.ko
+/usr/lib/tc/q_psp.so
+/usr/share/man/man8/tc-psp.8
+/usr/share/man/ja/man8/tc-psp.8   &lt;only if your locale is Japanese&gt;</tt></pre>
+</div></div>
+<div class="paragraph"><p>You can do configure without extracting the iproute2 package.  Issue
+the configure script with the option --with-iproute2-pkg as follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$ ./configure --with-iproute2-pkg=iproute2-2.6.9-ss040831.tar.gz</tt></pre>
+</div></div>
+<div class="paragraph"><p>In above case, the iproute2 package is extracted on the current directory.</p></div>
+<div class="paragraph"><p>To enable libnl library with PSPacer support, issue the following commands:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$ ./configure --with-libnl-pkg=libnl-1.0-pre6.tar.gz
+$ make
+$ su
+# make install</tt></pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">libnl.so is installed to /usr/local/lib directory.  You should set
+the environment variable LD_LIBRARY_PATH to find libnl.</td>
+</tr></table>
+</div>
+<h3 id="_rpm_install">2.3. RPM install</h3><div style="clear:left"></div>
+<div class="paragraph"><p>Alternatively you can install from a RPM package.  To build the RPM package
+from the source tarball, issue the following command:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># rpmbuild -tb --target i686 pspacer-&lt;version&gt;.tar.gz
+(or # rpmbuild -tb --define 'configure_options --with-iproute2-dir=/&lt;path&gt;/iproute2-2.6.9'
+      pspacer-&lt;version&gt;.tar.gz)</tt></pre>
+</div></div>
+<div class="paragraph"><p>And then, install the RPM package.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># rpm -ivh /usr/src/redhat/RPMS/i686/pspacer-&lt;version&gt;.i686.rpm
+# rpm -q pspacer
+pspacer-&lt;version&gt;</tt></pre>
+</div></div>
+<h3 id="_debian_package_install">2.4. Debian package install</h3><div style="clear:left"></div>
+<div class="paragraph"><p>(EXPERIMENTAL) For Debian GNU/Linux users, you can also install from
+a Debian package.
+To build the Debian package from the source tarball, issue as follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$ tar zxvf pspacer-&lt;version&gt;.tar.gz
+$ cd pspacer-&lt;version&gt;
+$ make deb</tt></pre>
+</div></div>
+<div class="paragraph"><p>And then, install the Debian package.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># dpkg -i ../pspacer-&lt;kernel version&gt;_&lt;version&gt;_i386.deb
+# dpkg -l|grep psp
+ii  pspacer-2.6.X- X.X-X          PSPacer module for Linux (kernel ...</tt></pre>
+</div></div>
+</div>
+<h2 id="_an_example_of_basic_operations">3. An example of basic operations</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>As an example, here we assume the following network configuration which
+connects three local area networks (LANs): the network A (192.168.1.0/24),
+the network B (192.168.2.0/24), and the network C (192.168.3.0/24).</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>       192.168.1.1    192.168.1.2
+       +-------+      +-------+
+       |  PC1  |      |  PC2  |
+       +-------+      +-------+      (network A)
+           |              |       192.168.1.0/24
+       ----------------------------------
+                      |
+                      \
+                      \          RTT=200ms
+                      |
+   link 1    +-----------------+ link 2
+   (500Mbps) |                 | (200Mbps)
+             |                 |
+       -----------       -------------------
+192.168.2.0/24  |                 |  192.168.3.0/24
+(network B)     |                 |  (network C)
+            +-------+         +-------+
+            |  PC3  |         |  PC4  |
+            +-------+         +-------+
+            192.168.2.1       192.168.3.1</tt></pre>
+</div></div>
+<div class="paragraph"><p>On each LAN, PCs are connected by Gigabit Ethernet, and then the bottleneck
+link&#8217;s bandwidth of the link 1 and the link 2 are 500 Mbps and 200 Mbps,
+respectively.  Both RTTs are 200 ms.
+In addition, we change the txqueuelen value to 10000 as follows
+(see <a href="#appIfq">Interface queue size</a>):</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/ifconfig eth0 txqueuelen 10000</tt></pre>
+</div></div>
+<div class="paragraph"><p>To classify traffic toward each others' network, we will create a traffic
+control tree which has three leafs shown below:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>            1:             root qdisc (psp)
+        /   |   \
+       /    |    \
+      /     |     \
+     /      |      \
+   1:1     1:2     1:3     leaf classes
+[500Mbit][200Mbit][NO GAP]
+    |       |       |
+    |       |       |
+   10:     20:     30:     sub qdiscs (pfifo)</tt></pre>
+</div></div>
+<div class="paragraph"><p>Each class has its classid and each qdisc has its handle.
+A classid or a handle consists of two parts, a major number and a minor
+number: [major]:[minor].  It is customary to name the root qdisc "1:",
+which is equal to "1:0". The minor number of a qdisc is always 0.</p></div>
+<div class="paragraph"><p>In this example, traffics of the link 1 and 2 are controlled by qdiscs
+10: and 20:, respectively, and other (unclassified) traffics are controlled
+by qdisc 30:.  Here qdisc 10: and 20: correspond to the leaf class 1:1 and
+1:2 respectively, and qdisc 30: corresponds to the leaf class 1:3, which is
+the default class.  Default class is a class to which packets are routed
+if there is no filter specifications.
+And then each class except the default class has the target rate for pacing.
+In this example, the target rate of the link 1 and 2 should be regulated to
+500 Mbps and 200 Mbps, respectively.</p></div>
+<h3 id="_setup_the_traffic_control_tree">3.1. Setup the traffic control tree</h3><div style="clear:left"></div>
+<div class="paragraph"><p>You can set/get parameters to the sch_psp qdisc via the tc (8) command.
+The general information of the tc command can be found in the man page
+and the Web page <a href="#lartc">[lartc]</a>.
+The man page of <em>tc-psp</em> is also included in this package.</p></div>
+<h4 id="_adding_the_root_qdisc">3.1.1. Adding the root qdisc</h4>
+<div class="paragraph"><p>Each interface has one <em>root qdisc</em>.
+To use PSPacer, the root qdisc should be the sch_psp.
+First, to add the sch_psp as the root qdisc, and set the default class as 1:3,
+issue the following command:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc qdisc add dev eth0 root handle 1: psp default 3</tt></pre>
+</div></div>
+<h4 id="_adding_classes">3.1.2. Adding classes</h4>
+<div class="paragraph"><p>Next, to add leaf classes to the root qdisc, issue the following commands:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc class add dev eth0 parent 1: classid 1:1 psp rate 500mbit
+# /sbin/tc class add dev eth0 parent 1: classid 1:2 psp rate 200mbit
+# /sbin/tc class add dev eth0 parent 1: classid 1:3 psp mode 0</tt></pre>
+</div></div>
+<h4 id="_adding_sub_qdiscs">3.1.3. Adding sub qdiscs</h4>
+<div class="paragraph"><p>Next, we add sub qdiscs to the leaf classes. Here we use PFIFO qdisc.
+This is the default qdisc which has 3-band FIFO queue.
+Unless you want to do something special with another qdisc, use PFIFO.</p></div>
+<div class="paragraph"><p>To add PFIFO (sub) qdiscs within each leaf class, issue the following</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc qdisc add dev eth0 parent 1:1 handle 10: pfifo
+# /sbin/tc qdisc add dev eth0 parent 1:2 handle 20: pfifo
+# /sbin/tc qdisc add dev eth0 parent 1:3 handle 30: pfifo</tt></pre>
+</div></div>
+<h4 id="_adding_filters">3.1.4. Adding filters</h4>
+<div class="paragraph"><p>Filters are used to classify traffic into the proper sub-qdiscs.
+Finally, to attach two filters to root qdisc, issue the following commands:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc filter add dev eth0 parent 1: protocol ip pref 1 u32
+  match ip dst 192.168.2.0/24 classid 1:1
+# /sbin/tc filter add dev eth0 parent 1: protocol ip pref 1 u32
+  match ip dst 192.168.3.0/24 classid 1:2</tt></pre>
+</div></div>
+<div class="paragraph"><p>Here we use the u32 filter in order to classify traffic by destination
+IP addresses. Use u32 unless you want to do something special using
+another filter.
+By issuing these commands,
+packets whose destination are 192.168.2.0/24 are controlled by
+qdisc 1:1 while
+packets whose destination are 192.168.3.0/24 are controlled by
+qdisc 1:2.</p></div>
+<h3 id="_configuration_check">3.2. Configuration check</h3><div style="clear:left"></div>
+<h4 id="_check_the_traffic_control_tree_with_tc">3.2.1. Check the traffic control tree with tc</h4>
+<div class="paragraph"><p>Now, the configuration has been completed.
+To print the current parameter settings and statistics,
+issue the <em>show</em> option of the tc command.
+The <em>-s</em> option means statistics, and <em>-d</em> option means detail.</p></div>
+<div class="paragraph"><p>Let&#8217;s examine what we have created.
+First, you can see the root &#8220;psp&#8221; qdisc and three &#8220;pfifo&#8221; sub-qdiscs:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc -s -d qdisc show dev eth0
+qdisc psp 1: default 3 direct pkts 0 max rate 1000Mbit
+  gap 0 bytes 0 pkts
+ Sent 0 bytes 0 pkts (dropped 0, overlimits 0 requeues 0)
+qdisc pfifo 10: parent 1:1 limit 10000p
+ Sent 0 bytes 0 pkts (dropped 0, overlimits 0 requeues 0)
+qdisc pfifo 20: parent 1:2 limit 10000p
+ Sent 0 bytes 0 pkts (dropped 0, overlimits 0 requeues 0)
+qdisc pfifo 30: parent 1:3 limit 10000p
+ Sent 0 bytes 0 pkts (dropped 0, overlimits 0 requeues 0)</tt></pre>
+</div></div>
+<div class="paragraph"><p>Here &#8220;max rate&#8221; shows the maximum transmission bandwidth of the network
+interface.</p></div>
+<div class="paragraph"><p>Next, you can see three &#8220;psp&#8221; classes:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc -s -d class show dev eth0
+class psp 1:1 root leaf 10: level 0 mode STATIC (500Mbit)
+ Sent 0 bytes 0 pkts (dropped 0, overlimits 0 requeues 0)
+class psp 1:2 root leaf 20: level 0 mode STATIC (200Mbit)
+ Sent 0 bytes 0 pkts (dropped 0, overlimits 0 requeues 0)
+class psp 1:3 root leaf 30: level 0 mode NOGAP
+ Sent 0 bytes 0 pkts (dropped 0, overlimits 0 requeues 0)</tt></pre>
+</div></div>
+<div class="paragraph"><p>Finally, you can see two &#8220;u32&#8221; filters:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc filter show dev eth0
+filter parent 1: protocol ip pref 1 u32
+filter parent 1: protocol ip pref 1 u32 fh 800: ht divisor 1
+filter parent 1: protocol ip pref 1 u32 fh 800::800 order 2048
+key ht 800 bkt 0 flowid 1:2
+  match 00110000/00ff0000 at 8
+filter parent 1: protocol ip pref 1 u32 fh 800::801 order 2049
+key ht 800 bkt 0 flowid 1:3
+  match 00060000/00ff0000 at 8</tt></pre>
+</div></div>
+<h4 id="_default_class">3.2.2. Default class</h4>
+<div class="paragraph"><p>You can confirm the default class configuration by using ping.
+Here ping generates unclassified traffic.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># ping 192.168.1.2
+PING 192.168.1.2 56(84) bytes of data.
+64 bytes from 192.168.1.2: icmp_seq=0 ttl=64 time=0.231 ms
+64 bytes from 192.168.1.2: icmp_seq=1 ttl=64 time=0.214 ms
+64 bytes from 192.168.1.2: icmp_seq=2 ttl=64 time=0.244 ms
+64 bytes from 192.168.1.2: icmp_seq=3 ttl=64 time=0.149 ms
+64 bytes from 192.168.1.2: icmp_seq=4 ttl=64 time=0.050 ms</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>--- 192.168.1.2 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4003ms
+rtt min/avg/max/mdev = 0.050/0.177/0.244/0.073 ms, pipe 2</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc -s -d qdisc show dev eth0
+        (snip)
+qdisc pfifo 30: parent 1:3 limit 10000p
+ Sent 476 bytes 6 pkts (dropped 0, overlimits 0 requeues 0)</tt></pre>
+</div></div>
+<div class="paragraph"><p>As you can see, all traffic to 192.168.1.2 is transmitted through qdisc
+30:, which is the qdisc under the default (unclassified) class.</p></div>
+<h4 id="_static_target_rate_transmission_test">3.2.3. Static target rate transmission test</h4>
+<div class="paragraph"><p>Next, we do some bulk data transfer by using iperf:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$ iperf -c 192.168.2.1 -i 10 -t 60 -w 32M
+------------------------------------------------------------
+Client connecting to 192.168.2.1, TCP port 5001
+TCP window size: 64.0 MByte (WARNING: requested 32.0 MByte)
+------------------------------------------------------------
+[  3] local 192.168.1.1 port 32771 connected with 192.168.2.1 port 5001
+[  3]  0.0-10.0 sec    463 MBytes    388 Mbits/sec
+[  3] 10.0-20.0 sec    571 MBytes    479 Mbits/sec
+[  3] 20.0-30.0 sec    572 MBytes    480 Mbits/sec
+[  3] 30.0-40.0 sec    572 MBytes    480 Mbits/sec
+[  3] 40.0-50.0 sec    553 MBytes    464 Mbits/sec
+[  3] 50.0-60.0 sec    572 MBytes    480 Mbits/sec
+[  3]  0.0-60.1 sec  3.23 GBytes    461 Mbits/sec</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc -s -d qdisc show dev eth0
+qdisc psp 1: default 3 direct pkts 0 max rate 1000Mbit
+  gap 1718967000 bytes 1145978 pkts
+ Sent 1735006166 bytes 1145979 pkts (dropped 409155, overlimits 0 requeues 0)
+qdisc pfifo 10: parent 1:1 limit 10000p
+ Sent 1735006166 bytes 1145979 pkts (dropped 409155, overlimits 0 requeues 0)
+        (snip)</tt></pre>
+</div></div>
+<div class="paragraph"><p>As you see, all traffic is via qdisc 10:, and then the iperf throughput is
+about 480 Mbps.  This rate is the half of the physical bandwidth,
+thus the amount of gap packets is about the same amount of real packets.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">PSPacer uses raw bandwidth (i.e. data link layer bandwidth)
+which includes IP, TCP or UDP headers as the target rate.
+On the other hand, iperf shows payload bandwidth.
+Therefore, iperf shows lower bandwidth than the target rate
+(see <a href="#appIperf">Why iperf shows bandwidth lower than the target rate which set by tc command</a>).</td>
+</tr></table>
+</div>
+<h3 id="_other_operations">3.3. Other operations</h3><div style="clear:left"></div>
+<h4 id="_changing_parameters">3.3.1. Changing parameters</h4>
+<div class="paragraph"><p>Some parameters can be modified <em>in place</em>.  To change parameters, issue
+the following command:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc class change dev eth0 parent 1: classid 1:2 psp mode 0
+# /sbin/tc class change dev eth0 parent 1: classid 1:3 psp rate 250mbit</tt></pre>
+</div></div>
+<h4 id="_removing_a_class">3.3.2. Removing a class</h4>
+<div class="paragraph"><p>The following is an example of a class removal:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc class del dev eth0 parent 1: classid 1:2</tt></pre>
+</div></div>
+<h4 id="_removing_a_qdisc">3.3.3. Removing a qdisc</h4>
+<div class="paragraph"><p>The following is an example of a qdisc removal:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/tc qdisc del dev eth0 root psp</tt></pre>
+</div></div>
+<div class="paragraph"><p>If you remove the root qdisc, all classes and qdiscs are also removed.</p></div>
+<h4 id="_kernel_module_install_uninstall">3.3.4. Kernel Module Install/Uninstall</h4>
+<div class="paragraph"><p>To install and uninstall the sch_psp module, issue the following commands,
+as super user:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/modprobe sch_psp
+# /sbin/rmmod sch_psp</tt></pre>
+</div></div>
+</div>
+<h2 id="_references">4. References</h2>
+<div class="sectionbody">
+<div class="ulist"><ul>
+<li>
+<p>
+<a id="PFLDnet05"></a> R.Takano, T.Kudoh, Y.Kodama, M.Matsuda, H.Tezuka,
+  and Y.Ishikawa, &#8220;Design and Evaluation of Precise Software Pacing
+  Mechanisms for Fast Long-Distance Networks,&#8221; In 3rd Intl. Workshop
+  on Protocols for Fast Long-Distance Networks (PFLDnet05), February 2005.
+</p>
+</li>
+<li>
+<p>
+<a id="iproute2"></a>
+  IP routing utilities (iproute2), <a href="http://developer.osdl.org/dev/iproute2/">http://developer.osdl.org/dev/iproute2/</a>.
+</p>
+</li>
+<li>
+<p>
+<a id="lartc"></a>
+   Linux Advanced Routing &amp; Traffic Control, <a href="http://lartc.org/howto/">http://lartc.org/howto/</a>
+</p>
+</li>
+<li>
+<p>
+<a id="libnl"></a>
+  netlink library, <a href="http://people.suug.ch/~tgr/libnl/">http://people.suug.ch/~tgr/libnl/</a>
+</p>
+</li>
+</ul></div>
+</div>
+<h2 id="_appendix_a_frequently_asked_questions">5. Appendix A: Frequently Asked Questions</h2>
+<div class="sectionbody">
+<h3 id="_what_is_the_requirement_for_the_pc_and_the_network_interface_hardware_to_run_pspacer">5.1. What is the requirement for the PC and the network interface hardware to run PSPacer?</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The system should have capability to transmit packets at the maximum rate
+of the connected network link to realize precise pacing.</p></div>
+<div class="paragraph"><p>If your PC is cabled by Gigabit Ethernet, your network interface should be
+connected to the PC by PCI-Express, PCI-X, 66MHz/64bit PCI, or CSA.
+Otherwise, the I/O bus becomes a bottleneck, and maximum transmission rate
+can not be achieved. The processor itself may have enough performance
+if it is Pentium 4 or above.
+If your PC is cabled by Fast Ethernet, most of today&#8217;s PCs may have enough
+performance.</p></div>
+<h3 id="_how_can_i_achieve_gigabit_speeds_on_long_fat_networks_using_tcp_ip">5.2. How can I achieve Gigabit speeds on Long Fat Networks using TCP/IP?</h3><div style="clear:left"></div>
+<div class="paragraph"><p>This is an independent matter from PSPacer. Here are some tips.</p></div>
+<div class="paragraph"><p>Modify kernel parameters using sysctl(8) command. To change TCP settings,
+add the entries below to the file /etc/sysctl.conf, and then run "sysctl -p".</p></div>
+<h4 id="_socket_buffer_size">5.2.1. Socket buffer size</h4>
+<div class="paragraph"><p>The optimal socket buffer size is twice the size of the bandwidth \* delay
+product (BDP) of the link. However, the default max TCP buffer size is too
+small on long fat networks.
+For example, to fill a 125MB/s (i.e. 1Gbps) pipe with 100ms one-way latency
+requires 125 \* 0.2 = 25MB of data.
+To change the socket buffer size, do the following:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># increase max TCP buffer size to 32MB (32 * 1024 * 1024)
+net.core.rmem_max = 33554432
+net.core.wmem_max = 33554432</tt></pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Linux doubles the requested buffer size.
+So the above setting means that the max TCP buffer size is set to 64MB.</td>
+</tr></table>
+</div>
+<h4 id="appIfq">5.2.2. Interface queue size</h4>
+<div class="paragraph"><p>Another thing you can try is to increase the size of the interface queue
+(i.e. the transmit queue of the network interface). To do this, issue the
+following using ifconfig (8) command:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># ifconfig eth0 txqueuelen 10000</tt></pre>
+</div></div>
+<h4 id="_input_queue_size">5.2.3. Input queue size</h4>
+<div class="paragraph"><p>netdev_max_backlog specifies the maximum length of the input queues for
+the processors.  The default value is 300 (packets).
+Linux has to wait up to scheduling time to flush buffers (due to bottom half
+mechanism).  Therefore, this value can limit the network bandwidth
+when receiving packets as follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>300       *      1,000     =      300,000
+packets          HZ               packets/s</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>300,000   *      1,000     =      300 M
+packets    averate (bytes/packet) throughput (Bytes/s)</tt></pre>
+</div></div>
+<div class="paragraph"><p>If you want to get higher throughput, you need to increase netdev_max_backlog:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>net.core.netdev_max_backlog = 2500</tt></pre>
+</div></div>
+<h4 id="_turn_off_caching_metrics">5.2.4. Turn off caching metrics</h4>
+<div class="paragraph"><p>When you run benchmarks and other experiments, it is often useful not to
+save the route metrics (cwnd, rtt, etc) from each connection. You can turn
+off caching the metrics:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>net.ipv4.tcp_no_metrics_save = 1</tt></pre>
+</div></div>
+<div class="paragraph"><p>The same effect can be achieved by executing this before each TCP session:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># echo 1 &gt; /proc/sys/net/ipv4/route/flush</tt></pre>
+</div></div>
+<h3 id="appIperf">5.3. Why iperf shows bandwidth lower than the target rate which set by tc command?</h3><div style="clear:left"></div>
+<div class="paragraph"><p>PSPacer uses raw bandwidth (i.e. data link layer bandwidth) which includes IP,
+TCP or UDP headers as the target rate. On the other hand, iperf shows payload
+bandwidth. Therefore, iperf shows lower bandwidth than the target rate.</p></div>
+<div class="paragraph"><p>In addition, especially when TCP/IP is used, the bandwidth may be regulated
+by congestion control or buffer size, etc.  See "How can I
+achieve Gigabit speeds on Long Fat Networks using TCP/IP?".</p></div>
+<h3 id="_can_i_use_pspacer_as_an_intermediate_network_box_which_regulates_bandwidth_of_through_traffic">5.4. Can I use PSPacer as an intermediate network box which regulates bandwidth of through traffic?</h3><div style="clear:left"></div>
+<div class="paragraph"><p>Here we call a Linux PC on which a PSPacer installed a PSP box. The example
+below uses a PSP box to smooth traffic from LAN (1Gbps) to WAN (100Mbps, 20ms).
+Network Configuration</p></div>
+<div class="paragraph"><p>The network configuration is as follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>            +-------+
+            |  PC1  | 192.168.1.2
+            +-------+
+                |         192.168.1.0/24
+ ----------------------------------
+         |&lt;-- 1Gbps (LAN)
+         |
+         | eth0 192.168.1.1
+   +-----------+
+   |           |
+   |  PSP Box  |
+   |           |
+   +-----------+
+         | eth0 192.168.2.1
+         |
+         |&lt;-- 100Mbps, 20ms (WAN)
+ ----------------------------------
+                |          192.168.2.0/24
+            +-------+
+            |  PC2  | 192.168.2.2
+            +-------+</tt></pre>
+</div></div>
+<h4 id="_setup_pc1_and_pc2">5.4.1. Setup PC1 and PC2</h4>
+<div class="paragraph"><p>If PC1 and PC2 are Linux boxes, configurations are as below.
+Of course you can use other network connected PCs or equipments.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>PC1:
+# ifconfig eth0 192.168.1.2
+# route add -net 192.168.2.0 netmask 255.255.255.0
+  gw 192.168.1.1</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>PC2:
+# ifconfig eth0 192.168.2.2
+# route add -net 192.168.1.0 netmask 255.255.255.0
+  gw 192.168.2.1</tt></pre>
+</div></div>
+<h4 id="_setup_psp_box">5.4.2. Setup PSP Box</h4>
+<div class="paragraph"><p>To enable IP forwarding, issue the following command:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># echo 1 &gt; /proc/sys/net/ipv4/ip_forward</tt></pre>
+</div></div>
+<h4 id="_setup_pspacer">5.4.3. Setup PSPacer</h4>
+<div class="paragraph"><p>In the PSP box, issue commands as follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># tc qdisc add dev eth0 root handle 1: psp default 2
+# tc class add dev eth0 parent 1: classid 1:1 psp rate 100mbit
+# tc class add dev eth0 parent 1: classid 1:2 psp mode 0
+# tc qdisc add dev eth0 parent 1:1 handle 10: pfifo
+# tc qdisc add dev eth0 parent 1:2 handle 20: pfifo
+# tc filter add dev eth0 protocol ip parent 1: pref 1 u32
+  match ip dst 192.168.1.0/24 classid 1:1</tt></pre>
+</div></div>
+<h3 id="_when_i_install_pspacer_tc_command_fails_with_an_error_message_rtnetlink_answers_invalid_argument">5.5. When I install PSPacer, tc command fails with an error message "RTNETLINK answers: Invalid argument"</h3><div style="clear:left"></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">PSPacer version 3.0 and later work with TSO.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>This error message implies that TCP Segmentation Offloading (TSO) is enabled.
+Because PSPacer is not supporting TSO, you have to disable TSO before you
+install it.</p></div>
+<div class="paragraph"><p>If you can see the following message by looking at the output of <em>'dmesg</em>'
+command, TSO is enabled.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt> psp: sch_psp does not support TSO.  You must disable it:
+"ethtool -K eth0 tso off"</tt></pre>
+</div></div>
+<div class="paragraph"><p>If so, you have to disable TSO by using <em>'ethtool</em>' (8) command and retry
+<em>'tc qdisc add</em>' as follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt># /sbin/ethtool -K eth0 tso off
+# /sbin/tc qdisc add dev eth0 ...</tt></pre>
+</div></div>
+</div>
+<h2 id="appTest">6. Appendix B: Tested Environments</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Table.1 and Table.2 show tested environments which we have tested.</p></div>
+<div class="tableblock">
+<table rules="none"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<caption class="title">TableLinux and iproute2 version</caption>
+<col width="240" />
+<col width="102" />
+<col width="102" />
+<thead>
+  <tr>
+    <th align="left">
+    Distribution
+    </th>
+    <th align="left">
+    Kernel
+    </th>
+    <th align="left">
+    iproute2
+    </th>
+  </tr>
+</thead>
+<tbody valign="top">
+  <tr>
+    <td align="left">
+    FedoraCore 3
+    </td>
+    <td align="left">
+    2.6.9
+    </td>
+    <td align="left">
+    ss040831
+    </td>
+  </tr>
+  <tr>
+    <td align="left">
+    FedoraCore 4
+    </td>
+    <td align="left">
+    2.6.11
+    </td>
+    <td align="left">
+    ss050330
+    </td>
+  </tr>
+  <tr>
+    <td align="left">
+    FedoraCore 5
+    </td>
+    <td align="left">
+    2.6.20
+    </td>
+    <td align="left">
+    ss060110
+    </td>
+  </tr>
+  <tr>
+    <td align="left">
+    SUSE SLES 9
+    </td>
+    <td align="left">
+    2.6.5
+    </td>
+    <td align="left">
+    ss020116
+    </td>
+  </tr>
+  <tr>
+    <td align="left">
+    Debian GNU/Linux sid
+    </td>
+    <td align="left">
+    2.6.12.2
+    </td>
+    <td align="left">
+    ss041019
+    </td>
+  </tr>
+</tbody>
+</table>
+</div>
+<div class="tableblock">
+<table rules="none"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<caption class="title">TableNetwork Interface Card</caption>
+<col width="194" />
+<col width="251" />
+<thead>
+  <tr>
+    <th align="left">
+    Name
+    </th>
+    <th align="left">
+    Bus
+    </th>
+  </tr>
+</thead>
+<tbody valign="top">
+  <tr>
+    <td align="left">
+    Intel PRO/1000
+    </td>
+    <td align="left">
+    PCI-X, 64bit PCI, CSA
+    </td>
+  </tr>
+  <tr>
+    <td align="left">
+    Intel PRO/100
+    </td>
+    <td align="left">
+    32bit PCI
+    </td>
+  </tr>
+  <tr>
+    <td align="left">
+    Broadcom BCM5704
+    </td>
+    <td align="left">
+    PCI-X
+    </td>
+  </tr>
+</tbody>
+</table>
+</div>
+</div>
+<h2 id="_appendix_c_performance_evaluation">7. Appendix C: Performance Evaluation</h2>
+<div class="sectionbody">
+<h3 id="_scenario_1_1_pacing_class">7.1. Scenario 1: 1 Pacing Class</h3><div style="clear:left"></div>
+<div class="paragraph"><p>Here we show some experimental results in a WAN emulation environment.
+In these experiments, a hardware network testbed, GtrcNET-1, emulates 200ms
+RTT latency.
+We measured the the bandwidth generated by iperf with a milli-second
+resolution.</p></div>
+<div class="imageblock">
+<div class="content">
+<img src="fig/bw.png" alt="1P" />
+</div>
+<div class="image-title">Figure 1: 1 Pacing class (500Mbps)</div>
+</div>
+<h3 id="_scenario_2_3_pacing_classes">7.2. Scenario 2: 3 Pacing Classes</h3><div style="clear:left"></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>              +-----+
+              | TCP |             (target rate 200 Mbps)
+        +-----+-----+-----+
+        |       TCP       |       (target rate 250 Mbps)
+  +-----+-----------------+-----+
+  |                             |
+  |             TCP             | (target rate 500 Mbps)
+  |                             |
+--+-----------------------------+---&gt;
+  0    10    20    40    50    60 (sec)</tt></pre>
+</div></div>
+<div class="imageblock">
+<div class="content">
+<img src="fig/strbw2.png" alt="3P" />
+</div>
+<div class="image-title">Figure 2: 3 pacing classes, RTT=200ms</div>
+</div>
+<h3 id="_scenario_3_1_pacing_class_2_normal_classes">7.3. Scenario 3: 1 Pacing Class + 2 Normal Classes</h3><div style="clear:left"></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>              +-----+
+              | UDP |             (CBR 300 Mbps)
+        +-----+-----+-----+
+        |       UDP       |       (CBR 300 Mbps)
+  +-----+-----------------+-----+
+  |                             |
+  |             TCP             | (target rate 500 Mbps)
+  |                             |
+--+-----------------------------+---&gt;
+  0    10    20    40    50    60 (sec)</tt></pre>
+</div></div>
+<div class="imageblock">
+<div class="content">
+<img src="fig/strbw3.png" alt="1P and 2N" />
+</div>
+<div class="image-title">Figure 3: 4 Pacing Class and 2 Normal Classes, RTT=200ms</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2010-09-14 16:32:47 JST
+</div>
+</div>
+</body>
+</html>

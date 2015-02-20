@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+<body>
+
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Configuration
+<td align="right">configure (8MPI)
+</tr></tbody></table>
+
+<h3>NAME</h3>
+
+<p>configure - GridMPI configurer
+
+<h3>SYNOPSIS</h3>
+
+<p>configure 
+[--enable-debug]
+[--enable-threads]
+[--disable-dlload]
+[--disable-prof-feature]
+[--disable-unix]
+<i>[--disable-onesided]</i>
+[--with-vendormpi=<i>no/ibmmpi/fjmpi/mpisx/mpich/mpich2/intelmpi</i>]
+[--with-binmode=<i>no/32/64</i>]
+[--with-libckpt[=<i>path</i>]]
+[--with-libckpt-include=<i>path</i>]
+[--with-libckpt-lib=<i>path</i>]
+[--with-score]
+[--with-libpsp]
+
+<h3>OPTIONS</h3>
+
+<p>Following options are supported:
+
+<dl>
+
+<p><dt><b>--enable-debug</b>
+
+<dd>Specifies to enable debugging in compiling the GridMPI library.
+
+<p><dt><b><i>--enable-threads</i></b>
+
+<dd>Specifies to enable multi-threading.  THREAD SUPPORT IS ONLY
+LIGHTLY TESTED.
+
+<p><dt><b>--disable-dlload</b>
+
+<dd>Specifies not to use dynamic library loading.  It will be
+specified when the OS does not have libdl.so.
+
+<p><dt><b>--disable-prof-feature</b>
+
+<dd>Specifies to not use MPI profiling feature.  It is automatically 
+disabled, if the compiler does not support #pragma weak (weak symbol).
+
+<p><dt><b>--disable-unix</b>
+
+<dd>Specifies not to use Unix domain sockets for communication on a
+local host.  Without this option, MPI processes on the same host may
+communicate with the loopback network.
+
+<p><dt><b><i>--disable-onesided</i></b>
+
+<dd>Specifies not to use one-sided communication of MPI-2.  Currently,
+one-sided is only supported in Linux and compilation fails on other
+OS.  One-sided is automatically disabled, if an ioctl operation
+F_SETSIG is not defined.
+
+<p><dt><b>--with-vendormpi=<i>no/ibmmpi/fjmpi/mpisx/mpich/mpich2/intelmpi</i></b>
+
+<dd>Specifies to use Vendor&nbsp;MPI, in which a vendor-supplied MPI
+library is used in underlying communication.  This option is supported
+for the following platforms: <b>ibmmpi</b> for IBM-MPI on AIX machines
+(to use the SP switches), <b>fjmpi</b> for Fujitsu-MPI on
+Solaris/SPARC64 machines, <b>mpisx</b> for NEC-MPI on
+NEC SX6 machines, <b>mpich</b> for MPICH-based MPI,
+<b>mpich2</b> for MPICH2-based MPI, and <b>intelmpi</b> for Intel MPI
+(<b>fjmpi</b> and <b>mpisx</b> are under development).
+
+<p><dt><b>--with-binmode=<i>no/32/64</i></b>
+
+<dd>Specifies to use the default binary mode, or 32bit or 64bit binary
+mode in compilation.  This is only meaningful when the compiler
+supports binary mode by a compiler option (e.g., <b>-m32/-m64</b> in
+GCC/IA32, and <b>-q32/-q64</b> in IBM XL compilers).  If the compiler
+does not support binary mode option, use <b>no</b>.  To use 32bit or
+64bit option, configure-make-install procedure shall be performed
+twice, once for 32bit and once for 64bit.  After that, <b>mpicc</b>
+accepts the options <b>-q32/-q64</b> to switch the binary mode.
+
+<p><dt><b>--with-libckpt[=<i>path</i>]</b>
+
+<dd>Specifies to use checkpoint/restart.  The paths to the library and
+include files are specified by this option: <i>path</i>/include and
+<i>path</i>/lib are used.  The paths can be specified separately by
+<b>--with-libckpt-include</b> and <b>--with-libckpt-lib</b>.
+Checkpointing is enabled by default on Linux Fedora Core 3 and 4 on
+IA32 (32bit) machines.  CHECKPOINTING IS SUPPORTED ONLY LINUX/IA32
+PLATFORMS, CURRENTLY.
+
+<p><dt><b>--with-libckpt-include=<i>path</i></b>
+
+<dd>Specifies libckpt include file path.  See above.
+
+<p><dt><b>--with-libckpt-lib=<i>path</i></b>
+
+<dd>Specifies libckpt library path.  See above.
+
+<p><dt><b><i>--with-libpsp</i></b>
+
+<dd>Specifies to use the PSPacer module.  NOTE: PSPacer is a precise 
+software pacing mechanism for Linux.  IT IS JUST EXPERIMENTAL, CURRENTLY.
+
+<p><dt><b><i>--with-score</i></b>
+
+<dd>DO NOT SPECIFY THIS.  NOT SUPPORTED YET.  Specifies to use SCore
+for cluster local communication.  It only passes this option to the
+YAMPII configurer in the subordinate "yampii" directory.  NOTE: SCore
+is a cluster system software with a very fast communication library.
+
+</dl>
+
+<hr>
+<font size=-2><i>($Date: 2006/09/12 09:44:38 $)</i></font>
+<!-- $Id: man.configure.html,v 1.5 2006/09/12 09:44:38 takano Exp $ -->
+
+</body></html>
+
+<!--
+Local Variables:
+mode: Fundamental
+End:
+-->

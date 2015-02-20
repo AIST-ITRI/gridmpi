@@ -1,0 +1,643 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="ref.css">
+</head>
+<body>
+
+<!-- $Id: quickuse.html,v 1.6 2008/04/24 04:22:02 takano Exp $ -->
+
+<h2>Quick Usage</h2>
+
+<p>This document describes a start-up usage of GridMPI.
+
+<p><font size=-2><i>($Date: 2008/04/24 04:22:02 $)</i></font>
+
+<h3>Contents</h3>
+
+<ul>
+<li><a href="#overview">1. GridMPI Overview</a>
+<li><a href="#pcc">2. Using GridMPI on PC Clusters</a>
+<li><a href="#ibmmpi">3. Using GridMPI on IBM AIX</a>
+<li><a href="#sr11k">4. Notes on Using GridMPI on Hitachi SR11000 (IMPORTANT)</a>
+<li><a href="#fjmpi">5. Using GridMPI on Fujitsu Solaris/SPARC64V</a>
+<li><a href="#gridmpirun">6. Run with GRIDMPIRUN script</a>
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="overview"></a>
+<h2>1. GridMPI Overview</h2>
+
+<h3>GridMPI</h3>
+
+<p>GridMPI extends a cluster MPI implementation YAMPI for
+communication in the Grid environment.  GridMPI includes YAMPI, and
+thus can be used in clusters as well as in the Grid.  The YAMPI
+protocol is used in intra-cluster communication, and the protocols for
+the Grid is used in inter-cluster communication.  Currently, IMPI,
+Interoperable MPI, is supported for inter-cluster communication.
+GridMPI can use TCP/IP, platform supplied Vendor&nbsp;MPI, and the PM
+protocol in some cluster systems as an intra-cluster transport.
+GridMPI only uses TCP/IP as an inter-cluster transport.
+
+<h3>IMPI Protocol</h3>
+
+<p>GridMPI follows the IMPI (Interoperable MPI) standard for
+inter-cluster communication.  In the following explanation, some
+terminology from the IMPI standard is used.
+
+
+<p>MPI application with IMPI consists of multiple <b>clients</b> and
+one <b>IMPI&nbsp;server</b>.
+
+<p>A <b>client</b> is a one MPI job, which consists of some number of
+MPI processes normally started by <b>mpirun</b>.  A client typically
+corresponds to a cluster.  Each client is sequentially numbered from 0
+to one-less the number of the clients.  The IMPI standard limits the
+maximum number of clients to 32.
+
+<p>An <b>IMPI&nbsp;server</b> is a process to make contacts from
+clients.  A server listens to a TCP/IP port and waits for connection
+from the clients.  A server acts as an information exchange of the
+clients, who need to know the IP address/port pairs of the other
+clients.  The clients make connections each other after taking
+information from the server.
+
+<p>An IMPI&nbsp;server does nothing after information exchange, but
+waits until all clients joining at MPI_Finalize.  One server is needed
+for each run of an MPI application.
+
+<h3>Invoking an IMPI&nbsp;server</h3>
+
+<p>An IMPI&nbsp;server is invoked by specifying the number of the
+clients (<i>M</i>) to use.
+
+<pre class="screen">
+$ impi-server -server <i>M</i>
+</pre>
+
+<p>After invoking an IMPI&nbsp;server, it prints an IP address/port
+pair to <i>stdout</i> to which it is listening.  The clients must
+specify this address/port pair at startup.
+
+<p>An IMPI&nbsp;server finishes at exit of an MPI application
+normally.  Thus, an IMPI&nbsp;server needs to be invoked each time
+before an application is started.
+
+<h3>Invoking IMPI&nbsp;clients</h3>
+
+<p>A client is started with a client number and the IMPI address/port
+pair.
+
+<pre class="screen">
+$ mpirun -client <i>K</i> <i>addr:port</i> -np <i>N</i> ./a.out
+</pre>
+
+<p><b>K</b> is from 0 to one-less the number of clients.  Lower ranks
+of processes are assigned to ones which are invoked with lower client
+number <b>K</b>.  <b>addr:port</b> is the address/port pair which
+IMPI&nbsp;server has printed out.
+
+<p>The total number of processes (NPROCS) in an MPI application is the
+sum of the <b>N</b> of all clients.  The number of processes in a
+client is specified by mpirun with the argument <b>-np N</b> and the
+configuration file as normal invocations.  The name of the
+configuration file of GridMPI/YAMPI is <b>mpi_conf</b> by default.
+
+<h3>Process Structure of MPI Jobs</h3>
+
+<p>The figure below depicts the process structure of GridMPI when two
+processes are started in each of two clusters.
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0
+$ impi-server -server 2 &amp;
+$ mpirun -client 0 <i>addr:port</i> -np 2 ./a.out &amp;
+$ mpirun -client 1 <i>addr:port</i> -np 2 ./a.out
+</pre>
+
+<p><b>mpirun -client K ...</b> starts a single client.  A number of
+clients are each started by <b>mpirun</b>.
+
+<center><caption>Fig. Process Structure of a GridMPI Job</caption>
+<table border=1 rules=none cellpadding=5>
+<tr><td><pre>
+                        IMPI Protocol
+          +---------+===================+---------+
+          |         |                   |         |
+    +-----|---------|-----+       +-----|---------|-----+ 	+--------+
+    | +-------+ +-------+ |       | +-------+ +-------+ |	| IMPI	 |
+    | | rank0 | | rank1 | |       | | rank2 | | rank3 | |	| Server |
+    | +-------+ +-------+ |       | +-------+ +-------+ |	+--------+
+    |     |         |     |       |     |         |     |
+    |     +=========+     |       |     +=========+     |
+    |   YAMPI Protocol    |       |   YAMPI Protocol    |
+    +---------------------+       +---------------------+
+       mpirun -client 0		     mpirun -client 1
+</pre>
+</table></center>
+
+
+<h3>Glossary</h3>
+
+<dl>
+
+<dt><b>YAMPI</b>: <dd>is a cluster MPI implementation, on which
+GridMPI is based.  GridMPI extends YAMPI for the Grid environment for
+inter-cluster communication via TCP/IP.  YAMPI is an independent
+software product developed at Yutaka&nbsp;Ishikawa laboratory of the
+University of Tokyo, and is distributed under the LGPL license.
+
+<dt><b>IMPI (Interoperable MPI)</b>: <dd>is a standard to connect
+multiple MPI implementations, and is defined by NIST (National
+Institute of Standards and Technology) in January 2000.
+
+Refer the <a href="http://impi.nist.gov/">IMPI standard</a>
+
+<dt><b>IMPI&nbsp;Server</b>: <dd>is a server process defined in the
+IMPI specification to exchange information from invocations of MPI.
+
+<dt><b>IMPI&nbsp;Client</b>: <dd>is an invocation of MPI, which
+connects to the IMPI&nbsp;server.  IMPI terms it as client.  A client
+normally corresponds to a cluster.
+
+<dt><b>Vendor&nbsp;MPI</b>: <dd>is a platform supplied MPI from
+computer vendors.  GridMPI can utilize a fast communication library
+provided for special hardware as an underlying communication layer
+through the use of Vendor&nbsp;MPI.  The point-to-point communication
+layer uses MPI_Send/MPI_Recv for sending/receiving bytes in GridMPI.
+
+</dl>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="pcc"></a>
+<h2>2. Using GridMPI on PC Clusters</h2>
+
+<p>Follow the steps below:
+
+<p>(1) Set the environment variables.
+
+<p><b>$MPIROOT</b> needs to be set to the installation directory.
+Commands, include files and libraries of GridMPI are installed under
+the directory <b>$MPIROOT/bin</b>, <b>$MPIROOT/include</b>, and
+<b>$MPIROOT/lib</b>.
+
+<p>Add $MPIROOT setting in <b>.profile</b>, <b>.cshrc</b>, etc, and
+add a path <b>$MPIROOT/bin</b> in the PATH.  Assume /opt/gridmpi as
+MPIROOT in the examples below.
+
+<pre class="screen">
+(For sh/bash)
+$ MPIROOT=/opt/gridmpi; export MPIROOT
+$ PATH="$MPIROOT/bin:$PATH"; export PATH
+
+(For csh/tcsh)
+% setenv MPIROOT /opt/gridmpi
+% set path=($MPIROOT/bin $path)
+</pre>
+
+<p>When the cluster environment does not support <b>rsh</b>
+(remote-shell), it fails because MPI processes are started using
+<b>rsh</b> in a cluster by default.  Set the environment variable
+<b>_YAMPI_RSH</b> to use <b>ssh</b>.  For using ssh, no passphrase
+setting is needed, or <b>ssh-agent</b> shall be used.
+See [<a href="faq.html#ssh">FAQ</a>].
+
+<pre class="screen">
+(For sh/bash)
+$ _YAMPI_RSH="ssh -x"; export _YAMPI_RSH
+
+(For csh/tcsh)
+% setenv _YAMPI_RSH "ssh -x"
+</pre>
+
+<p>(2) Check the installation.
+
+<p>Check the contents of the directory.
+
+<blockquote><pre>
+$MPIROOT/bin:		mpirun, mpicc, mpif77, mpif90, ...
+$MPIROOT/include:	mpi.h, mpif.h, mpi-1.h, mpi-2.h, mpic++.h
+$MPIROOT/lib:		libmpi.a
+</pre></blockquote>
+
+<p>Check the command paths.
+
+<pre class="screen">
+$ which mpicc
+$ which mpirun
+</pre>
+
+<p>(3) Compile the application.
+
+<pre class="screen">
+$ mpicc mpiprog.c
+</pre>
+
+<p>The default compilers are set ones found at configuration time.
+They can be changed by the environment variables <b>_YAMPI_CC</b>,
+<b>_YAMPI_CXX</b>, <b>_YAMPI_F77</b>, and <b>_YAMPI_F90</b>.
+
+<p>(4) Create a configuration file.
+
+<p><b>mpirun</b> reads a configuration from a file (<b>mpi_conf</b> in
+the current directory by default). <b>mpi_conf</b> holds a list of
+host names, one host in each line.  It is an error, if the number of
+hosts is less than the number of processes specified by the <b>-np</b>
+argument to <b>mpirun</b>.
+
+<p>Contents of <b>mpi_conf</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+localhost
+localhost
+localhost
+localhost
+</pre></table></blockquote>
+
+<p><b>mpirun</b> understands some of the extensions of MPICH
+configuration file, including a command argument for non-SPMD (Single
+Program Multiple Data) execution.
+
+<p>(5) Start a program in a single cluster.
+
+<pre class="screen">
+$ mpirun -np 4 ./a.out
+</pre>
+
+<p>(6) Start a program in multiple clusters.
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0		...(*1)
+$ impi-server -server 2 &amp;		...(*2)
+$ mpirun -client 0 <i>addr:port</i> -np 2 ./a.out &amp;	...(*3)
+$ mpirun -client 1 <i>addr:port</i> -np 2 ./a.out	...(*4)
+</pre>
+
+<p>(*1) Setting <b>IMPI_AUTH_NONE</b> specifies not to use any
+authentication.  Both runs of impi-server and mpirun need the same
+setting.
+
+<p>(*2) Start the IMPI&nbsp;server.  Run of the server prints an IP
+address/port pair to <i>stdout</i>.  Pass it to mpirun in the next
+steps.
+
+<p>(*3, *4) Start MPI processes.  Normally, two <b>mpirun</b> invocations
+are on different clusters.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="ibmmpi"></a>
+<h2>3. Using GridMPI on IBM AIX (with LoadLeveler Interactive)</h2>
+
+<p>Follow the steps below:
+
+<p>(1) Set the environment variables.
+
+<p><b>$MPIROOT</b> needs to be set to the installation directory.
+Commands, include files and libraries of GridMPI are installed under
+the directory <b>$MPIROOT/bin</b>, <b>$MPIROOT/include</b>, and
+<b>$MPIROOT/lib</b>.
+
+<p>Add $MPIROOT setting in <b>.profile</b>, <b>.cshrc</b>, etc, and
+add a path <b>$MPIROOT/bin</b> in the PATH.  Assume /opt/gridmpi as
+MPIROOT in the examples below.
+
+<pre class="screen">
+(For sh/bash)
+$ MPIROOT=/opt/gridmpi; export MPIROOT
+$ PATH="$MPIROOT/bin:$PATH"; export PATH
+
+(For csh/tcsh)
+% setenv MPIROOT /opt/gridmpi
+% set path=($MPIROOT/bin $path)
+</pre>
+
+<p>Step (1) is similar to the step in <a href="#pcc">Using GridMPI on
+PC Clusters</a>.
+
+<p>(2) Check the installation.
+
+<p>Check the contents of the directory.
+
+<blockquote><pre>
+$MPIROOT/bin:		mpirun, mpicc, mpif77, mpif90, ...
+$MPIROOT/include:	mpi.h, mpif.h, mpi-1.h, mpi-2.h, mpic++.h
+$MPIROOT/lib:		libmpi.a, (or libmpi32.a or libmpi64.a)
+</pre></blockquote>
+
+<p>Check the command paths.
+
+<pre class="screen">
+$ which mpicc
+$ which mpirun
+</pre>
+
+<p>Check <b>xlc_r</b>, <b>xlC_r</b>, <b>xlf_r</b>, and <b>xlf90_r</b>
+are in the PATH.  Also check the directory <b>/usr/lpp/ppe.poe</b>
+exists.
+
+<p>(3) Compile the application.
+
+<pre class="screen">
+$ mpicc mpiprog.c (32bit default, or configured without <b>--with-binmode</b>)
+$ mpicc -q32 mpiprog.c (for 32bit)
+$ mpicc -q64 mpiprog.c (for 64bit)
+</pre>
+
+<p>The default compilers are set ones found at configuration time.
+They can be changed by the environment variables <b>_YAMPI_CC</b>,
+<b>_YAMPI_CXX</b>, <b>_YAMPI_F77</b>, and <b>_YAMPI_F90</b>.
+
+<p>(4) Create configuration files.
+
+<p>Contents of <b>host.list1</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+node00
+node00
+</pre></table></blockquote>
+
+<p>Contents of <b>host.list2</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+node01
+node01
+</pre></table></blockquote>
+
+<p>Contents of <b>llfile</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+#@job_type=parallel
+#@resources=ConsumableCpus(2)
+#@queue
+</pre></table></blockquote>
+
+<p>(5) Start a program in a single cluster.
+
+<pre class="screen">
+$ mpirun -np 4 ./a.out -llfile llfile
+</pre>
+
+<p>(6) Start a program in multiple clusters.
+
+<p>The following runs two MPI jobs with two processes each.
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0		...(*1)
+$ impi-server -server 2 &amp;		...(*2)
+$ mpirun -client 0 addr:port -np 2 -c host1.list ./a.out -llfile llfile &amp; ...(*3)
+$ mpirun -client 1 addr:port -np 2 -c host2.list ./a.out -llfile llfile	 ...(*4)
+</pre>
+
+<p>(*1) Setting <b>IMPI_AUTH_NONE</b> specifies not to use any
+authentication.  Both runs of impi-server and mpirun need the same
+setting.
+
+<p>(*2) Start the IMPI&nbsp;server.  Run of the server prints an IP
+address/port pair to <i>stdout</i>.  Pass it to mpirun in the next
+step.
+
+<p>(*3, *4) Start MPI processes.  Normally, two <b>mpirun</b>
+invocations are on different clusters.
+
+<p><b>NOTE</b>: <b>-llfile llfile</b> is not necessary when
+LoadLeveler is not used.
+
+<p>mpirun calls the <b>poe</b> command of IBM-MPI internally, and the
+option <b>-c</b> of mpirun is renamed to <b>-hostfile</b>.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="sr11k"></a>
+<h2>3. Notes on Using GridMPI on Hitachi SR11000 (IMPORTANT)</h2>
+
+<h3>Notes on Using Hitachi f90</h3>
+
+<p>Hitachi f90 compiler is set to aggressive optimization <b>-Os</b>
+as the site default.  Some programs fail due to its aggressive
+optimization.
+
+<ul>
+
+<li>Disable auto-parallelization of the f90 compiler by
+<b>-parallel=0</b>.  Auto-parallelization uses threads and some MPI
+programs fail to run properly, without regard to the thread support of
+the MPI library.  Compiler drivers <b>mpif77</b> and <b>mpif90</b>
+provided in GridMPI adds the option and disables auto-parallelization.
+
+<li>Disables optimization by <b>-O0</b> during testing.  The default
+setting <b>-Os</b> (<b>-O3</b>) is too aggressive and it sometimes
+breaks runs of proper programs.  Variable visibility of the strict
+Fortran definition is too loose that an optimizer can drop some
+assignments.
+
+</ul>
+
+<h3>Environment with Both 32bit and 64bit Binary Modes</h3>
+
+<ul>
+
+<li>Binary mode (32bit/64bit) is a configuration option in GridMPI.
+It is necessary to run the configure-make-make-install steps twice to
+install both binary modes.  Compiler drivers of GridMPI
+<b>mpicc/mpif77/mpif90</b> accepts options of <b>-q32</b> or
+<b>-q64</b> to specify the binary mode.
+
+<li>It is necessary to specify the same binary mode when creating your
+own library.  IBM xlc/xlf compilers accept <b>-q32</b> and <b>-q64</b>
+options, and Hitachi f90 compiler accepts <b>-32</b> and <b>-64</b>
+options.
+
+</ul>
+
+<h3>Passing Options of IBM POE (Parallel Operating Environment)</h3>
+
+<p>GridMPI utilizes IBM-MPI as Vendor&nbsp;MPI, and <b>mpirun</b>
+calls the <b>poe</b> command of IBM-MPI internally.  <b>mpirun</b>
+passes the arguments after a binary to the <b>poe</b> command intact,
+which are parsed and consumed by <b>poe</b> at its startup.  The
+following example shows passing a <b>-shared_memory</b> option to
+<b>poe</b>.
+
+<pre class="screen">
+$ mpirun -np N ./a.out -shared_memory yes
+</pre></blockquote>
+
+<p>Some useful options of POE:
+
+<dl>
+
+<dt><b>-shared_memory yes</b>: <dd>specifies to use shared memory in
+IBM-MPI for intra-node communication.  It makes the communication much
+faster in most cases.  The default is <b>no</b>.
+
+<dt><b>-labelio yes</b>: <dd>specifies to append task IDs in printing
+<i>stdout</i>.  It helps to tell a node which prints.  The default is
+<b>no</b>.
+
+</dl>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="fjmpi"></a>
+<h2>5. Using GridMPI on Fujitsu Solaris/SPARC64V</h2>
+
+<p>Follow the steps below:
+
+<p>(1) Set the environment variables.
+
+<p><b>$MPIROOT</b> needs to be set to the installation directory.
+Commands, include files and libraries of GridMPI are installed under
+the directory <b>$MPIROOT/bin</b>, <b>$MPIROOT/include</b>, and
+<b>$MPIROOT/lib</b>.
+
+<p>Add $MPIROOT setting in <b>.profile</b>, <b>.cshrc</b>, etc, and
+add a path <b>$MPIROOT/bin</b> in the PATH.  Assume /opt/gridmpi as
+MPIROOT in the examples below.
+
+<pre class="screen">
+(For sh/bash)
+$ MPIROOT=/opt/gridmpi; export MPIROOT
+$ PATH="$MPIROOT/bin:/opt/FSUNaprun/bin:$PATH"; export PATH
+
+(For csh/tcsh)
+% setenv MPIROOT /opt/gridmpi
+% set path=($MPIROOT/bin /opt/FSUNaprun/bin $path)
+</pre>
+
+<p>(2) Check the installation.
+
+<p>Check the contents of the directory.
+
+<blockquote><pre>
+$MPIROOT/bin:		mpirun, mpicc, mpif77, mpif90, ...
+$MPIROOT/include:	mpi.h, mpif.h, mpi-1.h, mpi-2.h, mpic++.h
+$MPIROOT/lib:		libmpi.so, libmpi_frt.a, libmpi_gmpi.so
+			(or libmpi32.so, libmpi_frt32.a, libmpi_gmpi32.so)
+			(or libmpi64.so, libmpi_frt64.a, libmpi_gmpi64.so)
+</pre></blockquote>
+
+<p>Check the command paths.
+
+<pre class="screen">
+$ which mpicc
+$ which mpirun
+</pre>
+
+<p>Check <b>c99</b>, <b>FCC</b>, <b>frt</b>, and <b>f90</b> are in the
+PATH.  Also check <b>/opt/FJSVmpi2/bin/mpiexec</b> exists.
+
+<p>(3) Compile the application.
+
+<pre class="screen">
+$ mpicc mpiprog.c (32bit default, or configured without <b>--with-binmode</b>)
+$ mpicc -q32 mpiprog.c (for 32bit)
+$ mpicc -q64 -KV9 mpiprog.c (for 64bit)
+</pre>
+
+<p>The default compilers are set ones found at configuration time.
+They can be changed by the environment variables <b>_YAMPI_CC</b>,
+<b>_YAMPI_CXX</b>, <b>_YAMPI_F77</b>, and <b>_YAMPI_F90</b>.
+
+<p>(4) (Create configuration files).  Configuration files are not
+needed with Fujitsu MPI -- global setting of the node is used.
+
+<p>(5) Start a program in a single cluster.
+
+<pre class="screen">
+$ mpirun -np 4 ./a.out
+</pre>
+
+<p>(6) Start a program in multiple clusters.
+
+<p>The following runs two MPI jobs with two processes each.
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0		...(*1)
+$ impi-server -server 2 &amp;		...(*2)
+$ mpirun -client 0 addr:port -np 2 ./a.out &amp; ...(*3)
+$ mpirun -client 1 addr:port -np 2 ./a.out	 ...(*4)
+</pre>
+
+<p>(*1) Set <b>IMPI_AUTH_NONE</b> to specify not to use any
+authentication.  Both runs of <b>impi-server</b> and <b>mpirun</b>
+need the same setting.
+
+<p>(*2) Start the IMPI&nbsp;server.  Run of the server prints an IP
+address/port pair to <i>stdout</i>.  Pass it to mpirun in the next
+step.
+
+<p>(*3, *4) Start MPI processes.  Normally, two <b>mpirun</b>
+invocations are on different clusters.
+
+<p>The GridMPI runtime calls <b>mpiexec</b>
+(<b>/opt/FJSVmpi2/bin/mpiexec</b>) in the Fujitsu MPI environment to
+start MPI processes.  Options to <b>mpirun</b> are translated and
+passed to the Fujitsu runtime: <b>-np</b> to <b>-n</b> and <b>-c</b>
+to <b>-nl</b>.
+
+<p><b>mpirun</b> converts a host-list file passed to the <b>-c</b>
+option to a node-list acceptable to the <b>-nl</b> option of Fujitsu
+<b>mpiexec</b>.  The contents of a host-list file is matched against
+to the Fujitsu MPI configuration file, and a hostname is converted to
+a node number.  It is performed by the <b>makenodelist.fjmpi.sh</b>
+script in the <b>$MPIROOT/bin</b>.  Note that the format of a file
+specified by <b>-c</b> consists of one host per line (no comments
+allowed), which is different from the format of the configuration file
+for clusters.
+
+<p><b>mpirun</b> also accepts the <b>-nl</b> option when configured
+with Fujitsu MPI, which is passed to <b>mpiexec</b> unmodified.  For
+example, use a line like: <b>-nl 0,0,0,0,0,0,0,0,0,0,...,0</b>.  Note
+that the number of nodes specified by the <b>-nl</b> option needs one
+more nodes than the value passed to the <b>-np</b> option.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="gridmpirun"></a>
+<h2>6. Run with GRIDMPIRUN script</h2>
+
+<p><b>gridmpirun</b> script is a simple frontend to start an
+impi-server and to start MPI processes via rsh/ssh.  <b>gridmpirun</b>
+starts impi-server in local host, and then calls <b>mpirun</b> using
+<b>rsh</b> or <b>ssh</b> as specified by the configuration file.
+
+<p>(1) Create a gridmpirun configuration file.
+
+<p>Contents of <b>gridmpirun.conf</b> configuration file (one line per client):
+
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+0 -submit ssh -target node00 -n 2 -wdir /tmp ./a.out
+1 -submit ssh -target node01 -n 2 -wdir /tmp ./a.out
+</pre></table></blockquote>
+
+<p>It runs SSH -n <i>target</i> 'cd <i>wdir</i>; mpirun -np <i>N</i>
+<i>./a.out</i>'. The option <b>-wdir</b> specifies the working directory.
+
+<p>Contents of <b>/tmp/mpi_conf</b> for each cluster (i.e., node00 and node01):
+
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+localhost
+localhost
+</pre></table></blockquote>
+
+<p>(2) Start an MPI application.
+
+<pre class="screen">
+$ gridmpirun gridmpirun.conf
+</pre>
+
+<!-- ================================================================ -->
+<hr>
+</body></html>
+
+<!--
+Local Variables:
+mode: Fundamental
+End:
+-->

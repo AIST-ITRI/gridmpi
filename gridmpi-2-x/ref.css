@@ -1,0 +1,114 @@
+h1 {
+	font-size: 28pt;
+	margin: 36pt -12% 9pt -12%;
+}
+
+h2 {
+	text-decoration: underline;
+	font-size: 24pt;
+	margin: 27pt -9% 7pt -9%;
+}
+
+h3 {
+	font-size: 20pt;
+	margin: 18pt -6% 6pt -6%;
+}
+
+h4 {
+	font-size: 16pt;
+	margin: 15pt -3% 5pt -3%;
+}
+
+body {
+	color: #000000;
+	background: #ffffff;
+	margin: 1em 15% 1em 15%;
+}
+
+a:visited {
+	color: #0000ff;
+}
+
+a:link {
+	color: #000099;
+}
+
+a:active {
+	color: #ff9966;
+}
+
+.hilight {
+	background: #ffffcc;
+}
+
+pre {
+	font-size: 10pt;
+	font-family: Courier;
+}
+
+.code {
+	background: lavender;
+	border: 1px solid blue;
+	margin: 20px 0;
+	padding: 8px;
+	text-align: left;
+}
+
+ul {
+	list-style: square;
+}
+
+th {
+	background-color: darkblue;
+	color: white;
+}
+
+table {
+	margin: 5px 5px 15px 5px;
+	font-size: small;
+	border-collapse: collapse;
+	border-top: 1px solid gray;
+	text-align: left;
+}
+
+thead tr th, thead tr td {
+	padding: 3px;
+	background-color: darkblue;
+	color: white;
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+}
+
+tbody tr th {
+	padding: 3px;
+	background-color: lightgray;
+	/*color: #FFF;*/
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+}
+
+tbody tr td {
+	padding: 3px;
+	/*background-color: #EEF;*/
+	/*color: #FFF;*/
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+}
+
+dt {
+	padding-top: 1em;
+}
+
+pre.screen {
+	color: black;
+	background: lavender;
+	border: 1px solid blue;
+	margin-top: 0.2em;
+ 	margin-bottom: 0.2em;
+	margin-left: 2em;
+	margin-right: 2em;
+	padding: 1ex;
+}

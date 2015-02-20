@@ -1,0 +1,1455 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="ref.css">
+</head>
+<body>
+
+<!-- $Id: install.html,v 1.16 2008/02/19 09:16:10 takano Exp $ -->
+
+<h1>Installation Procedure</h1>
+
+<p>This document describes a step-by-step installation and test
+procedure of GridMPI/YAMPI.
+
+<p><font size=-2><i>($Date: 2008/02/19 09:16:10 $)</i></font>
+
+<h3>Contents</h3>
+
+<ul>
+<li><a href="#pcc">1. Installation on Linux Clusters</a>
+	<ul>
+	<li>1.1. Prerequisite
+	<li>1.2. Setting Environment Variables
+	<li>1.3. Unpacking the Source
+	<li>1.4. Compiling the Source
+	<li>1.5. Checking the Installed Files
+	<li>1.6. Testing Compilation
+	<li>1.7. Starting a Program (as a Cluster MPI)
+	<li>1.8. Starting a Program (as a Multiple-Cluster MPI)
+	</ul>
+<li><a href="#ibmmpi">2. Installation on IBM AIX</a>
+	<ul>
+	<li>2.1. Prerequisite
+	<li>2.2. Setting Environment Variables
+	<li>2.3. Unpacking the Source
+	<li>2.4. Compiling the Source
+	<li>2.5. Checking the Installed Files
+	<li>2.6. Testing Compilation
+	<li>2.7. Starting a Program (as a Cluster MPI)
+	<li>2.8. Starting a Program (as a Multiple-Cluster MPI)
+	</ul>
+<li><a href="#fjmpi">3. Installation on Fujitsu Solaris/SPARC64V</a>
+	<ul>
+	<li>3.1. Prerequisite
+	<li>3.2. Setting Environment Variables
+	<li>3.3. Unpacking the Source
+	<li>3.4. Compiling the Source
+	<li>3.5. Checking the Installed Files
+	<li>3.6. Testing Compilation
+	<li>3.7. Starting a Program (as a Cluster MPI)
+	<li>3.8. Starting a Program (as a Multiple-Cluster MPI)
+	</ul>
+<li><a href="#sx">4. Installation on NEC SX Series</a>
+	<ul>
+	<li>4.1. Prerequisite
+	<li>4.2. Setting Environment Variables
+	<li>4.3. Unpacking the Source
+	<li>4.4. Compiling the Source
+	<li>4.5. Checking the Installed Files
+	<li>4.6. Testing Compilation
+	<li>4.7. Starting a Program (as a Cluster MPI)
+	<li>4.8. Starting a Program (as a Multiple-Cluster MPI)
+	</ul>
+<li><a href="#platforms">5. Notes on Platforms and Compilers</a>
+	<ul>
+	<li>5.1. SCore PM
+	<li>5.2. Myrinet MX
+	<li>5.3. Solaris
+	<li>5.4. MacOS X
+	<li>5.5. FreeBSD
+	<li>5.6. PGI Compiler
+	</ul>
+<li><a href="#gridmpi">6. Info: Structure of GridMPI Execution</a>
+<!--<li><a href="#gridmpirun">7. Test with GRIDMPIRUN Script</a>-->
+</ul>
+
+<h3>NOTE: Changes from Version 1.2 to Version 2.0</h3>
+
+<p>Version 2.0 is a major milestone release.
+
+<ul>
+<li>Add a <b>Relay</b> program to support privately addressed clusters.
+</ul>
+
+<h3>NOTE: Changes from Version 1.1 to Version 1.2</h3>
+
+<p>Version 1.2 is not released widely.
+
+<h3>NOTE: Changes from Version 1.0 to Version 1.1</h3>
+
+<p>Version 1.1 is a minor bug fix release.
+
+<ul>
+<li>Fix connect failure on Solaris.
+<li>Fix Fortran interface in 64bit compilation.
+<li>Add a check of pragma-weak support of the C complier.
+</ul>
+
+<h3>NOTE: Configuration Templates</h3>
+
+<p>The following lists the recommended options for the configurer.
+The configurer shall find default compilers in most cases, and
+specifying compilers is optional.  Note that when specifying
+<b>--with-binmode=32/64</b> option, do the <b>configure; make; make
+install</b> procedure twice, with calling <b>make distclean</b>
+between them.  Also, do not mix <b>--with-binmode=no</b> and
+<b>--with-binmode=32/64</b> options, which overrides the previously
+specified configuration.
+
+<blockquote>
+<table border=1 rules=all cellpadding=3>
+<tr><th bgcolor=lightgrey>Platform
+<th bgcolor=lightgrey>Compiler
+<th bgcolor=lightgrey>Configuration
+<th bgcolor=lightgrey>Notes
+<tr><td>Linux/i386<td>GCC
+	<td>./configure<td>(1)
+<tr><td>Linux/i386<td>Intel
+	<td>CC=icc CXX=icpc F77=ifort F90=ifort ./configure<td>(1)
+<tr><td>Linux/x86_64<td>GCC
+	<td>./configure --with-binmode=32<br>
+	./configure --with-binmode=64<td>(1)
+<tr><td>Linux/x86_64<td>Intel
+	<td>CC=icc CXX=icpc F77=ifort F90=ifort ./configure<td>(1)(2)
+<!--
+<tr><td>Linux/x86_64<td>PGI
+	<td>CC=pgcc CXX=pgCC F77=pgf77 F90=pgf90 ./configure<td>(1)(2)(3)
+-->
+<tr><td>Linux/x86_64<td>Pathscale
+	<td>CC=pathcc CXX=pathCC F77=pathf90 F90=pathf90 ./configure
+	--with-binmode=32<br>
+	CC=pathcc CXX=pathCC F77=pathf90 F90=pathf90 ./configure
+	--with-binmode=64<td>(1)
+<tr><td>Linux/IA64<td>GCC
+	<td>./configure<td>&nbsp;
+<tr><td>IBM AIX/Power<td>IBM XL Compilers
+	<td>./configure --with-vendormpi=ibmmpi --with-binmode=32<br>
+	./configure --with-vendormpi=ibmmpi --with-binmode=64<td>&nbsp;
+<tr><td>Hitachi SR11K (AIX/Power)<td>IBM XL and Hitachi F90
+	<td>./configure --with-vendormpi=ibmmpi --with-binmode=32<br>
+	./configure --with-vendormpi=ibmmpi --with-binmode=64<td>(4)
+<tr><td>Fujitsu Solaris8/SPARC64V<td>Fujitsu
+	<td>CC=c99 CXX=FCC F77=frt F90=f90 ./configure --with-vendormpi=fjmpi
+	--with-binmode=32<br>
+	CC=c99 CXX=FCC F77=frt F90=f90 ./configure --with-vendormpi=fjmpi
+	--with-binmode=64<td>
+<tr><td>Solaris10/SPARC<td>Sun (SUN Studio11)
+	<td>./configure --with-binmode=32<br>
+	./configure --with-binmode=64<td>&nbsp;
+<tr><td>NEC SX/Super-UX<td>NEC CC
+	<td>./configure --target=sx6-nec-superux14.1 --host=sx6-nec-superux14.1
+	<td>(5)
+<tr><td>MacOS X/IA32 and MacOS X/PowerPC<td>GCC
+	<td>./configure<td>(6)
+</table>
+</blockquote>
+
+<ul>
+
+<li>(1) Checkpointing (libckpt) is enabled by default (and only) on
+Linux/IA32 Fedora Core 3 and 4.
+
+<li>(2) Intel and PGI compilers do not support binary mode option.  It
+uses different compilers for 32bit and 64bit.  So, do not specify
+<b>--with-binmode</b> to the configurer.  It needs to set a proper
+path to a needed compiler.
+
+<!--
+<li>(3) PGI 6.1 or later is needed for compiling code written in ISO
+C99 (6.1 is new and we do not have tested it yet).  It may help to add
+<b>CFLAGS="-mcmodel=medium"</b> for PGI CC in 64bit mode.  Indices to
+data are restricted to 32bits in the default <b>small</b> model in PGI
+CC.
+-->
+
+<li>(4) The configurer considers <b>f90</b> as Hitachi Optimizing
+Fortran90 and sets some specific options for it, when it finds
+<b>f90</b> in the path.  It prefers Hitachi f90 to IBM xlf90.
+GridMPI-2.0 has been tested for release with Hitachi f90 version
+"V01-05-/C".
+
+<li>(5) Profiling interface (prefixed by PMPI) is disabled.  Super-UX
+14.1 does not support weak symbols, currently.  Shared memory
+communication is disabled.  Super-UX 14.1 does not support mmap,
+currently.
+
+<li>(6) Profiling interface (prefixed by PMPI) is disabled.  Darwin
+8.8 does not support weak symbols, currently.  Shared memory
+communication is disabled.  Darwin 8.8 does not support "Thread
+Process-Shared Synchronization", currently.
+
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="pcc"></a>
+<h2>1. Installation on Linux Clusters</h2>
+
+<!-- ================================ -->
+<h3>1.1. Prerequisite</h3>
+<!-- ================================ -->
+
+<p>GridMPI/YAMPI is tested with RedHat 9, FedoraCore 3 and 5 for
+IA32(i386) machines with GNU GCC.  It is also tested with SuSE SLES 9
+on x86_64, and with RedHat Advanced Server 2 on IA64.  Also, it is
+partially tested with Intel Compilers.
+
+<p>GridMPI/YAMPI needs following non-standard commands to compile.
+
+<pre>
+	- makedepend
+</pre>
+
+<p><b>makedepnd</b> is in the "xorg-x11-devel" RPM package in RedHat
+or Fedora Core.
+
+<p><i>NOTE: The Myrinet MX support is experimental in GridMPI-2.0.  It
+needs further tuning.</i>
+
+<a name="pcc_env"></a>
+<!-- ================================ -->
+<h3>1.2. Setting Environment Variables</h3>
+<!-- ================================ -->
+
+<p>Set <b>$MPIROOT</b> to the installation directory, and add
+<b>$MPIROOT/bin</b> in the PATH.
+
+<p>Commands and libraries are installed and searched in
+<b>$MPIROOT/bin</b>, <b>$MPIROOT/include</b> and <b>$MPIROOT/lib</b>.
+Note that it does NOT understand shell's "~" notation.  Add settings
+in ".profile" or ".cshrc", etc.
+
+<pre class="screen">
+# Example assumes /opt/gridmpi as MPIROOT
+
+(For sh/bash)
+$ MPIROOT=/opt/gridmpi; export MPIROOT
+$ PATH="$MPIROOT/bin:$PATH"; export PATH
+
+(For csh/tcsh)
+% setenv MPIROOT /opt/gridmpi
+% set path=($MPIROOT/bin $path)
+</pre>
+
+<a name="pcc_unpack"></a>
+<!-- ================================ -->
+<h3>1.3. Unpacking the Source</h3>
+<!-- ================================ -->
+
+<p>Unpack the source in an appropriate directory.
+
+<p>In the following, files are expanded under the $HOME directory.
+The source expands in the <b>gridmpi-2.x</b> directory.
+
+<pre class="screen">
+$ cd $HOME
+$ tar zxvf gridmpi-2.x.tar.gz
+</pre>
+
+<p>The contents are:
+
+<pre>
+	README:		README file
+	NOTICE:		license notification
+	LICENSE:	The Apache License
+	RELEASENOTE:	major changes (incomplete)
+	checkpoint:	source of checkpointing package
+	configure:	configuration script
+	yampii:		source of YAMPI (PC cluster MPI)
+	src:		source of GridMPI
+	man:		few manual pages
+</pre>
+
+<a name="pcc_make"></a>
+<!-- ================================ -->
+<h3>1.4. Compiling the Source</h3>
+<!-- ================================ -->
+
+<p>Simply do the following:
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x			...(1)
+$ ./configure				...(2)
+$ make					...(3)
+$ make install				...(4)
+</pre>
+
+<p>(1) Move to the source directory.
+
+<p>(2) Invoke the configurer.  No options suffice for Linux cluster
+settings.
+
+<p>Check the configuration output.  Note that the configure runs
+twice: the first run is for GridMPI, and the second run is for YAMPI.
+The configurer of GridMPI calls the configurer of YAMPI inside.
+
+<p>The below shows the typical output (it was run on x86_64):
+
+<blockquote><caption><b>Configuration (output from configure)</b></caption>
+<table border=1 rules=none cellpadding=5><tr><td><pre>
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               yes
+  --with-binmode                        no
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --enable-mem                          yes
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  --with-vendormpi                      no
+  --with-libckpt                        no
+  --with-libpsp                         no
+  --enable-dlload                       yes
+
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               yes
+  --with-binmode                        no
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --enable-mem                          yes
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  --with-gridmpi                        yes
+  --with-vendormpi                      no
+  --with-libckpt                        no
+  --with-libckpt-includedir             no
+  --with-libckpt-libdir                 no
+  --enable-dlload                       yes
+</pre></table></blockquote>
+
+<p>(3) Make.
+
+<p>(4) Install.
+
+<p>Files are installed in <b>$MPIROOT/bin</b>,
+<b>$MPIROOT/include</b>, and <b>$MPIROOT/lib</b>.
+
+<p>See FAQ to use a C complier other than the default one.
+[<a href="faq.html#faq.config.cc">FAQ</a>]
+
+<!-- ================================ -->
+<h3>1.5. Checking the Installed Files</h3>
+<!-- ================================ -->
+
+<p>Check the files in the installation directories.
+
+<p>(1) In $MPIROOT/bin,
+
+<pre>
+	mpicc, mpif77, mpic++, mpif90, mpirun, gridmpirun,
+	impi-server, mpifork, nsd, canquit, detach
+	(and some utility shell scripts)
+</pre>
+
+<p>(2) In $MPIROOT/include,
+
+<pre>
+	mpi.h, mpif.h, mpi-1.h, mpi-2.h mpic++.h
+</pre>
+
+<p>(3) In $MPIROOT/lib,
+
+<pre>
+	libmpi.a libmpif.a
+</pre>
+
+<p>(4) Check the commands are in the path.
+
+<pre class="screen">
+$ which mpicc
+$ which mpif77
+$ which mpirun
+</pre>
+
+<a name="pcc_mpicc"></a>
+<!-- ================================ -->
+<h3>1.6. Testing Compilation</h3>
+<!-- ================================ -->
+
+<p>Compile <b>pi.c</b> in the <b>src/test/basic</b> directory.
+
+<p>(1) Compile a test program.
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x/src/test/basic/
+$ mpicc pi.c
+</pre>
+
+<p>See FAQ to change the default compiler.
+[<a href="faq.html#faq.yampirc">FAQ</a>]
+
+<a name="pcc_mpirun1"></a>
+<!-- ================================ -->
+<h3>1.7. Starting a Program (as a Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>(1) Create a configuration file.
+
+<p>Content of <b>mpi_conf</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+localhost
+localhost
+</pre></table></blockquote>
+
+<p>(2) Run an application (a.out) as a cluster MPI.
+
+<pre class="screen">
+$ mpirun -np 2 ./a.out
+</pre>
+
+<p>In this case, GridMPI does not use wide-area communication, and is
+a cluster configuration using YAMPI.
+
+<p>The remote shell command can be changed.  The default is
+<b>ssh</b>.  Set the environment variable <b>_YAMPI_RSH</b> to use
+<b>rsh</b> or to pass options to the remote shell command.
+
+<pre class="screen">
+(For sh/bash)
+$ _YAMPI_RSH="ssh -x"; export _YAMPI_RSH
+
+(For csh/tcsh)
+% setenv _YAMPI_RSH "ssh -x"
+</pre>
+
+<p>Setting of <b>ssh</b> should be with no password.  Refer to the FAQ
+to use <b>ssh-agent</b>.  [<a href="faq.html#help.ssh">FAQ</a>]
+
+<a name="pcc_mpirun2"></a>
+<!-- ================================ -->
+<h3>1.8. Starting a Program (as a Multiple-Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>(1) Create configuration files.  Here, two <b>localhost</b> entires
+in <b>mpi_conf1</b>, and two <b>localhost</b> entries in
+<b>mpi_conf2</b>.
+
+<p>Content of <b>mpi_conf1</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+localhost
+localhost
+</pre></table></blockquote>
+
+<p>Content of <b>mpi_conf2</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+localhost
+localhost
+</pre></table></blockquote>
+
+<p>(2) Run an application (a.out).
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0		...(1)
+$ impi-server -server 2 &amp;		...(2)
+$ mpirun -client 0 <i>addr:port</i> -np 2 -c mpi_conf1 ./a.out &amp;	...(3)
+$ mpirun -client 1 <i>addr:port</i> -np 2 -c mpi_conf2 ./a.out		...(4)
+</pre>
+
+<p>(1) Set <b>IMPI_AUTH_NONE</b> environment variable.  It specifies
+the authentication method of the impi-server.  The value can be
+anything, because it is ignored.
+
+<p>(2) Start the <b>impi-server</b>.  <b>impi-server</b> is a process
+to make a contact and to exchange information between MPI processes.
+<b>impi-server</b> shall be started each time, because it exits at the
+end of an execution of an MPI program.  The <b>-server</b> argument
+specifies the number of MPI jobs (invocations of mpirun command).
+<b>impi-server</b> prints the IP address/port pair to the stdout.
+
+<p>(3,4) Start MPI jobs by mpirun.  The <b>-client</b> argument
+specifies the MPI job ID, and the IP address/port pair of
+<b>impi-server</b>.  Job ID is from 0 to the number of jobs minus one
+to distinguish mpirun invocations.  The <b>-c</b> option specifies the
+list of nodes.  It starts an MPI program with NPROCS=4 (2+2).
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="ibmmpi"></a>
+<h2>2. Installation on IBM AIX</h2>
+
+<p>GridMPI can use a vendor supplied MPI as an underlying
+communication layer as a "Vendor&nbsp;MPI".  It is necessary to
+specify options to the configurer to use Vendor&nbsp;MPI.  GridMPI
+supports IBM-MPI (on IBM P-Series and Hitachi SR11000) as a
+Vendor&nbsp;MPI.
+
+<!-- ================================ -->
+<h3>2.1. Prerequisite</h3>
+<!-- ================================ -->
+
+<p>GridMPI/YAMPI needs following (non-standard) commands to compile.
+
+<pre>
+	- gmake (GNU make)
+	- makedepend
+	- cc_r and xlc_r
+	- IBM-MPI library (assumed to be in /usr/lpp/ppe.poe/lib)
+</pre>
+
+<p>GridMPI/YAMPI uses <b>xlc_r</b> to compile the source code.  MPI
+applications can be compiled with <b>cc_r</b>, <b>xlf_r</b>, and
+Hitachi f90.
+
+<p>When the IBM-MPI library is not installed in the directory
+<b>/usr/lpp/ppe.poe/lib</b>, it is necessary to specify its location
+by <b>MP_PREFIX</b> (it is needed in both installation and use time).
+The <b>MP_PREFIX</b> environment variable is specified by the IBM-MPI.
+
+<!-- ================================ -->
+<h3>2.2. Setting Environment Variables</h3>
+<!-- ================================ -->
+
+<p>See <b>Installation on Linux Clusters.</b>
+[<a href="#pcc_env">jump</a>]
+
+<!-- ================================ -->
+<h3>2.3. Unpacking the Source</h3>
+<!-- ================================ -->
+
+<p>
+<p>See <b>Installation on Linux Clusters.</b>
+[<a href="#pcc_unpack">jump</a>]
+
+<!-- ================================ -->
+<h3>2.4. Compiling the Source</h3>
+<!-- ================================ -->
+
+<p>The procedure slightly differs from the Linux Clusters case in
+specifying <b>--with-vendormpi</b> to the configurer and in using
+gmake to compile.
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x			...(1)
+$ ./configure --with-vendormpi=ibmmpi --with-binmode=32	...(2)
+$ gmake					...(3)
+$ gmake install				...(4)
+$ gmake distclean
+$ ./configure --with-vendormpi=ibmmpi --with-binmode=64	...(2)
+$ gmake					...(3)
+$ gmake install				...(4)
+
+</pre>
+
+<p>(1) Move to the source directory.
+
+<p>(2) Invoke the configurer.
+
+<p>The <b>--with-vendormpi=ibmmpi</b> specifies to use
+Vendor&nbsp;MPI.
+
+<p>The <b>--with-binmode=32/64</b> specifies binary mode.  Use
+<b>--with-binmode=no</b> to use a compiler default mode (or when the
+compiler does not support options to control the mode).  Use
+<b>--with-binmode=32/64</b> to use both modes.  The
+<i>configure-make-install</i> procedure shall be performed twice, once
+for 32bit mode and once for 64bit mode.  Also specify <b>-q32/-q64</b>
+to <b>mpicc</b> at compiling applications.  Do not forget
+<b>gmake&nbsp;distclean</b> between two runs of <b>configure</b>.
+
+<p>Check the configuration output.  Note that the configure runs
+twice: the first run is for GridMPI, and the second run is for YAMPI.
+The configurer of GridMPI calls the configurer of YAMPI inside.
+
+<p>Check that <b>--with-vendormpi</b> is <b>ibmmpi</b>.
+
+<blockquote><caption><b>Configuration (output from configure)</b></caption>
+<table border=1 rules=none cellpadding=5><tr><td><pre>
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               yes
+  --with-binmode                        32/64
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --enable-mem                          yes
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  <b>--with-vendormpi                      ibmmpi</b>
+  --with-libckpt                        no
+  --with-libpsp                         no
+  --enable-dlload                       yes
+
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               yes
+  --with-binmode                        32/64
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --enable-mem                          yes
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  --with-gridmpi                        yes
+  <b>--with-vendormpi                      ibmmpi</b>
+  --with-libckpt                        no
+  --with-libckpt-includedir             no
+  --with-libckpt-libdir                 no
+  --enable-dlload                       yes
+</pre></table></blockquote>
+
+<p>(3) Make with gmake.
+
+<p>(4) Install.
+
+<p>Files are installed in <b>$MPIROOT/bin</b>,
+<b>$MPIROOT/include</b>, and <b>$MPIROOT/lib</b>.
+
+<p><b>NOTE</b>: <b>gmake&nbsp;distclean</b> is necessary to clean the
+all configuration state when compiling with a different configuration.
+Also note that it removes all Makefiles.
+
+<!-- ================================ -->
+<h3>2.5. Checking the Installed Files</h3>
+<!-- ================================ -->
+
+<p>Check the files in the installation directories.
+
+<p>(1) In $MPIROOT/bin,
+
+<pre>
+	mpicc, mpif77, mpic++, mpif90, mpirun, gridmpirun,
+	impi-server, mpifork, nsd, canquit, detach
+	(and some utility shell scripts)
+</pre>
+
+<p>(2) In $MPIROOT/include,
+
+<pre>
+	mpi.h, mpif.h, mpi-1.h, mpi-2.h mpic++.h
+</pre>
+
+<p>(3) In $MPIROOT/lib,
+
+<pre>
+	libmpi32.a	(--with-binmode=32 case)
+	libmpi64.a	(--with-binmode=64 case)
+</pre>
+
+<p>(4) Check the commands are in the path.
+
+<pre class="screen">
+$ which mpicc
+$ which mpif77
+$ which mpirun
+</pre>
+
+<!-- ================================ -->
+<h3>2.6. Testing Compilation</h3>
+<!-- ================================ -->
+
+<p>Compile <b>pi.c</b> in the <b>src/test/basic</b> directory.
+
+<p>(1) Compile a test program.
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x/src/test/basic/
+$ mpicc -q32 -O3 pi.c (for 32bit binary)
+$ mpicc -q64 -O3 pi.c (for 64bit binary)
+</pre>
+
+<!-- ================================ -->
+<h3>2.7. Starting a Program (as a Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>In the IBM-MPI environment, IBM POE (Parallel Operating
+Environment) is used to start MPI processes.  Nodes are specified by a
+file <b>host.list</b> in POE by default.  In using POE with the
+LoadLeveler, a batch command file <b>llfile</b> is needed.
+
+<p>(1) Create a configuration file.
+
+<p>Content of host.list:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+node00
+node01
+</pre></table></blockquote>
+
+<p>Content of llfile:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+#@job_type=parallel
+#@resources=ConsumableCpus(1)
+#@queue
+</pre></table></blockquote>
+
+<p>(2) Run an application (a.out) as a cluster MPI.
+
+<pre class="screen">
+$ mpirun -np 2 ./a.out -llfile llfile
+</pre>
+
+<p><b>NOTE</b>: In no LoadLeveler environment, the specification of
+<b>-llfile&nbsp;llfile</b> is not necessary.
+
+<p><b>mpirun</b> calls <b>poe</b> command inside to start MPI
+processes in the IBM POE.  In the process, the <b>-c</b> argument is
+renamed with the <b>-hostfile</b> argument for <b>poe</b> command.
+
+<!-- ================================ -->
+<h3>2.8. Starting a Program (as a Multiple-Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>(1) Create configuration files.  Here, two <b>node00</b> entries in
+<b>host1.list</b>, and two <b>node01</b> entries in <b>host2.list</b>.
+
+<p>Content of <b>host1.list</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+node00
+node00
+</pre></table></blockquote>
+
+<p>Content of <b>host2.list</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+node01
+node01
+</pre></table></blockquote>
+
+<p>Content of <b>llfile</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+#@job_type=parallel
+#@resources=ConsumableCpus(1)
+#@queue
+</pre></table></blockquote>
+
+<p>(2) Run an application (a.out).
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0
+$ impi-server -server 2 &amp;
+$ mpirun -client 0 <i>addr:port</i> -np 2 -c host1.list ./a.out -llfile llfile &amp;
+$ mpirun -client 1 <i>addr:port</i> -np 2 -c host2.list ./a.out -llfile llfile
+</pre>
+
+<p><b>NOTE</b>: In no LoadLeveler environment, the specification of
+<b>-llfile&nbsp;llfile</b> is not necessary.
+
+<p>See <b>Installation on Linux Clusters</b> for descriptions.
+[<a href="#pcc_mpirun2">jump</a>]
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="fjmpi"></a>
+<h2>3. Installation on Fujitsu Solaris/SPARC64V</h2>
+
+<p>GridMPI supports Fujitsu MPI and Fujitsu compilers in Solaris8
+(Fujitsu PrimePower Series).
+
+<!-- ================================ -->
+<h3>3.1. Prerequisite</h3>
+<!-- ================================ -->
+
+<p>GridMPI/YAMPI needs following (non-standard) commands to compile.
+
+<pre>
+	- Fujitsu c99/f90
+	- Fujitsu MPI (Parallelnavi)
+	- gmake (GNU make)
+	- makedepend (in /usr/openwin/bin)
+</pre>
+
+<p>The configurer assumes the Fujitsu compilers are installed in
+directory <b>/opt/FSUNf90</b>, and the Fujitsu MPI in
+<b>/opt/FJSVmpi2</b> and <b>/opt/FSUNaprun</b>.  GridMPI/YAMPI uses
+Fujitsu <b>c99</b> to compile the source code.
+
+<!-- ================================ -->
+<h3>3.2. Setting Environment Variables</h3>
+<!-- ================================ -->
+
+<pre class="screen">
+# Example assumes /opt/gridmpi as MPIROOT
+
+(For sh/bash)
+$ MPIROOT=/opt/gridmpi; export MPIROOT
+$ PATH="$MPIROOT/bin:/opt/FSUNf90/bin:/opt/FSUNaprun/bin:/usr/ccs/bin:$PATH"; export PATH
+$ LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/FSUNf90/lib:/opt/FJSVmpi2/lib:\
+/opt/FSUNaprun/lib"; export LD_LIBRARY_PATH
+$ LD_LIBRARY_PATH_64="$LD_LIBRARY_PATH_64:/opt/FSUNf90/lib/sparcv9:\
+/opt/FJSVmpi2/lib/sparcv9:/opt/FSUNaprun/lib/sparcv9:\
+/usr/ucblib/sparcv9:/usr/lib/sparcv9"; export LD_LIBRARY_PATH_64
+
+(For csh/tcsh)
+% setenv MPIROOT /opt/gridmpi
+% set path=($MPIROOT/bin /opt/FSUNf90/bin /opt/FSUNaprun/bin /usr/ccs/bin $path)
+% setenv LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:/opt/FSUNf90/lib:/opt/FJSVmpi2/lib:\
+/opt/FSUNaprun/lib"
+% setenv LD_LIBRARY_PATH_64 "${LD_LIBRARY_PATH_64}:/opt/FSUNf90/lib/sparcv9:\
+/opt/FJSVmpi2/lib/sparcv9:/opt/FSUNaprun/lib/sparcv9:\
+/usr/ucblib/sparcv9:/usr/lib/sparcv9"
+</pre>
+
+<!-- ================================ -->
+<h3>3.3. Unpacking the Source</h3>
+<!-- ================================ -->
+
+<p>
+<p>See <b>Installation on Linux Clusters.</b>
+[<a href="#pcc_unpack">jump</a>]
+
+<!-- ================================ -->
+<h3>3.4. Compiling the Source</h3>
+<!-- ================================ -->
+
+<p>The procedure slightly differs from the Linux Clusters case in
+specifying <b>--with-vendormpi</b> to the configurer and in using
+gmake to compile.
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x			...(1)
+$ CC=c99 CXX=FCC F77=frt F90=f90 ./configure --with-vendormpi=fjmpi --with-binmode=32	...(2)
+$ gmake					...(3)
+$ gmake install				...(4)
+$ gmake distclean
+$ CC=c99 CXX=FCC F77=frt F90=f90 ./configure --with-vendormpi=fjmpi --with-binmode=64	...(2)
+$ gmake					...(3)
+$ gmake install				...(4)
+</pre>
+
+<p>(1) Move to the source directory.
+
+<p>(2) Invoke the configurer.
+
+<p>The <b>--with-vendormpi=fjmpi</b>
+specifies to use Vendor&nbsp;MPI.
+
+<p>The <b>--with-binmode=no/32/64</b> specifies binary mode.  Use
+<b>--with-binmode=no</b> to use a compiler default mode (or when the
+compiler does not support options to control the mode).  Use
+<b>--with-binmode=32/64</b> to use both modes.  The
+<i>configure-make-install</i> procedure shall be performed twice, once
+for 32bit mode and once for 64bit mode.  Also specify <b>-q32/-q64</b>
+to <b>mpicc</b> at compiling applications.  Do not forget
+<b>gmake&nbsp;distclean</b> between two runs of <b>configure</b>.
+
+<p>Check the configuration output.  Note that the configure runs
+twice: the first run is for GridMPI, and the second run is for YAMPI.
+The configurer of GridMPI calls the configurer of YAMPI inside.
+
+<p>Check that <b>--with-vendormpi</b> is <b>fjmpi</b>.
+
+<blockquote><caption><b>Configuration (output from configure)</b></caption>
+<table border=1 rules=none cellpadding=5><tr><td><pre>
+Configuration
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               yes
+  --with-binmode                        32/64
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --enable-mem                          yes
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  <b>--with-vendormpi                      fjmpi</b>
+  --with-libckpt                        no
+  --with-libpsp                         no
+  --enable-dlload                       yes
+
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               yes
+  --with-binmode                        32/64
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --enable-mem                          yes
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  --with-gridmpi                        yes
+  <b>--with-vendormpi                      fjmpi</b>
+  --with-libckpt                        no
+  --with-libckpt-includedir             no
+  --with-libckpt-libdir                 no
+  --enable-dlload                       yes
+</pre></table></blockquote>
+
+<p>(3) Make with gmake.
+
+<p>(4) Install.
+
+<p>Files are installed in <b>$MPIROOT/bin</b>,
+<b>$MPIROOT/include</b>, and <b>$MPIROOT/lib</b>.
+
+<p><b>NOTE</b>: <b>gmake&nbsp;distclean</b> is necessary to clean the
+all configuration state when compiling with a different configuration.
+Also note that it removes all Makefiles.
+
+<!-- ================================ -->
+<h3>3.5. Checking the Installed Files</h3>
+<!-- ================================ -->
+
+<p>Check the files in the installation directories.
+
+<p>(1) In $MPIROOT/bin,
+
+<pre>
+	mpicc, mpif77, mpic++, mpif90, mpirun, gridmpirun,
+	impi-server, mpifork, nsd, canquit, detach
+	(and some utility shell scripts)
+</pre>
+
+<p>(2) In $MPIROOT/include,
+
+<pre>
+	mpi.h, mpif.h, mpi-1.h, mpi-2.h mpic++.h
+</pre>
+
+<p>(3) In $MPIROOT/lib,
+
+<pre>
+	libmpi32.so libmpi_frt32.a libmpi_gmpi32.so (--with-binmode=32 case)
+	libmpi64.so libmpi_frt64.a libmpi_gmpi64.so (--with-binmode=64 case)
+</pre>
+
+<p>(4) Check the commands are in the path.
+
+<pre class="screen">
+$ which mpicc
+$ which mpif77
+$ which mpirun
+</pre>
+
+<!-- ================================ -->
+<h3>3.6. Testing Compilation</h3>
+<!-- ================================ -->
+
+<p>Compile <b>pi.c</b> in the <b>src/test/basic</b> directory.
+
+<p>(1) Compile a test program.
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x/src/test/basic/
+$ mpicc -q32 -Kfast pi.c (for 32bit binary)
+$ mpicc -q64 -Kfast -KV9 pi.c (for 64bit binary)
+</pre>
+
+<!-- ================================ -->
+<h3>3.7. Starting a Program (as a Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>In the Fujitsu MPI environment, MPI runtime
+<b>/opt/FJSVmpi2/bin/mpiexec</b> is used to start MPI processes.
+Options to <b>mpirun</b> are translated and passed to Fujitsu MPI
+mpiexec: <b>-np</b> to <b>-n</b> and <b>-c</b> to <b>-nl</b>.  The
+contents of the host configuration file specified by <b>-c</b> is
+traslated to the nodelist format of <b>-nl</b>, and the configuration
+file should be a list of the host names (a host per line, comments not
+allowed).
+
+<p>(1) Run an application (a.out) as a cluster MPI.
+
+<p>Configuration file is not needed.  Fujitsu MPI automatically
+configures for available nodes.
+
+<pre class="screen">
+$ mpirun -np 2 ./a.out
+</pre>
+
+<p><b>mpirun</b> accepts the node list option <b>-nl</b> when
+configured with Fujitsu MPI.  For example, only node zero should be
+used in the run, pass a list of zeros to the <b>-nl</b> option (one
+more zeros is needed to the number to the MPI processes which is
+assigned to the daemon process).
+
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+mpirun -np 4 -nl 0,0,0,0,0
+</pre></table></blockquote>
+
+<p><b>mpirun</b> accepts the <b>-c</b> option, which is intended for
+using with NODELIST of PBS Pro.
+
+<!-- ================================ -->
+<h3>3.8. Starting a Program (as a Multiple-Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>(1) Run an application (a.out).
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0
+$ impi-server -server 2 &amp;
+$ mpirun -client 0 <i>addr:port</i> -np 2 ./a.out &amp;
+$ mpirun -client 1 <i>addr:port</i> -np 2 ./a.out
+</pre>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="sx"></a>
+<h2>4. Installation on NEC SX Series</h2>
+
+<p>GridMPI/YAMPI only partially supports NEC SX with Super-UX.  It
+does not support NEC MPI as a vendor MPI.  It does not support shared
+memory communication, and uses sockets inside a node.
+
+<p>Running GridMPI/YAMPI on SX is very restricted by resource
+limitation.  SX only allows very small number of socket connections;
+we observed the limit of running six processes on a node by the
+default setting.  The number of sockets is limited to 255 as of the
+default parameter setting.
+
+<p>GridMPI/YAMPI is only tested lightly on a single processor SX6i,
+with SUPER-UX 17.1, and the cross compiling environment crosskit r171.
+
+<!--
+C++/SX Version 1.0
+C++/SX Driver   Rev.072  2006/03/03
+C++/SX Compiler Rev.072  2006/03/03
+sxld: V10.13 for SX-6
+-->
+
+<!-- ================================ -->
+<h3>4.1. Prerequisite</h3>
+<!-- ================================ -->
+
+<p>GridMPI/YAMPI needs the cross compiling environment (crosskit) on
+Linux.
+
+<p>SX cross compiler commands:
+<pre>
+	- sxcc, sxas, sxar, and others.
+</pre>
+
+<p>GridMPI/YAMPI also needs an optional package for IPv6 support.  It
+includes files <b>netdb.h</b>, <b>netinet/in.h</b>, <b>stdint.h</b>,
+and <b>stdio.h</b> in <b>/SX/opt/include</b>; and <b>libsxnet.a</b> in
+<b>/SX/opt/lib/</b>.  The package is unnamed and may not be available
+commercially.  Please ask sales person of NEC if configure fails with
+a message like following:
+
+<pre class="screen">
+Optional package (libsxnet.a) is required: /SX/opt/lib/libsxnet.a is not found.
+</pre>
+
+<!-- ================================ -->
+<h3>4.2. Setting Environment Variables</h3>
+<!-- ================================ -->
+
+<pre class="screen">
+# Example assumes /opt/gridmpi as MPIROOT
+
+(For sh/bash)
+$ MPIROOT=/opt/gridmpi; export MPIROOT
+$ SX_BASE_CPLUS=/SX/opt/sxc++/CC; export SX_BASE_CPLUS
+$ PATH="$MPIROOT/bin:/SX/opt/sxc++/inst/bin:/SX/opt/sxf90/inst/bin:\
+/SX/opt/crosskit/inst/bin:$PATH"; export PATH
+
+(For csh/tcsh)
+% setenv MPIROOT /opt/gridmpi
+% setenv SX_BASE_CPLUS /SX/opt/sxc++/CC
+% set path=($MPIROOT/bin /SX/opt/sxc++/inst/bin /SX/opt/sxf90/inst/bin \
+	/SX/opt/crosskit/inst/bin $path)
+</pre>
+
+<!-- ================================ -->
+<h3>4.3. Unpacking the Source</h3>
+<!-- ================================ -->
+
+<p>
+<p>See <b>Installation on Linux Clusters.</b>
+[<a href="#pcc_unpack">jump</a>]
+
+<!-- ================================ -->
+<h3>4.4. Compiling the Source</h3>
+<!-- ================================ -->
+
+<p>The procedure slightly differs from the Linux Clusters case in
+specifying <b>--target</b> and <b>--host</b> for cross compiling.
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x			...(1)
+$ ./configure --target=sx6-nec-superux17.1 --host=sx6-nec-superux17.1	...(2)
+$ make					...(3)
+$ make install				...(4)
+</pre>
+
+<p>(1) Move to the source directory.
+
+<p>(2) Invoke the configurer.
+
+<p>Check the configuration output.  Note that the configure runs
+twice: the first run is for GridMPI, and the second run is for YAMPI.
+The configurer of GridMPI calls the configurer of YAMPI inside.
+
+<blockquote><caption><b>Configuration (output from configure)</b></caption>
+<table border=1 rules=none cellpadding=5><tr><td><pre>
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               no
+  --with-binmode                        no
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  --with-vendormpi                      no
+  --with-libckpt                        no
+  --with-libpsp                         no
+  --enable-dlload                       no
+
+Configuration
+  MPIROOT                               /opt/gridmpi
+  --enable-debug                        no
+  --enable-pmpi-profiling               no
+  --with-binmode                        no
+  --with-binmode-default
+  --enable-threads                      yes
+  --enable-signal-onesided              no
+  --with-score                          no
+  --with-mx                             no
+  --with-openib                         no
+  --with-gridmpi                        yes
+  --with-vendormpi                      no
+  --with-libckpt                        no
+  --with-libckpt-includedir             no
+  --with-libckpt-libdir                 no
+  --enable-dlload                       no
+</pre></table></blockquote>
+
+<p>(3) Make with make.
+
+<p>(4) Install.
+
+<p>Files are installed in <b>$MPIROOT/bin</b>,
+<b>$MPIROOT/include</b>, and <b>$MPIROOT/lib</b>.
+
+<!-- ================================ -->
+<h3>4.5. Checking the Installed Files</h3>
+<!-- ================================ -->
+
+<p>Check the files in the installation directories.
+
+<p>(1) In $MPIROOT/bin,
+
+<pre>
+	mpicc, mpif77, mpic++, mpif90, mpirun, gridmpirun,
+	impi-server, mpifork, nsd, canquit, detach
+	(and some utility shell scripts)
+</pre>
+
+<p>(2) In $MPIROOT/include,
+
+<pre>
+	mpi.h, mpif.h, mpi-1.h, mpi-2.h mpic++.h
+</pre>
+
+<p>(3) In $MPIROOT/lib,
+
+<pre>
+	libmpi.a libmpif.a
+</pre>
+
+<p>(4) Check the commands are in the path.
+
+<pre class="screen">
+$ which mpicc
+$ which mpif77
+$ which mpirun
+</pre>
+
+<!-- ================================ -->
+<h3>4.6. Testing Compilation</h3>
+<!-- ================================ -->
+
+<p>Compile <b>pi.c</b> in the <b>src/test/basic</b> directory.
+
+<p>(1) Compile a test program.
+
+<pre class="screen">
+$ cd $HOME/gridmpi-2.x/src/test/basic/
+$ mpicc pi.c
+</pre>
+
+<!-- ================================ -->
+<h3>4.7. Starting a Program (as a Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>The way <b>mpirun</b> command starts MPI processes is the same as
+the Linux Clusters case.  However, there are two slightly different
+ways to start MPI processes. 
+
+<p>One way is to run <b>mpirun</b> on SX itself.  In this case, set
+<b>_YAMPI_RSH</b> environment variable as <b>#</b> (one "sharp"
+character), when SX does not allow a remote shell running on itself.
+The sharp-sign instructs <b>mpirun</b> to simply <b>fork</b>, instead
+of to use a remote shell.
+
+<pre class="screen">
+$ _YAMPI_RSH='#'; export _YAMPI_RSH
+</pre>
+
+<p>The other way is to run <b>mpirun</b> on the Linux front-end.  In
+this case, set the <b>_YAMPI_RSH</b> environment variable as
+<b>rsh</b>, when SX only allows rsh as a remote shell.
+
+<pre class="screen">
+$ _YAMPI_RSH=rsh; export _YAMPI_RSH
+$ _YAMPI_MPIFORK=/opt/gridmpi/bin/mpifork; export _YAMPI_MPIFORK
+$ _YAMPI_MPIRUN_NOFULLPATH=1; export _YAMPI_MPIRUN_NOFULLPATH
+$ _YAMPI_MPIRUN_SPREAD=255; export _YAMPI_MPIRUN_SPREAD
+$ _YAMPI_MPIRUN_CHDIR=0; export _YAMPI_MPIRUN_CHDIR
+$ _YAMPI_MPIRUN_RLIMIT=0; export _YAMPI_MPIRUN_RLIMIT
+</pre>
+
+<p>Note: Set <b>_YAMPI_MPIFORK</b> to a command runnable on the Linux
+front-end, and set <b>_YAMPI_MPIRUN_NOFULLPATH=1</b> to use just
+"mpifork" on the remote nodes (thus use one found in the path),
+otherwise, the same one as <b>_YAMPI_MPIFORK</b> is used on the remote
+nodes.  Setting <b>_YAMPI_MPIRUN_CHDIR=0</b> disables chdir, and
+setting <b>_YAMPI_MPIRUN_RLIMIT=0</b> disables setrlimit on the remote
+nodes; set them if needed.
+
+<p>(1) Run an application (a.out) as a cluster MPI.
+
+<p>Configuration file is <b>mpi_conf</b> in the current directory.
+
+<pre class="screen">
+$ mpirun -np 2 ./a.out
+</pre>
+
+<p>If SX would claim shortage of socket buffers, set
+<b>_YAMPI_SOCBUF</b> and <b>IMPI_SOCBUF</b> to zero to use the system
+default.  GridMPI/YAMPI sets the socket buffer size to 64K bytes by
+default, which would seem to be fairly large for the Super-UX default.
+
+<!-- ================================ -->
+<h3>4.8. Starting a Program (as a Multiple-Cluster MPI)</h3>
+<!-- ================================ -->
+
+<p>(1) Run an application (a.out).
+
+<pre class="screen">
+$ export IMPI_AUTH_NONE=0
+$ impi-server -server 2 &amp;
+$ mpirun -client 0 <i>addr:port</i> -np 2 ./a.out &amp;
+$ mpirun -client 1 <i>addr:port</i> -np 2 ./a.out
+</pre>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="platforms"></a>
+<h2>5. Notes on Platforms and Compilers</h2>
+
+<h3>5.1. SCore PM</h3>
+
+<p><b>SCore</b> is a Linux clustering package developed and
+distributed by the PC Cluster Consortium [<a
+href="http://www.pccluster.org/">http://www.pccluster.org/</a>].
+<b>PM</b> is the fast and abstract messaging library of SCore.
+GridMPI/YAMPI supports PM, which in turn supports many fast
+communication hardware, such as Myrinet, InfiniBand, and Ethernet
+(fast non-TCP/IP protocol), and also supports one-copy shared memory
+communication.
+
+<p>Specify <b>--with-score</b> to the configurer to use PM on SCore.
+
+<pre class="screen">
+$ ./configure --with-score
+</pre>
+
+<h3>5.2. Myrinet MX</h3>
+
+<p>GridMPI/YAMPI also directly supports Myrinet MX, not via PM on
+SCore.
+
+<p>Specify <b>--with-mx</b> to the configurer to use MX.
+
+<pre class="screen">
+$ ./configure --with-mx
+</pre>
+
+<h3>5.3. Solaris</h3>
+
+<p>GridMPI/YAMPI should work on Solaris 10 and later, although it is
+not fully tested.  It can be installed and used very much like Linux
+clusters.  The exceptions are:
+
+<ul>
+
+<li>Use Sun Studio 11 (and later) or GNU GCC.  GridMPI/YAMPI is
+written conforming to ISO C99, but earlier versions of Sun Studio only
+partially support C99.
+
+<li>Use gmake (GNU make).  Makefiles are in the gmake format.
+
+</ul>
+
+<h3>5.4. MacOS X (both IA32 or PowerPC)</h3>
+
+<p>GridMPI/YAMPI should work in MacOS X (Darwin 8.x), although it is
+not fully tested.  It can be installed and used very much like Linux
+clusters.
+
+The exceptions are:
+
+<ul>
+
+<li>Disable PMPI profiling (automatically disabled).  Compilers and
+linkers of MacOS do not support weak-symbols, and PMPI profiling
+feature is disabled by the configurer.
+
+<li>Disable the shared memory p2p-layer (automatically disabled).  The
+pthread library of MacOS does not support "Thread Process-Shared
+Synchronization", and GridMPI/YAMPI needs it in the share memory
+p2p-layer.
+
+</ul>
+
+<h3>5.5. FreeBSD/IA32</h3>
+
+<p>GridMPI/YAMPI should work in FreeBSD, although it is not fully
+tested.  It can be installed and used very much like Linux clusters.
+
+<h3>5.6. PGI Compiler</h3>
+
+<p>PGI 6.x or earlier does not supoort needed features of ISO C99.
+
+<p>While PGI compiler cannot be used to compile GridMPI/YAMPI, PGI C,
+C++, and Fortran compilers can be used to compile applications.
+GridMPI/YAMPI includes variations of Fortran symbols, and it can be
+linked to the code compiled with PGI Fortran compiler even when
+GridMPI/YAMPI is compiled with GCC.  It does not need reconfiguration
+and recompilation of GridMPI/YAMPI.
+
+<p>However, it needs some setup to tell the compiler driver
+<b>mpicc</b> about the Fortran compiler and its options.  The
+environment variables <b>_YAMPI_F77</b>, <b>_YAMPI_EXTFOPT</b> and
+others can be used to override the default setting.
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="gridmpi"></a>
+<h2>6. Info: Structure of GridMPI Execution</h2>
+
+<p>In running a single cluster MPI, processes are started by
+<b>mpirun</b> (without the <b>-client</b> option).  It is just a
+cluster MPI, YAMPI, and the YAMPI protocol is used in communication.
+
+<p>In running a multiple-cluster MPI, processes are started by
+<b>mpirun -client <i>n</i> <i>ip-address-port</i></b> for each MPI
+job.  Multiply invoked MPI jobs join by connecting to an
+<b>impi-server</b> process.
+
+<p>The <b>impi-server</b> is a process to exchange information of
+processes (e.g., IP address/port pairs of the processes) from multiple
+MPI invocations.  It does nothing after exchanging information until
+joining processes in MPI_Finalize.
+
+<p>In multiple-cluster MPI, the YAMPI protocol is used for
+intra-cluster communication, and the IMPI (Interoperable MPI) protocol
+is used for inter-cluster communication.  Multiply started MPI
+processes receives their rank with regard to the client number.  The
+lowest ranks are assigned to the processes started with <b>mpirun
+-client 0</b> and the next lowest are to processes started with
+<b>mpirun -client 1</b>, and so on.
+
+<center><pre class="code">
+                        IMPI Protocol
+          +---------+===================+---------+
+          |         |                   |         |
+    +-----|---------|-----+       +-----|---------|-----+ 	+--------+
+    | +-------+ +-------+ |       | +-------+ +-------+ |	| impi-	 |
+    | | rank0 | | rank1 | |       | | rank2 | | rank3 | |	| server |
+    | +-------+ +-------+ |       | +-------+ +-------+ |	+--------+
+    |     |         |     |       |     |         |     |
+    |     +=========+     |       |     +=========+     |
+    |   YAMPI Protocol    |       |   YAMPI Protocol    |
+    +---------------------+       +---------------------+
+       mpirun -client 0		     mpirun -client 1
+</pre></center>
+
+<!-- ================================================================ -->
+
+<!--
+<hr>
+
+<a name="gridmpirun"></a>
+<h2>7. Test with GRIDMPIRUN Script</h2>
+
+<p><b>gridmpirun</b> is a simple frontend script to invoke the
+<b>impi-server</b> and a number of mpirun via an rsh/ssh.  It reads
+its own configuration file and starts processes as specified.
+
+<p><b>impi_conf</b> specifies the way to start MPI processes on each
+cluster.
+
+<p>(1) Create configuration files.  Here, two <b>node00</b> entires in
+<b>host1.list</b>, and two <b>node01</b> entries in <b>host2.list</b>.
+
+<p>Content of host1.list:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+node00
+node00
+</pre></table></blockquote>
+
+<p>Content of host2.list:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+node01
+node01
+</pre></table></blockquote>
+
+<p>Content of <b>impi_conf</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+-np 2 -c host1.list
+-np 2 -c host2.list
+</pre></table></blockquote>
+
+<p>Content of <b>llfile</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+#@job_type=parallel
+#@resources=ConsumableCpus(1)
+#@queue
+</pre></table></blockquote>
+
+<p>(2) Run an application (a.out).
+
+<pre class="screen">
+$ gridmpirun -np 4 -machinefile impi_conf ./a.out -llfile llfile
+</pre>
+
+<p><b>-np</b> specifies the total number of MPI processes.  gridmpirun
+breaks up the number into the sum of the number of processes of each
+cluster.
+-->
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2008/02/19 09:16:10 $)</i></font>
+
+<!--
+Local Variables:
+mode: Fundamental
+End:
+-->
+</body></html>

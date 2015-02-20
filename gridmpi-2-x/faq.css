@@ -1,0 +1,62 @@
+/* $Id: faq.css,v 1.1 2007/11/16 10:42:41 matu Exp $ */
+
+body {
+	font-family: verdana,arial,helvetica,sans-serif;
+	color: #333333;
+}
+
+h2 {
+	width: 90%;
+	font-family: verdana,arial,helvetica,sans-serif;
+	font-weight: bold;
+	color: white;
+	background-color: slateblue;
+	padding: 5px 3px 3px 0.5em;
+}
+
+h3 {
+	width: 90%;
+	font-family: verdana,arial,helvetica,sans-serif;
+	color: white;
+	background-color: gray;
+	padding: 5px 3px 3px 0.5em;
+}
+
+h4 {
+	text-decoration: underline;
+	color: black;
+	background-color: white;
+	padding: 5px 3px 3px 0.5em;
+}
+
+p {
+	text-indent: 1em;
+}
+
+dl.faq dt {
+	background-color: lavender;
+	margin: 1em 0% 1em 0%;
+}
+
+pre.screen {
+	color: black;
+	background: lavender;
+	border: 1px solid blue;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	margin-left: 2em;
+	margin-right: 2em;
+	padding: 1ex;
+}
+
+th {
+	background-color: darkblue;
+	color: white;
+	text-align: center;
+}
+
+table {
+	margin: 5px 5px 15px 5px;
+	border: 1px solid black;
+	text-align: left;
+}

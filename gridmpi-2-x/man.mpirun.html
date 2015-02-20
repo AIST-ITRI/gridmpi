@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Commands
+<td align="right">mpirun (1MPI)
+</tr></tbody></table>
+
+<h3>NAME</h3>
+
+<p>mpirun - start MPI processes in a cluster
+
+<h3>SYNOPSIS</h3>
+
+<blockquote>
+<p>mpirun -np <i>nprocs</i>
+[-c <i>configuration-file</i>]
+[-dryrun]
+[-debug <i>level</i>]
+[-nr <i>nprocs-reserved</i>]
+[-wid <i>world-id</i>]
+[-scrun <i>argument</i>]
+[-nl <i>process-list</i>]
+[-tv]
+[-restart]
+[-ckptdir <i>directory</i>]
+[-arch <i>arch</i>]
+[-nounix]
+<i>program</i> ...
+
+<p>mpirun -client <i>client</i> <i>address:port</i>
+-np <i>nprocs</i>
+[-c <i>configuration-file</i>]
+[-dryrun]
+[-debug <i>level</i>]
+[-nr <i>nprocs-reserved</i>]
+[-wid <i>world-id</i>]
+[-scrun <i>argument</i>]
+[-nl <i>process-list</i>]
+[-tv]
+[-restart]
+[-ckptdir <i>directory</i>]
+[-arch <i>arch</i>]
+[-nounix]
+<i>program</i> ...
+</blockquote>
+
+<h3>DESCRIPTION</h3>
+
+<p>The first synopsis runs MPI processes for a single cluster.  The
+host names to run processes on are taken from the configuration file.
+
+<p>The second synopsis with <b>-client</b> option runs MPI processes
+for multiple clusters.  The option specifies the IP address (IPv4) and
+the port number of the impi-server process which should be started in
+advance.  The <b>-np</b> option specifies the number of processes in a
+local cluster.
+
+<p><b>mpirun</b> command only invokes local MPI processes in a
+cluster, and the <b>-np</b> option specifies the number of local
+processes.  The host names to run processes on are taken from a
+configuration file as the first synopsis, which needs only include
+local hosts.  The clusters exchange information about the total number
+of processes and host addresses by themselves via the IMPI server in
+the startup stage.
+
+<h3>OPTIONS</h3>
+
+<p>The following options are supported:
+
+<dl>
+
+<dt><b>-np</b> <i>nprocs</i>
+
+<dd>Specifies the number of MPI processes to start.
+
+<dt><b>-c</b> <i>configuration-file</i>
+
+<dd>Specifies the configuration file (-machinefile as in MPICH).  It
+is a list of hostnames one per line.  The default is <b>"mpi_conf"</b>
+in the current directory.  The configuration file should include the
+same or more lines of host names than the
+<i>nprocs</i> argument.
+
+<dt><b>-machinefile</b> <i>configuration-file</i>
+
+<dd>Synonym of <b>-c</b> <i>configuration-file</i>.
+
+<dt><b>-client</b> <i>client</i> <i>address:port</i>
+
+<dd>Specifies the cluster number (n-th of clusters) of this mpirun is
+for.  The argument <i>client</i> specifies a cluster serially by an
+integer ranging between 0 to 31, up to the number of clusters given to
+the impi-server.  <i>address:port</i> specifies the contact to the
+impi-server.  The impi-server prints its address:port at startup.
+
+<p>The word <i>client</i> means for each cluster in a single job,
+following the IMPI specification.
+
+<p>MPI process ranks in clusters will be given contiguously, and
+processes in a cluster with lesser client number will have lesser
+ranks.  Thus, cleint 0 includes rank 0.
+
+<p>This is specified in the IMPI specification, where the command is
+named as <b>impirun</b> instead of normal <b>mpirun</b>.
+
+<dt><b>-dryrun</b>
+
+<dd>Prints the command that would be used without running them.
+
+<dt><b>-debug</b> <i>level</i>
+
+<dd>Specifies the debugging level.  This is effective only when
+GridMPI is configured as debugging.
+
+<dt><b>-nr</b> <i>nprocs-reserved</i>
+
+<dd>Specifies the number of "reserved" MPI processes for
+<b>MPI_Spawn</b>.  It should include static processes (<b>-np</b>).
+
+<dt><b>-wid</b> <i>world-id</i>
+
+<dd>Specifies the world ID to distinguish worlds for
+<b>MPI_Comm_connect</b> and <b>MPI_Comm_accept</b>.  Unspecified run
+has -1 as the world ID, and calls to <b>MPI_Comm_connect</b> and
+<b>MPI_Comm_accept</b> are prohibited.  Whereas the client number is
+used as the world ID in a run of IMPI (run with the <b>-client</b>
+option), the world ID should be given explicitly because the world IDs
+are not distinct.
+
+<dt><b>-scrun</b> <i>arugment</i>
+
+<dd>(SCore specific) Passes the argument to the <b>scrun</b> command in the
+<b>SCore</b> cluster environment.  Multiple uses of this option just
+concatenate the arguments and passed it to <b>scrun</b>.
+
+<dt><b>-nl</b> <i>process-list</i>
+
+<dd>(Fujitsu-MPI specific) Passes the argument to Fujitsu-MPI
+<b>mpiexec</b> as the <b>-nl</b> option.
+
+<dt><b>-tv</b>
+
+<dd>Enables "Totalview(tm)" debugger.  MPI processes are in the loop
+until the debugger attaches the processes with this option.
+
+<dt><b>-restart</b>
+
+<dd>Specifies restarting from a check-point save file.  See the README
+of checkpointing for more (<i>which is in preparation</i>).
+
+<dt><b>-ckptdir</b> <i>directory</i>
+
+<dd>Specifies a directory for check-point save file.  See the README
+of checkpointing for more (<i>which is in preparation</i>).
+
+<dt><b>-arch</b> <i>arch</i>
+
+<dd>Specifies an "arch", a transport layer to use.  (This is for
+debugging).
+
+<dt><b>-nounix</b>
+
+<dd>Specifies not to use Unix domain sockets for communication on the same
+host.
+
+</dl>
+
+<h3>EXIT STATUS</h3>
+
+<p>The mpirun returns the return code from the process of the lowest
+rank which has normally exited.  Exceptional exits from the processes
+are reported in the stderr, but not counted.  No process exits
+normally, 255 is returned.
+
+<h3>FILES</h3>
+
+<dl>
+<dt><b>mpi_conf</b>
+
+<dd>The default host configuration file.  It consists lines of host
+names to use.  The format is simple: a line for each host.  Comment
+lines are started by "#".  MPI process ranks are assinged from the
+top.  If the list is shorter than the specified number of processes by
+-np option, a resource error is signaled.  THE FORMAT IS FOR YAMPI.
+IT DIFFERS IN THE VENDOR MPI CONFIGUARTION.
+
+</dl>
+
+<h3>ENVIRONMENT VARIABLES</h3>
+
+<dl>
+
+<dt><b>MPIROOT</b>=<i>path-to-the-installation</i>
+
+<dd>Specifies the directory of GridMPI installation.  The mpirun
+command itself can be found in $MPIRUN/bin.
+
+<dt><b>_YAMPI_RSH</b>=<i>remote-shell-command</i>
+
+<dd>Specifies a remote shell command.  Typical choice is "rsh" or
+"ssh".  RSH is the default.
+
+</dl>
+
+<h3>EXAMPLES</h3>
+
+<h4>Example 1</h4>
+
+<pre class="screen">
+% mpirun -np 8 a.out
+</pre>
+
+<p>This starts eight processes in a cluster.
+
+<h4>Example 2</h4>
+
+<pre class="screen">
+% mpirun -np 8 -c mpi_conf a.out
+</pre>
+
+<p>This starts eight processes using the host list in the file
+mpi_conf.
+
+<h4>Example 3</h4>
+
+<pre class="screen">
+% export IMPI_AUTH_NONE=0
+% impi-server -server 2 &amp;
+% mpirun -client 0 192.168.1.10:5678 -np 4 -c mpi_conf1 a.out &amp;
+% mpirun -client 1 192.168.1.10:5678 -np 4 -c mpi_conf2 a.out
+</pre>
+
+<p>This starts two sets of four processes each (total eight) using the
+host lists in the files mpi_conf1 and mpi_conf2.  The IP address is
+the one output from running impi-server.  Normally, two runs of mpirun
+are started on different clusters.
+
+<p>Setting the environment variable IMPI_AUTH_NONE (to any value)
+specifies not to use any authentication, where it is one of the two
+authentication methods defined in the IMPI standard.
+
+<h3>SEE ALSO</h3>
+
+<p><b>mpirun</b> invokes <b>mpifork</b> command in YAMPI to start
+processes in a cluster.  <b>mpifork</b> uses normal RSH/SSH to start
+processes.  <b>mpifork</b> is a standalone program and has many
+options settable via environment variables.  Refer to the description
+of <b>mpifork</b> for its specific behavior.
+
+<p><b>mpirun</b> invokes a vendor-supplied MPI invoker program in the
+vendor&nbsp;MPI configuration, with slightly changing option naming.
+Refer to MPI manuals from vendors for their specific behavior.
+
+<blockquote>
+<table border=1 rules=all cellpadding=3>
+<tr><th>Configuration Key<th>Invoker Command<th>Vendor
+<tr><td>no<td>mpifork<td>GridMPI (YAMPI)
+<tr><td>ibmmpi<td>poe<td>IBM
+<tr><td>fjmpi<td>/opt/FJSVmpi2/bin/mpiexec<td>Fujitsu
+<tr><td>mpich<td>$MP_PREFIX/bin/mpirun <td>MPICH
+<tr><td>mpich2<td>$MP_PREFIX/bin/mpiexec<td>MPICH2
+<tr><td>intelmpi<td>$MP_PREFIX/bin/mpiexec<td>Intel
+</table>
+<p>NOTE: <b>Configuration Key</b> is a word passed to
+<b>--with-vendormpi</b>.
+</blockquote>
+
+<!-- <h3>RESTRICTIONS</h3> -->
+
+<hr>
+<font size=-2><i>($Date: 2007/08/20 10:51:42 $)</i></font>
+<!-- $Id: man.mpirun.html,v 1.4 2007/08/20 10:51:42 matu Exp $ -->
+
+</body></html>

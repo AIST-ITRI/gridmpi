@@ -1,0 +1,330 @@
+<!-- -*-Mode: Fundamental;-*- -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>Internals</title>
+<link href="ref.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<!--
+<div class="index">
+<a class="index" href="index.html">Main&nbsp;Page</a>
+| <a class="index" href="modules.html">Modules</a>
+| ......
+| <a class="index" href="reference.html">Reference</a></div>
+-->
+
+<h1>Internals of GridMPI and YAMPI</h1>
+
+<font size=-2><i>($Date: 2007/05/22 14:51:56 $)</i></font>
+
+<p>This document describes the basic software organization needed for
+developers to modify GridMPI and YAMPI.
+
+<h3>Table of Contents:</h3>
+<hr>
+<ul>
+<li><a href="#overview">Overview</a>
+<!--<li><a href="#base">The MPI-API Layer</a>-->
+<!--<li><a href="#req">The Request Layer</a>-->
+<li><a href="#p2p">P2P Layer Interface</a>
+<li><a href="#ext">Extension Mechanism (Library Loading)</a>
+<li><a href="#impi">IMPI Issues</a>
+<ul>
+<li><a href="#impi.cid">CID Assignment under Threads</a>
+</ul>
+<!--<li><a href="#app.tcp">Appendix: TCP P2P</a>-->
+<!--<li><a href="#app.pm">Appendix: SCore P2P</a>-->
+<!--<li><a href="#app.shm">Appendix: MEM (SMP Shared Memory) P2P</a>-->
+</ul>
+<hr>
+
+<!-- ================================================================ -->
+<h2><a name="overview">Overview</a></h2>
+
+<p>(in preparation)
+
+<hr>
+
+<h3>Software Layers and Source Files</h3>
+
+<table border=1 rules=all cellpadding=3>
+<tr><td align="center">
+<i>(MPI API)</i><br>
+fortran.c mpi1funcs.c mpi2funcs.c
+<tr><td align="center">
+<i>(API written in MPI)</i><br>
+coll.c onesided.c fileio1.c fileio2.c fileio3.c
+<tr><td align="center">
+<i>(MPI Core Functions)</i><br>
+communicator.c group.c keyval.c
+operator.c topology.c errmsg.c misc.c
+<tr><td align="center">
+<i>(Basic Communication)</i><br>
+sendrecv.c datatype.c packunpack.c
+<tr><td align="center">
+<i>(Request Mangement)</i><br>
+request.c
+<tr><td align="center">
+<i>(Initialization)</i><br>
+environment.c rpim.c process.c
+<tr><td align="center">
+<i>(Utilities)</i><br>
+commops.c commdebugops.c prof.c ckpt.c
+sockutil.c util-backtrace.c utility.c
+</table>
+
+<!-- ================================================================ -->
+<h2><a name="p2p">P2P Layer Interface</a></h2>
+
+<p>(The belows are the extracts from the source.  See the comments for
+up-to-date descriptions).
+
+<h3>Interfaces to P2P Layer</h3>
+
+<p>Operations in the p2p-layer is invoked through a table in
+<b>YamConHandle</b> (Connection Handler).
+
+<dl>
+
+<dt>int (*<b>topsend</b>)(struct YamConHandle*, YamReq*, int)
+
+<dd>schedules a send of a YamReq.  Typically, it enqueues a YamReq in
+the send queue.  The third argument of {topsend} indicates that it is
+called from {_YampiPostSend}, in which case it is allowed to call
+{_YampiPollP2P}, otherwise it is already called through it.  It is
+called by any thread.
+
+<dt>int (*<b>toprecv</b>)(struct YamConHandle*, YamReq*, YamReq*, int)
+
+<dd>is called when a pulled YamReq and a posted YamReq are matched.
+It may be null, if the p2p-layer does not need it.  It is called by
+any thread.
+
+<dt>int (*<b>netpush</b>)(struct YamConHandle*)
+
+<dd>is regularly called to push messages from the send queue to the
+network, when the select system call hits.  It may be null, if the
+p2p-layer redefines the polling routine.  It is called by any thread.
+
+<dt>int (*<b>netpull</b>)(struct YamConHandle*)
+
+<dd>is also regularly called to pull messages from the network, when
+the select system call hits.  It may be null, if the p2p-layer
+redefines the polling routine.  It is called only through a monitor in
+the polling routine.
+
+<dt>int (*<b>netcancel</b>)(struct YamConHandle*, YamReq*)
+
+<dd>is called by the request-layer to cancel YamReq.  It is called
+only for send YamReqs.  Typically, it removes a YamReq from the send
+queue.
+
+<dt>int (*<b>netabort</b>)(struct YamConHandle*)
+
+<dd>shutdowns the peer and makes it abort.
+
+<dt>int (*<b>netclose</b>)(struct YamConHandle*);
+
+<dd>is called at closure event or at finalization.
+
+</dl>
+
+<h3>Upcall Interfaces from P2P Layer</h3>
+
+<p>Upcall interfaces from the p2p-layer are in <b>request.c</b>.
+
+<dl>
+
+<dt>YamReq *
+<b>_YampiCheckRecv</b>(YamReq *req, void *data, int datasize)
+
+<dd>Checks received header for matching recv.  It searches entries in
+the expected queue, and replaces the request with the found one.  It
+returns either a request passed to or the one in the expected queue.
+It returns null when the request is PULL_RDYREQ.  MEMO: For transports
+of TCP and Vendor-MPI, {data} is {req-&gt;yreq_anexdata}, and
+{datasize} is {req-&gt;yreq_realsize}.
+
+<dt>int
+<b>_YampiFinishRecv</b>(YamReq *req)
+
+<dd>Finishes a receive on receiving a whole message.  It is invoked by
+the P2P-layer and request-layer.  Error condition is retuned (and
+recorded in YamReq if not freed).  YamReq (not PULL) is normally
+unaccessible after {_YampiFinishRecv}.  By convention, P2P-layer never
+touch the YamReq after {_YampiFinishRecv}.  MEMO: Unpacking is
+performed for a recv request (not for a pull request).
+
+<dt>YamReqState
+<b>_YampiFinishSend</b>(YamReq *req, int syncacked)
+
+<dd>Finishes a send request on sending a whole message, or marks
+{ssend_acked} flag.  State of send YamReq changes to SENT/DONE only
+via this except in cancel cases.  YamReq is normally unaccessible
+after {_YampiFinishSend}.  MEMO: Normally sender calls this, but
+receiver can call this in case at receiving sync-ack or cancel-ack.
+Both moves state from SENT to DONE and it is safe as not to interfere
+with the sender.  NOTE: {syncacked} can be true, when the mode is not
+SSEND in IMPI for long messages.
+
+</dl>
+
+<!--
+
+<h3>Êý¿Ë</h3>
+
+<ol>
+<li>ÇÓÂ¾¤Ï GIANT¡£
+
+<li>Request ÁØ¤È P2P ÁØ¤ÏÉáÄÌ¤Ï YamReq ¤òÇÓÂ¾Åª¤Ë
+¥¢¥¯¥»¥¹¤¹¤ë¤Î¤Ç¡¢ÇÓÂ¾¤ÏÉÔÍ×¡£
+YamReq ¤Î DONE ¤Ø¤Î transition ¤À¤±Ãí°Õ¡£
+YamReq ¤Î DONE ¤Ø¤Î transition ¤Ë¤Ï¡¢_YampiFinishSend ¤«
+_YampiFinishRecv ¤ò»È¤¦¡£
+
+<li>send ¤Ï Request ÁØ¤ÇÇÓÂ¾¤»¤º¡¢topsend¡¢netpush ¤Þ¤Ç¹Ô¤¯¤Î¤Ç
+P2P ÁØ¤ÇÇÓÂ¾¡£
+(tcp.c ¤Ç Request ÁØ¤ÇÇÓÂ¾¤¹¤ë¤ÈÌÀ¤é¤«¤ËÃÙ¤«¤Ã¤¿¤Î¤Ç¤½¤¦¤·¤¿)¡£
+
+<li>recv ¤Ï Request ÁØ¤Ç 1 ¤Ä¤Î thread ¤ËÀ©¸Â¤·¤Æ¤«¤é
+P2P-poll (netpull) ¤Ë¹Ô¤¯ (_yampiPollMonitor)¡£
+Ãí: mem2.c ¤Ï¤½¤¦¤Ê¤Ã¤Æ¤Ê¤¤¡£
+
+<li>netpull ¤È postrecv ¤È¤ÎÇÓÂ¾¤Ï _yampiP2PMonitor ¤Ç¹Ô¤¦¡£
+netpull ¤È postrecv ¤Ï YamReq ¤Î²£¼è¤ê»þ (overtake) ¤ËÇÓÂ¾¤¬É¬Í×¡£
+Ãí: º£¤ÏÇÓÂ¾¤·²á¤® (YamReq Ëè¤ÎÇÓÂ¾¤ÎÊý¤¬¤¤¤¤¤«¤â)¡£
+
+<li>ÇÓÂ¾¥³¡¼¥É¤Î¤Û¤È¤ó¤É¤Ï Request ÁØ¤Ë¤¢¤ë¡£
+ÇÓÂ¾¤Ï¡¢_yampiP2PMonitor ¤È _yampiPollMonitor ¤È _yampiPollMutex ¤Ç
+ÇÓÂ¾¤µ¤ì¤Æ¤¤¤ë¡£¤¨¤¨²Ã¸º¤Ê¶èÊÌ¤ÇÀ°Íý¤µ¤ì¤Æ¤Ê¤¤¡£
+
+</ol>
+
+<h3>ÊäÂ­</h3>
+
+<ol>
+
+<li>send ¤ÎÇÓÂ¾: P2P-send (netpush) ¤Î¸Æ¤Ó½Ð¤·¤Ï P2P Â¦¤ÇÇÓÂ¾¡£
+Åµ·¿Åª¤ÊÆ°ºî¤Ï¡¢netpush ¤Ï¥­¥å¡¼¤Ë¤¢¤ë¤â¤Î¤ÏÁ´¤ÆÁ÷¤ë¡£
+£²ÈÖ¼ê°Ê¹ß¤Î thread ¤Ï topsend ¤ÇÃ±¤Ë¥­¥å¡¼¤ËÁÞÆþ¤¹¤ë¤À¤±¡£
+
+<li>recv ¤ÎÇÓÂ¾: P2P-poll ¸Æ¤Ó½Ð¤·¤Ï 1 thread ¤ËÀ©¸Â¡£
+¤É¤¦¤» select/poll ¤¹¤ë¤Î¤Ç Request ÁØ¤ÇÇÓÂ¾¤·¤Æ¤¤¤ë¡£
+£²ÈÖ¼ê°Ê¹ß¤Î thread ¤Ï¡¢wait ¤¹¤ë¤«¤É¤¦¤«¤ò¸«¤Æ
+É¬Í×¤Ê¤é condvar ¤ÇÂÔ¤Ä (_yampiPollMonitor)¡£
+
+<li>P2P Â¦¤Î netpull ¤È Request Ãæ¤Î postrecv ¤ÏÁÐÊý¤ÇÇÓÂ¾¡£
+YamReq ¤ÎÅÓÃæ¤Î²£¼è¤ê (overtake: unexpected ¤ò netpull ¤·¤Æ¤ëÅÓÃæ¤Ç
+postrecv ¤¬Íè¤¿¤È¤­¡¢unexpected ¤ò postrecv ¤Î YamReq ¤ÇÃÖ¤­´¹¤¨¤ë)
+¤Ï _yampiP2PMonitor ¤ÇÇÓÂ¾¡£
+Ãí: system call ¤¬Æþ¤ë¤Î¤Ç mutex ¤¸¤ã¤Ê¤¯ monitor ¤Ë¤·¤Æ¤¢¤ë¡£
+
+</ol>
+
+<pre class="code">
+MUTEX_LOCK(&mutex);
+MUTEX_UNLOCK(&mutex);
+MONITOR_ENTER(&monitor);
+MONITRO_LEAVE(&monitor);
+SINGLE_ENTER(&mutex);
+SINGLE_LEAVE(&mutex);
+</pre class="code">
+
+-->
+
+<h3>Thread Mutexing</h3>
+
+<p>Thread mutexing is giant.  Normally the request-layer and the
+p2p-layer access requests (YamReq) exclusively, and there is not
+needed to mutex each other.  Only the DONE-transition needs mutexing,
+and they are performed in {_YampiFinishSend} and {_YampiFinishRecv} in
+normal operation.
+
+<h3>Exclusion Monitors</h3>
+
+<p>There are two kinds of monitors.  {_yampiPollMonitor} restricts
+threads to one to enter the p2p-poll routine (which does select/poll
+system calls).  {_yampiP2PMonitor} protects recv YamReqs between pull
+in the p2p-layer and takeover in request-layer.
+
+<p>The p2p-poll routine is mutexed by the request-layer and only one
+thread can enter it.  But, p2p-send (NetPush) must be mutexed by
+itself.  Normally, the first-entered p2p-send handles all requests,
+and later sends immediately return.
+
+<p>{_yampiPollMonitor} also tracks the state of the p2p-poll routine
+which may enter sleep state in select/poll.  the p2p-layer should call
+{_YampiPollSleepIn} and {_YampiPollSleepOut} around select/poll.
+
+<h3>P2P Layer Interface for Exclusion</h3>
+
+<p>(The belows are the extracts from the source.  See the comments for
+up-to-date descriptions).
+
+<dl>
+
+<dt>int
+<b>_YampiPollSleepIn</b>(void)
+
+<dd>Tells request-layer poll goes to sleep.  It returns 1 if sleeping
+is allowed.  It should call {_YampiPollSleepOut} when
+{_YampiPollSleepIn} has been called.
+
+<dt>void
+<b>_YampiPollSleepOut</b>(void)
+
+<dd>Tells request-layer poll goes out of sleep or never goes to sleep.
+It must be called when {_YampiPollSleepIn} have been called.  It is
+allowed not to call both of them.
+
+<dt>void (*<b>_yampiP2PPollWake</b>)(void)
+
+<dd>Wakes up a polling thread.  It should be able to wake up a thread
+even if it is not in the sleep state yet.
+
+</dl>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2><a name="ext">Extension Mechanism (Library Loading)</a></h2>
+
+<p>GridMPI/YAMPI provides dynamic loading of library modules.
+
+<hr>
+
+<!-- ================================================================ -->
+<h2><a name="">IMPI Issues</a></h2>
+
+<h3><a name="impi.cid">CID Assignment under Threads</a></h3>
+
+<p>The IMPI-specified CID (Communicator ID) assignment fails in races
+under multi-thread environment.
+
+<p>Two ALLREDUCEs are used in the algorithm.  One reduces CID value.
+The other checks interference for other communicators.  Lower CID of
+the communicator has precedence.  This precedence avoids locking
+indefinitely.  Note that our algorithm assumes mutexing within a
+communicator.  No concurrent operations on the same communicator for
+dup/create/etc.
+
+<hr>
+
+<!-- ================================================================ -->
+<h2><a name="">Appendix</a></h2>
+
+<hr>
+
+<!--
+<table id="tbl">
+<thead><tr>
+<th>media</th><th>a1</th><th>a2</th></tr></thead>
+<tbody><tr><th>Ultimate</th><td>b1</th><td>b2</th>
+</tbody>
+</table>
+-->
+
+</body>
+</html>

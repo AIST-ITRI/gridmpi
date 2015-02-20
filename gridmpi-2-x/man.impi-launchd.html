@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Commands
+<td align="right">impi-launchd (1MPI)
+</tr></tbody></table>
+
+<h3>NAME</nh3>
+
+<p>impi-launchd - IMPI launcher daemon <b>(deprecated)</b>
+
+<h3>SYNOPSIS</h3>
+
+<p>impi-launchd 
+[-port <i>port</i>] [-fork] [-log <i>syslog|filename</i>] [-v] [-h]
+
+<h3>DESCRIPTION</h3>
+
+<p>This accepts and executes a command string (i.e., impi-server/impi-relay)
+received from IMPI exec.
+See also <b>impi-exec</b>(1MPI), <b>impi-server</b>(1MPI), and 
+<b>impi-relay</b>(1MPI).
+
+<h3>OPTIONS</h3>
+
+<p>The following options are supported:
+
+<dl>
+
+<dt><b>-port</b> <i>port</i>
+
+<dd>Specifies the listen port.  
+It is used to establish a connection from an impi-exec.
+
+<dt><b>-fork</b>
+
+<dd>Forks myself and let the child process be a background process.
+
+<dt><b>-log</b> <i>filename | syslog</i>
+
+<dd>Redirects stderr to the specified file.  If syslog is specified, log 
+messages are output to syslog(2).
+
+<dt><b>-v</b>
+
+<dd>Prints verbose messages to the stderr.
+
+<dt><b>-h</b>
+
+<dd>Prints simple help.
+
+</dl>
+
+<h3>ENVIRONMENT VARIABLES</h3>
+
+<dl>
+
+<dt><b>IMPI_LAUNCHD_PORT</b>=<i>port</i>
+
+<dd>Specifies port number to listen.
+
+</dl>
+
+<h3>EXAMPLES</h3>
+
+<h4>Example 1</h4>
+<pre class="screen">
+192.10.2.1% export RELAYADDR=192.10.2.1
+192.10.2.1% export RELAYPORT=4000
+192.10.2.1% impi-launchctl start
+
+192.10.1.1% impi-server -server 2 -port 5000
+192.10.1.1:5000
+
+192.10.2.1% impi-launchcmd -host $RELAYADDR impi-relay -relay 0 192.10.1.1:5000 \
+             -port $RELAYPORT
+192.10.2.1% mpirun -np 4 -client 0 $RELAYADDR:$RELAYPORT ./a.out
+
+192.10.3.1% mpirun -np 4 -client 1 192.10.1.1:5000 ./a.out
+</pre>
+
+<hr>
+<font size=-2><i>($Date: 2008/02/19 09:16:10 $)</i></font>
+<!-- $Id: man.impi-launchd.html,v 1.3 2008/02/19 09:16:10 takano Exp $ -->
+
+</body></html>

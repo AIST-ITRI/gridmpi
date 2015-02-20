@@ -1,0 +1,219 @@
+<pre>
+README								2004.10.21
+
+This is the version 0.2 release of GridMPI, NAREGI Release ID:
+naregi-wp2-mpi-041021, which has been developed at Grid Technology
+Research Center, National Institute of Advanced Industrial Science and
+Technology, AIST, Japan under the contract with the National Research
+Grid Initiative, NAREGI, project.
+
+The GridMPI home page is:
+	http://www.gridmpi.org/
+
+GridMPI uses YAMPI, Yet Another MPI Implementation, as a cluster MPI
+library, which has been developed at the University of Tokyo, Japan.
+It is licensed under the GNU LGPL.  This release of GridMPI needs
+YAMPI version 1.0 to build with.  If the GridMPI package does not
+include the YAMPI release, it should be obtained from the YAMPI home
+page below.
+
+The YAMPI home page is:
+	http://www.il.is.s.u-tokyo.ac.jp/yampii/
+
+The YAMPI source code (directory name yampii) must be placed under
+the top directory of GridMPI.  Please check it.
+
+In this release, we support the following protocols:
+	1. Communication Layers
+		- YAMPI/TCPIP (for intra-cluster communication)
+		- GridMPI/IMPI (for inter-cluster communication)
+		- YAMPI/SCore (experimental)
+	2. Remote Invocation Layers
+		- rsh/ssh
+		- globusrun (experimental)
+
+GridMPI ver.0.2 implements fully the MPI-1.2 specification and some
+from the MPI-2.0 specification.  The MPI-2.0 part is still under
+development.  We tested this package in the Linux packages RedHat9 and
+FedoraCore2 on IA32 machines.
+
+------------------------------------------------
+1. Installation
+------------------------------------------------
+
+(1) The MPIROOT environment variable is used to specify the root
+directory of the installation of GridMPI.  You need to set up MPIROOT.
+For example,
+
+        $ export MPIROOT=/usr/local/gridmpi
+
+(2) Then issue the following commands:
+
+	$ ./configure
+	$ make all
+	$ make install
+
+The bin, lib, include, and etc directories will be created under the
+directory specified by MPIROOT.  Add the bin directory to the PATH
+environment for commands such as mpicc and gridmpirun.
+
+------------------------------------------------
+2. Simple Test Run (short-cut to running programs)
+------------------------------------------------
+
+(1) Go to the directory src/test/basic and type make.
+
+	$ cd src/test/basic
+	$ make
+
+The directory holds two simple programs "nettest.c" and "pi.c".  If
+they had failed to compile, please check the MPIROOT and the
+directories under it.
+
+(2) Set the environment variable _YAMPI_RSH.
+
+The GridMPI starts processes via rsh by default.  If your environment
+does not allow to rsh but allows ssh, set _YAMPI_RSH to ssh.
+
+For example,
+	$ export _YAMPI_RSH=ssh
+
+You must add the setting of MPIROOT, PATH and _YAMPI_RSH in ".bashrc"
+(or ".cshrc"), because GridMPI starts processes in two steps and these
+shell variables are not propagated.
+
+(3) Run the script "run".
+
+	$ run nettest
+
+This simple script "run" starts the "nettest" program with four
+processes in two by two configuration.  Each pair of processes is
+considered in one cluster, and the pairs are separated to two
+clusters.  GridMPI uses different protocols for intra- and inter-
+cluster communication.
+
+------------------------------------------------
+3. Specifying Hosts by the Configuration File
+------------------------------------------------
+
+(1) You need the impi_conf file under the directory specified by the
+IMPI_CONF and need some mpi_conf files to run YAMPI MPI processes.
+The default setting is the $MPIROOT/etc/config file.
+
+(2) An example of a configuration file is located under the
+src/test/basic directory.  You will see the following entries in the
+example "src/test/basic/config":
+
+	-np 2 -c ./mpi_conf1 -rh localhost
+	-np 2 -c ./mpi_conf2 -rh localhost
+
+This means that two clusters are invoked at the localhost machine.
+Two processes are started in the first cluster as specified in the
+"mpi_conf1" file.  Another two processes are started in the second
+cluster as specified in the "mpi_conf2" file.  That is, each line of
+the "config" file specifies processes invoked in a cluster.
+
+(3) Both "mpi_conf1" and "mpi_conf2" have the following two entries:
+
+	localhost
+	localhost
+
+This means that two processes are started on the localhost machine.
+So, the application will run as the following configuration:
+
+                         IMPI Protocol
+            +----------+===================+---------+
+        +---|-----+====|===============+---|-----+   |
+        |   |     |    |               |   |     |   |
+    +---|---|-----|----|---+       +---|---|-----|---|----+
+    | +-+---+-+ +-+----+-+ |       | +-+---+-+ +-+---+--+ |
+    | | rank 0| | rank 1 | |       | | rank 2| | rank 3 | |
+    | +---+---+ +----+---+ |       | +---+---+ +----+---+ |
+    |     |          |     |       |     |          |     |
+    |     +----------+     |       |     +----------+     |
+    | YAMPI TCP/IP protocol|       | YAMPI TCP/IP protocol|
+    +----------------------+       +----------------------+
+
+(4) The default setting is the $MPIROOT/etc/config file, and the
+"config" file specifies $MPIROOT/etc/mpi_conf for the local setting.
+
+You will see the following entries in the "config" file:
+
+	-np 8 -c $MPIROOT/etc/mpi_conf -rh localhost
+
+Also, you will see the following entries in the "mpi_conf" file:
+
+	localhost
+	... 6 more lines ...
+	localhost
+
+------------------------------------------------
+3. Compiling Your Programs
+------------------------------------------------
+
+Make sure that your shell environment has the MPIROOT environment
+variable and it correctly points to the installation directory.  You
+need to add the $(MPIROOT)/bin directory in your PATH on all hosts.
+That is, you have to edit the ".bashrc" (or ".cshrc") on all hosts so
+that the $(MPIROOT)/bin is included in the PATH variable.
+
+Make sure that "mpicc", "mpif77", and "gridmpirun" will be used when
+you issue them:
+
+	$ which mpicc
+	$ which mpif77
+	$ which mpirun
+	$ which gridmpirun
+
+Then, you can test the settings, for example, by issue the following
+commands:
+
+	$ cd src/test/basic
+	$ make
+
+The "nettest" and the famous "pi" programs will be compiled.
+
+------------------------------------------------
+4. Executing Your Programs
+------------------------------------------------
+
+Be sure that remote machines can be accessed by rsh in this release.
+To run the example,
+
+	$ export IMPI_CONF=`pwd`/impi_conf
+	$ gridmpirun -np 4 nettest
+
+------------------------------------------------
+5. Environment Variables
+------------------------------------------------
+
+The following environment variables can be specified:
+
+   - _YAMPI_COPS
+
+	If YAMP_COPS=1 all MPI communications are traced.
+
+   - _YAMPI_RSH
+
+	By default, rsh is used to invoke a process within a cluster.
+	If you want to use ssh, specify the environment variable as
+	follows:
+
+	$ export YAMPI_RSH=ssh
+
+   - IMPI_INTER_RSH
+
+	By default, the rsh is used to invoke remote processes by the
+	"gridmpirun" command.  If you want to use ssh, specify the
+	environment variable as follows:
+
+	$ export IMPI_INTER_RSH=ssh
+
+------------------------------------------------
+6. For Further Information
+------------------------------------------------
+
+Documentation for further information will be given in the Web page:
+
+	http://www.gridmpi.org/
+</pre>

@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="ref.css">
+</head>
+<body>
+
+<!-- $Id: gridmpiandpspacer.html,v 1.4 2008/07/07 05:30:16 takano Exp $ -->
+
+<h2>How to run GridMPI with PSPacer</h2>
+
+<p>This document describes a step-by-step installation and test
+procedure of GridMPI with PSPacer
+
+<p><font size=-2><i>($Date: 2008/07/07 05:30:16 $)</i></font>
+
+<h3>Contents</h3>
+
+<ul>
+<li><a href="#pspacer">1. Installation of PSPacer</a>
+<li><a href="#gridmpi">2. Installation of GridMPI</a>
+<li><a href="#pspd">3. Execution of pspd</a>
+<li><a href="#nbp">a. Example: NAS Parallel Benchmarks</a>
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="pspacer"></a>
+<h2>1. Prerequisite: Installation of PSPacer</h2>
+
+<p>You need to install and setup PSPacer on all nodes.  The source
+codes of both iproute2 and libnl are required for the compilation.
+
+To compile PSPacer, issue the following commands:
+
+<pre class="screen">
+$ ./configure --with-iproute2-pkg=/path/iproute2-<version>.tar.gz \
+  --with-libnl-pkg=/path/libnl-1.0-pre6.tar.gz
+$ make
+# make install
+</pre>
+
+Check the files in the installation directories.
+
+<pre class="screen">
+/lib/modules/`uname -r`/kernel/net/sched/sch_psp.ko
+/usr/lib/tc/q_psp.so
+/usr/local/lib/libnl.so*
+</pre>
+
+<p>Hereinafter, we assume that the network interface, which is used
+for the inter-cluster (external) communication, is eth0.
+
+<p>First of all, you should confirm that PSPacer works well by using
+iperf.  To control the transmission rate at 500 Mbps, issue the
+following commands:
+
+<pre class="screen">
+# /sbin/tc qdisc add dev eth0 root handle 1: psp default 1
+# /sbin/tc class add dev eth0 parent 1: classid 1:1 psp rate 500mbit
+# /sbin/tc qdisc add dev eth0 parent 1:1 handle 10: pfifo
+</pre>
+
+To change the transmission rate:
+
+<pre class="screen">
+# /sbin/tc class change dev eth0 parent 1: classid 1:1 psp rate 800mbit
+</pre>
+
+To remove the setting:
+
+<pre class="screen">
+	# /sbin/tc qdisc del dev eth0 parent 1:1 handle 10:
+	# /sbin/tc class del dev eth0 parent 1: classid 1:1
+	# /sbin/tc qdisc del dev eth0 root handle 1:
+</pre>
+
+
+<p>For your further information, please see <a
+href="https://www.gridmpi.org/pspacer.jsp">PSPacer project page</a>.
+
+
+<a name="gridmpi"></a>
+<h2>2. Installation of GridMPI</h2>
+
+No special operation is required. Do ./configure & make & make
+install.  PSPacer support (--with-libpsp) is enabled by default on the
+Linux platform.
+
+<pre class="screen">
+$ mpicc -qconfig|grep psp --with-libpsp yes
+</pre>
+
+Check the library collpsp.so in the $MPIROOT/lib directory.
+
+Set the following two environment variables on each host:
+
+<pre class="screen">
+_YAMPI_EXTS=$MPIROOT/lib/collpsp.so
+IMPI_PSP_OPT=eth0,1:1,1250000000
+</pre>
+
+IMPI_PSP_OPT is a comma-separated triplet
+(<i>dev</i>,<i>classid</i>,<i>rate</i>), where <i>dev</i> is the name
+of an interface; <i>classid</i> is a class ID, which equals to a
+<i>classid</i> parameter of the tc command; and <i>rate</i> is the
+inter-cluster bandwidth. <i>rate</i> is optional. The default value is
+the physical bandwidth of the interface.
+
+<a name="pspd"></a>
+<h2>3. Execution of pspd</h2>
+
+<p>The GridMPI library communicates with PSPacer via a pspd daemon
+process.  pspd should be run on all compute hosts with root
+permission.
+
+Set the configuration of PSPacer before pspd runs:
+
+<pre class="screen">
+# /sbin/tc qdisc add dev eth0 root handle 1: psp default 1
+# /sbin/tc class add dev eth0 parent 1: classid 1:1 psp mode 0
+# /sbin/tc qdisc add dev eth0 parent 1:1 handle 10: pfifo
+</pre>
+
+<p>NOTE: If the libnl library, which is provided by the Linux
+distribution, is installed before you will install the PSPacer, set
+the environment variable LD_LIBRARY_PATH to use a proper (i.e.,
+PSPacer supported) library as the following:
+
+<pre class="screen">
+# LD_LIBRARY_PATH=/usr/local/lib /usr/sbin/pspd -d
+</pre>
+
+
+<a name="env"></a>
+<h2>a. Changes of NAS Parallel Benchmarks</h2>
+
+<p>To use this feature, changing code of a target application is required.
+
+<p><a href="npb3.2-psp.patch">Here</a> is a patch for NPB version 3.2.
+In this case, applications set the target transmission rate by using
+the following code. The function nhosts_in_client returns the number
+of hosts in the cluster. The function psp_change_nconns regulates the
+transmission rate at "inter-cluster-bandwidth / (n / 2)".
+
+<pre class="screen">
+call nhosts_in_client(n)
+call psp_change_nconns(n / 2)
+</pre>
+
+<!-- ================================================================ -->
+<hr>
+</body></html>
+
+<!--
+Local Variables:
+mode: Fundamental
+End:
+-->

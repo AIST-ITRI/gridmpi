@@ -1,0 +1,235 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="keywords" content="Computer">
+<meta name="keywords" content="Parallel Processing">
+<meta name="keywords" content="High Performance Computing">
+<meta name="keywords" content="Networking">
+<meta name="keywords" content="Grid">
+<meta name="keywords" content="MPI">
+<meta name="keywords" content="Message Passing Interface">
+<meta name="keywords" content="GridMPI">
+
+<link rel="stylesheet" type="text/css" href="./psyche.css">
+<title>GridMPI</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody>
+<tr align="left" valign="top">
+<td class="topmenu">
+   <a href="./index.html">Home</a>
+ | <a href="./gridmpi.html">GridMPI</a>
+ | <a href="./gridtcp.html">GridTCP</a>
+ | <a href="./publications/index.html">Publications</a>
+ | Download
+<tr><td class="topmenu2">
+<tr><td height="4pt">
+</tbody></table>
+
+<table class="wholepage">
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<td class="maincolumn">
+<table class=banner><tbody>
+<tr><td class=banner11><td class=banner12>&nbsp;GridMPI&trade;
+<td class=banner13>&nbsp;</tr>
+<tr><td class=banner21 colspan=2><td class=banner22></tr>
+<tr><td class=banner31><td class=banner32 colspan=2><i>A Project of the
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid Technology
+Research Center, AIST</a>&nbsp;</i></tr>
+</tbody></table>
+<br>
+
+</tr>
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<p align=center><font color=red>Curret Release: GridMPI-2.1.3</font></p>
+<ul class="sidebar">
+<li class="sidebartitle">Contents
+<li class="section"><a href="./index.html">Home</a>
+<li class="section"><a href="./gridmpi.html">Project GridMPI</a>
+<li class="subsection"><a href="./gridmpi-2-x/index.html">GridMPI 2.1</a><br>
+<li class="subsection"><a href="./gridmpi-2-x/faq.html">GridMPI 2.1 FAQ</a><br>
+<li class="subsection"><a href="./gridmpi-1-1/index.html">GridMPI 1.1</a>
+<li class="subsection"><a href="./gridmpi-1-1/faq.html">GridMPI FAQ</a>
+<li class="section"><a href="./gridtcp.en.html">Project GridTCP</a>
+<li class="subsection"><a href="./pspacer/index.en.html">PSPacer 3.0</a>
+<li class="subsection"><a href="./pspacer-ht/index.html">PSPacer/HT 1.0</a>
+<!--<li class="subsection"><a href="./pspacer-2.1/index.en.html">PSPacer 2.1.2</a>-->
+<!--<li class="subsection"><a href="./pspacer-1.0/index.en.html">PSPacer 1.2</a>-->
+<li class="subsection"><a href="./pspacer/faq.en.html">PSPacer FAQ</a>
+<li class="section"><a href="./publications/index.html">Publications</a>
+<li class="section">Download
+<!--<li class="section"><a href="/related.html">Related Links</a>-->
+<li class="section"><a href="./contact.html">Contact</a>
+</ul>
+
+<td class="maincolumn">
+
+
+<!-- **** BODY PART **** -->
+
+<h2>Introduction to GridMPI</h2>
+
+<p>GridMPI is a new open-source free-software implementation of the
+standard MPI (Message Passing Interface) library designed for the
+Grid.  GridMPI enables unmodified applications to run on cluster
+computers distributed across the Grid environment.
+
+<p>GridMPI team found that it is feasible to connect cluster computers
+and to run ordinary scientific applications in distance upto 500
+miles.  Simple experiment has shown that most MPI benchmarks scale
+fine upto 20 millisecond round-trip latency which corresponds to about
+500 miles in distance, when the clusters are connected by fast 1 to 10
+Gbps networks.  500 miles covers the major cities between Tokyo--Osaka
+in Japan.  Thus, applications which are too large to run on a local
+cluster should run on multiple clusters in the Grid environment with
+acceptable performance.  However, it is only feasible when using an
+efficient MPI implementation [1].  Existing implementations are not
+efficient enough mainly because of the two reasons: their focus on
+security features and TCP performance problems.
+
+<p>GridMPI skips security layers assuming dedicated secure links.  The
+institutes housing large clusters tend to have their own networks to
+connect to other institutes in most cases.  GridMPI so focuses on the
+performance on TCP.  Since existing implementations are in most cases
+designed for MPP machines and recently clusters with special hardware,
+their performance on TCP with Ethernet is not optimal.  Also TCP
+performance itself is not optimal for the work load of the MPI
+traffic.  In addition, support for heterogeneous combinations of
+computers of the existing MPI implementations is not satisfactory.
+Thus, GridMPI is designed and implemented from the scratch.  GridMPI
+is carefully coded and tested with heterogeneity in mind.
+
+<ul>
+
+<li>[1] <a href="publications/ccgrid03-matsuda.pdf">Evaluation of MPI
+Implementations on Grid-connected Clusters using an Emulated WAN
+Environment</a>.
+
+</ul>
+
+<h2>Overview of the GridMPI</h2>
+
+<!--
+Simple experiments shows that many ordinary applications are supposed
+to run efficiently in that range of distance.  However, there are no
+MPI implementations opted for TCP/IP in the Grid.  So, GridMPI is
+designed to deploy running applications on clusters to the Grid
+environment without modifications.  GridMPI is carefully coded and
+tested with heterogeneity of processors.
+-->
+
+<p>GridMPI targets to a metropolitan-area, high-bandwidth environment
+(e.g., &le;20ms RTT latency, and &ge;10Gbps bandwidth).  Improving
+TCP/IP performance is the key to the successful deployment to the
+Grid, and GridMPI integrates the <b><i>PSPacer</i></b> module to
+achieve better use of the network.  GridMPI runtime notifies to the
+PSPacer module about the estimated traffic at start and end of
+collective communications, and the PSPacer module regulated the
+traffic to adapt the TCP/IP behavior to large number of streams.
+Currently, GridMPI does nothing about security itself for efficiency
+reasons, but GridMPI is designed to collaborate with the tools from
+the <b>NAREGI</b> project for "Grid-level" security.
+
+<p>Features:
+<ul>
+
+<li>Full conformance to the standard: GridMPI passes 100% of the
+functional tests of the large test suites from ANL and Intel (MPI-1.2
+level).
+
+<li>Full heterogeneity support: GridMPI is fully tested with
+combinations of processors of 32bit/64bit and big/little-endian.
+
+<li>Primary support of TCP/IP and sockets: GridMPI is written from
+scratch and it is new and clean.  It is efficient with sockets, and
+thus suitable for the Grid as well as ordinary Ethernet-based
+clusters.
+
+<li>Cooperation with Grid job submission: GridMPI can be used with
+Globus, Unicore, tool from NAREGI project, etc.
+
+<li>Checkpointing support: GridMPI supports checkpointing on
+Linux/IA32 platforms to restart long-running applications from
+failure.
+
+<li>Vendor MPI support: GridMPI supports IBM-MPI, Fujitsu-Solaris-MPI,
+Intel-MPI, and any MPICH-based MPI for clusters with special
+communication hardware.
+
+</ul>
+
+<p>GridMPI is a new MPI programming environment designed to
+efficiently run MPI applications in the Grid.  GridMPI introduces a
+Latency-aware Collectives layer which
+optimizes the communication performance over the links with
+non-uniform latency and bandwidth and hides the details of the
+lower-level communication libraries.
+
+<p>
+<table width="100%">
+<caption><b>Fig.1. Software Layer of the GridMPI</b></caption>
+<tr><td align="center">
+<img src="layer.png" alt="Software Layer of the GridMPI">
+</table>
+
+<h2>Performance of the GridMPI Version 0.2</h2>
+
+<p>To validate the performance of MPI applications in high latency
+environment, comparison of benchmarks is performed.  The graph shows
+the performance comparison of MPI implementations running NPB2.3 (NAS
+Parallel Benchmarks).  The setting is an emulated WAN environment,
+where two 8 node clusters are connected through a WAN emulator.  The
+used WAN emulator varies the latency and bandwidth between the
+clusters, and can simulate behaviour of typical Internet routers.  In
+the experiment, only the latency is varied and the bandwidth is fixed
+to 1 Gpbs.
+
+<p>
+<table width="100%">
+<caption><b>Fig.2. Performance Comparison of MPI Implementations</b></caption>
+<tr><td align="center">
+<a href="mpicomparison.png"><img src="mpicomparison4.png" alt="Performance
+Comparison of MPI Implementations"></a>
+</table>
+
+<h2>Performance of the GridMPI Version 0.11</h2>
+
+<p>To validate the performance of MPI applications in high-speed network
+environment, the experiment is performed using NPB 3.2 (NAS Parallel
+Benchmarks).  The graph shows the relative performance between single 16
+node cluster and two 8 node clusters which are connected through the JGN2
+(Japan Gigabit Network 2) network.  In the experiment, one cluster is
+comprised of Pentium4/2.4GHz PCs and the other is comprised of
+Pentium4/2.8GHz PCs.  Redhat Linux 9.0 (kernel 2.4.32) is running on
+both the clusters.  These clusters are about 60 kilometers apart; the
+network bandwidth is 10 Gbps and the round-trip latency is 1.5 ms, on
+average.  To change the bandwidth between clusters, we employed two 10GbE
+switches (Huawei 3COM S5648) or two 1GbE switches (Dell PowerConnect
+5224).  The result shows if the inter-cluster bandwidth is large enough,
+GridMPI achieves the performance more than 80% of single cluster.
+
+<p>
+<table width="100%">
+<caption><b>Fig.3. Performance Comparison between GridMPI 0.11 and MPICH-G2 1.2.7p1</b></caption>
+<tr><td align="center">
+<a href="benchmarks/NPB3.2-GridMPI-0.11-MPICHG2-1.2.7p1.png">
+<img src="benchmarks/NPB3.2-GridMPI-0.11-MPICHG2-1.2.7p1-small.png"
+alt="Performance Comparison between GridMPI 0.11 and MPICH-G2 1.2.7p1"></a>
+</table>
+
+<hr>
+<font size=-2><i>($Date: 2007-11-09 10:52:29 $)</i></font>
+<!-- $Id: gridmpi.jsp,v 1.16 2007-11-09 10:52:29 takano Exp $ -->
+
+<!-- **** BODY PART **** -->
+
+<td width="20%">
+
+</td>
+</table>
+</body>
+

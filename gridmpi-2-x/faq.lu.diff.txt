@@ -1,0 +1,24 @@
+<blockqouote><pre>
+*** NPB2.3/LU/bcast_inputs.f
+***************
+*** 31,39 ****
+        call MPI_BCAST(dt, 1, dp_type, root, MPI_COMM_WORLD, ierr)
+        call MPI_BCAST(omega, 1, dp_type, root, MPI_COMM_WORLD, ierr)
+        call MPI_BCAST(tolrsd, 5, dp_type, root, MPI_COMM_WORLD, ierr)
+!       call MPI_BCAST(nx0, 1, dp_type, root, MPI_COMM_WORLD, ierr)
+!       call MPI_BCAST(ny0, 1, dp_type, root, MPI_COMM_WORLD, ierr)
+!       call MPI_BCAST(nz0, 1, dp_type, root, MPI_COMM_WORLD, ierr)
+  
+        return
+        end
+--- 31,39 ----
+        call MPI_BCAST(dt, 1, dp_type, root, MPI_COMM_WORLD, ierr)
+        call MPI_BCAST(omega, 1, dp_type, root, MPI_COMM_WORLD, ierr)
+        call MPI_BCAST(tolrsd, 5, dp_type, root, MPI_COMM_WORLD, ierr)
+!       call MPI_BCAST(nx0, 1, MPI_INTEGER, root, MPI_COMM_WORLD, ierr)
+!       call MPI_BCAST(ny0, 1, MPI_INTEGER, root, MPI_COMM_WORLD, ierr)
+!       call MPI_BCAST(nz0, 1, MPI_INTEGER, root, MPI_COMM_WORLD, ierr)
+  
+        return
+        end
+</pre></blockqouote>

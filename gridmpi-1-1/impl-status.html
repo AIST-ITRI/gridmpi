@@ -1,0 +1,122 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="keywords" content="Computer">
+<meta name="keywords" content="Parallel Processing">
+<meta name="keywords" content="High Performance Computing">
+<meta name="keywords" content="Networking">
+<meta name="keywords" content="Grid">
+<meta name="keywords" content="MPI">
+<meta name="keywords" content="Message Passing Interface">
+<meta name="keywords" content="GridMPI">
+
+<link rel="stylesheet" type="text/css" href="../psyche.css">
+<title>GridMPI</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody>
+<tr align="left" valign="top">
+<td class="topmenu">
+   <a href="../index.html">Home</a>
+ | <a href="../gridmpi.html">GridMPI</a>
+ | <a href="../gridtcp.html">GridTCP</a>
+ | <a href="../publications/index.html">Publications</a>
+ | Download
+<tr><td class="topmenu2">
+<tr><td height="4pt">
+</tbody></table>
+
+<table class="wholepage">
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<td class="maincolumn">
+<table class=banner><tbody>
+<tr><td class=banner11><td class=banner12>&nbsp;GridMPI&trade;
+<td class=banner13>&nbsp;</tr>
+<tr><td class=banner21 colspan=2><td class=banner22></tr>
+<tr><td class=banner31><td class=banner32 colspan=2><i>A Project of the
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid Technology
+Research Center, AIST</a>&nbsp;</i></tr>
+</tbody></table>
+<br>
+
+</tr>
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<p align=center><font color=red>Curret Release: GridMPI-2.1.3</font></p>
+<ul class="sidebar">
+<li class="sidebartitle">Contents
+<li class="section"><a href="../index.html">Home</a>
+<li class="section"><a href="../gridmpi.html">Project GridMPI</a>
+<li class="subsection"><a href="../gridmpi-2-x/index.html">GridMPI 2.1</a><br>
+<li class="subsection"><a href="../gridmpi-2-x/faq.html">GridMPI 2.1 FAQ</a><br>
+<li class="subsection"><a href="../gridmpi-1-1/">GridMPI 1.1</a>
+<li class="subsection"><a href="../gridmpi-1-1/faq.html">GridMPI FAQ</a>
+<li class="section"><a href="../gridtcp.en.html">Project GridTCP</a>
+<li class="subsection"><a href="../pspacer/index.en.html">PSPacer 3.0</a>
+<li class="subsection"><a href="../pspacer-ht/index.html">PSPacer/HT 1.0</a>
+<!--<li class="subsection"><a href="../pspacer-2.1/index.en.html">PSPacer 2.1.2</a>-->
+<!--<li class="subsection"><a href="../pspacer-1.0/index.en.html">PSPacer 1.2</a>-->
+<li class="subsection"><a href="../pspacer/faq.en.html">PSPacer FAQ</a>
+<li class="section"><a href="../publications/index.html">Publications</a>
+<li class="section">Download
+<!--<li class="section"><a href="/related.html">Related Links</a>-->
+<li class="section"><a href="../contact.html">Contact</a>
+</ul>
+
+<td class="maincolumn">
+
+
+<!-- **** BODY PART **** -->
+
+<h2>Implementation Status</h2>
+
+<!-- ================================================================ -->
+<h3>Known Problems, Compatibility Issues, and Open Issues</h3>
+
+<table border=1 rules=all cellpadding=3>
+<tr bgcolor=lightgrey><td colspan=2 align=center>Known Problems
+
+<tr><td>pack_external<br>unpack_external<td><b>long double</b> is not
+properly packed/unpacked in architecture neutral format, because of
+the diversity of long double formats -- Intel uses 96bits, IBM/Power
+uses a pair of doubles, and so on.
+
+<tr bgcolor=lightgrey><td colspan=2 align=center>Compatibility Issues
+
+<tr><td>pack_external<br>unpack_external<td><b>long</b> data are packed
+into 64bit whereas MPI-2 specifies they are in 32bits.  This
+non-standard behavior is for 64bit machines.  Setting environment
+variable <b>_YAMPI_COMMON_PACK_SIZE</b> makes it to the standard
+behavior.
+
+<tr><td>MPI_Cancel<td>Cancelation is a non-local operation, opposed to
+the MPI specification in which MPI_Wait after MPI_Cancel is a local
+operation (MPI1 &sect;3.8).  GridMPI may waits at MPI_Wait for
+checking with the peer receiver process of a send.
+
+<tr bgcolor=lightgrey><td colspan=2 align=center>Open Issues
+<tr><td>
+</table>
+
+<p>See <a href="impl-status-mpi2.html">MPI Implementation Status</a> for
+support levels of MPI-2 features.
+
+<p>See <a href="impl-status-ckpt.html">Checkpoint/Restart
+Implementation Status</a> for support levels of checkpointing feature.
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2006-06-07 15:56:42 $)</i></font>
+<!-- $Id: impl-status.jsp,v 1.1 2006-06-07 15:56:42 matu Exp $ -->
+
+<!-- **** BODY PART **** -->
+
+<td width="20%">
+
+</td>
+</table>
+</body>
+

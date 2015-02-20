@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Commands
+<td align="right">impi-server (1MPI)
+</tr></tbody></table>
+
+<h3>NAME</h3>
+
+<p>impi-server - IMPI server
+
+<h3>SYNOPSIS</h3>
+
+<p>impi-server 
+-server <i>number-of-clients</i>
+[-port <i>port</i>] [-fork] [-h]
+
+<h3>DESCRIPTION</h3>
+
+<p>This starts the IMPI server, which is a contact point and an
+information exchange of MPI processes separately started across
+multiple clusters.  It prints the IP address and the port number at
+startup, which will be given to the mpirun command as an argument to
+the -client option.  This is specified in the IMPI specification, and
+users are refered to it.
+
+<h3>OPTIONS</h3>
+
+<p>The following options are supported:
+
+<dl>
+
+<p><dt><b>-server</b> <i>number-of-clients</i>
+
+<dd>Specifies the number of expected clusters to use.  It is an
+integer between 1 and 32.
+
+<p><dt><b>-port</b> <i>port-number</i>
+
+<dd>Specifies a network port number on which impi-server services.  An
+arbitrary port is selected if not specified.
+
+<p><dt><b>-fork</b>
+
+<dd>Specifies impi-server to fork and let it into background.
+
+<p><dt><b>-h</b>
+
+<dd>Prints simple help.
+
+</dl>
+
+<h3>ENVIRONMENT VARIABLES</h3>
+
+<dl>
+
+<p><dt><b>CKPT_RESTART</b>=<i>0 or 1</i>
+
+<dd>Specifies restarting from a checkpoint save when set to 1.
+
+<p><dt><b>IMPI_SERVER_PORT_RANGE</b>=<i>n0</i>:<i>n1</i>
+
+<dd>Specifies port range to listen.  Port number from <i>n0</i> to
+<i>n1</i> (inclusive) is tried.
+
+</dl>
+
+<hr>
+<font size=-2><i>($Date: 2006/09/04 10:31:06 $)</i></font>
+<!-- $Id: man.impi-server.html,v 1.2 2006/09/04 10:31:06 matu Exp $ -->
+
+</body></html>

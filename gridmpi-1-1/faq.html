@@ -1,0 +1,442 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="keywords" content="Computer">
+<meta name="keywords" content="Parallel Processing">
+<meta name="keywords" content="High Performance Computing">
+<meta name="keywords" content="Networking">
+<meta name="keywords" content="Grid">
+<meta name="keywords" content="MPI">
+<meta name="keywords" content="Message Passing Interface">
+<meta name="keywords" content="GridMPI">
+
+<link rel="stylesheet" type="text/css" href="../psyche.css">
+<title>GridMPI</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody>
+<tr align="left" valign="top">
+<td class="topmenu">
+   <a href="../index.html">Home</a>
+ | <a href="../gridmpi.html">GridMPI</a>
+ | <a href="../gridtcp.html">GridTCP</a>
+ | <a href="../publications/index.html">Publications</a>
+ | Download
+<tr><td class="topmenu2">
+<tr><td height="4pt">
+</tbody></table>
+
+<table class="wholepage">
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<td class="maincolumn">
+<table class=banner><tbody>
+<tr><td class=banner11><td class=banner12>&nbsp;GridMPI&trade;
+<td class=banner13>&nbsp;</tr>
+<tr><td class=banner21 colspan=2><td class=banner22></tr>
+<tr><td class=banner31><td class=banner32 colspan=2><i>A Project of the
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid Technology
+Research Center, AIST</a>&nbsp;</i></tr>
+</tbody></table>
+<br>
+
+</tr>
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<p align=center><font color=red>Curret Release: GridMPI-2.1.3</font></p>
+<ul class="sidebar">
+<li class="sidebartitle">Contents
+<li class="section"><a href="../index.html">Home</a>
+<li class="section"><a href="../gridmpi.html">Project GridMPI</a>
+<li class="subsection"><a href="../gridmpi-2-x/index.html">GridMPI 2.1</a><br>
+<li class="subsection"><a href="../gridmpi-2-x/faq.html">GridMPI 2.1 FAQ</a><br>
+<li class="subsection"><a href="../gridmpi-1-1/index.html">GridMPI 1.1</a>
+<li class="subsection"><a href="../gridmpi-1-1/faq.html">GridMPI FAQ</a>
+<li class="section"><a href="../gridtcp.en.html">Project GridTCP</a>
+<li class="subsection"><a href="../pspacer/index.en.html">PSPacer 3.0</a>
+<li class="subsection"><a href="../pspacer-ht/index.html">PSPacer/HT 1.0</a>
+<!--<li class="subsection"><a href="../pspacer-2.1/index.en.html">PSPacer 2.1.2</a>-->
+<!--<li class="subsection"><a href="../pspacer-1.0/index.en.html">PSPacer 1.2</a>-->
+<li class="subsection"><a href="../pspacer/faq.en.html">PSPacer FAQ</a>
+<li class="section"><a href="../publications/index.html">Publications</a>
+<li class="section">Download
+<!--<li class="section"><a href="/related.html">Related Links</a>-->
+<li class="section"><a href="../contact.html">Contact</a>
+</ul>
+
+<td class="maincolumn">
+
+
+<!-- $Id: faq.jsp,v 1.7 2006-08-22 03:12:11 matu Exp $ -->
+
+<!-- **** BODY PART **** -->
+
+<h1>FAQ, Tips, and Trouble Shooting</h1>
+
+<p>Contents:
+<ul>
+<li><a href="#faq">FAQ</a>
+	<ul>
+	<li><a href="#faq.ipaddress">Do all hosts need global IP
+	addresses?</a>
+	<li><a href="#faq.netifs">How do I select one from multiple
+	network interfaces?</a>
+	<li><a href="#faq.config.cc">Can I change CC in compiling
+	GridMPI?</a>
+	<li><a href="#faq.abort.cores">Can I stop dumping cores at
+	abortion?</a>
+	<li><a href="#faq.aix.core">Can I change naming of core
+	files in AIX IBM?</a>
+	<li><a href="#faq.clustercolor">Can I get the configuration of
+	wide-area networks?</a>
+	</ul>
+<li><a href="#help">Trouble Shooting</a>
+	<ul>
+	<li><a href="#help.ssh">SSH Says "Permission denied"</a>
+	<li><a href="#help.fujitsu.aprun"><b>mpirun</b> on Fujitsu
+	Solaris8/SPARC64V stops with a message
+	"/opt/FJSVmpi2/bin/mpiexec[15]:	aplpg: not found".</a>
+	</ul>
+<li><a href="#tips">Tips</a>
+	<ul>
+	<!--<li><a href="#faq.envs">Important Environemnt Variables</a>-->
+	<!--<li><a href="#faq.impl">Implementation Specifics</a>-->
+	<li><a href="#tip.pit">Pitfalls in Heterogeneous Environment</a>
+	<li><a href="#tip.npb">Running NPB (NAS Parallel Benchmarks)</a>
+	</ul>
+<li><a href="#platforms">Odds on Specific Platforms</a>
+</ul>
+
+<!-- ================================================================ -->
+<a name="faq"></a>
+<h2>Frequently Asked Questions</h2>
+
+<!--
+<h3>GridMPI General</h3>
+-->
+
+<!-- ================ -->
+<h3>Configuration</h3>
+
+<dl class="faq">
+
+<dt><a name="faq.ipaddress"></a>
+<i>Do all hosts need global IP addresses?</i>
+
+<dd>Yes.  Each host in the cluster should have an IP global address and
+be IP reachable.
+
+<p><b>RATIONALE</b>: This is because the GridMPI implementors judged
+that relaying/forwarding of messages has impact on performance with
+the current technology.  Also, it is too restricted a
+relaying/forwarding topology to provide a variety of collective
+algorithms for experiments.
+
+<dt><a name="faq.netifs"></a>
+<i>How do I select one from multiple network interfaces?</i>
+
+<dd>GridMPI uses the default nework interface for global communication
+by default.  An interface can be selected by a network address using
+the environment variable <b>IMPI_NETWORK</b>, in case a host has
+multiple network interfaces.  It is specified by the format of a
+network address like "163.220.2.0".
+
+<p>Inside a cluster, having multiple intefaces is not a problem
+because the cluster MPI (YAMPII) uses ones specified in a
+configuration file, where an inteface is selected by a given hostname.
+
+<dt><a name="faq.config.cc"></a>
+<i>Can I change CC in compiling GridMPI?</i>
+
+<dd>To compile GridMPI with a non-default C/C++ compiler, specify the
+environment variables (<b>CC</b> and others) and invoke "configure".
+Specify the Fortran and C++ compilers, too, because the compiler
+driver uses ones found at configuration time.  Use <b>CFLAGS</b> to
+pass options to CC.  For example, the following line suffices for
+using GCC.
+
+<pre>
+	CC=gcc CXX=g++ F77=g77 F90=g77 ./configure (for sh/bash)
+	env CC=gcc CXX=g++ F77=g77 F90=g77 ./configure (for csh/tcsh)
+</pre>
+
+<dt><a name="faq.abort.cores"></a>
+<i>Can I stop dumping cores at abortion?</i>
+
+<dd>The behavior at abortion is controlable by the environemnt
+variable <b>_YAMPI_DUMPCORE</b>.  Setting <b>_YAMPI_DUMPCORE=0</b>
+calls <b>exit&nbsp;(3c)</b> at aborting situation, and setting
+<b>_YAMPI_DUMPCORE=1</b> calls <b>abort&nbsp;(3c)</b>.  GridMPI dumps
+cores by default, because abortion is an irregular condition.  Also,
+setting <b>_YAMPI_ABORT_ON_CLOSE=0/1/2</b> may help to suppress
+dumping cores.  See the <a href="man.environ.html">full-list</a> for
+the environment variables.
+
+<dt><a name="faq.aix.core"></a>
+<i>Can I change naming of core files in IBM AIX?</i>
+
+<dd>The naming of core files (such as appending PID and date) can be
+changed by setting environment variable "CORE_NAMING" in AIX 5.2, or
+using "chcore" command in AIX5.3.
+
+<p>To make full core dump (not only stack, but include data) in AIX,
+set "_YAMPI_AIX_FULLCORE" environment varaible.
+
+<dt><a name="faq.clustercolor"></a>
+<i>Can I get the configuration of wide-area networks?</i>
+
+<dd>No.  But you can retrieve the number of clusters and the number of
+procs in each cluster.  IMPI defines two attributes of cluster
+configuration in MPI_COMM_WORLD (IMPI_CLIENT_SIZE and
+IMPI_CLIENT_COLOR).  They indicate which cluster the proc (myrank)
+belongs.  Counting the number of procs in clusters is simple (just do
+allreduce).
+See <a href="faq.clustercolor.c.txt">faq.clustercolor.c.txt</a>
+or <a href="faq.clustercolorf.f.txt">faq.clustercolorf.f.txt</a>.
+
+<!--
+<a name="faq.envs"></a>
+<h3>Important Environemnt Variables</h3>
+-->
+<!--
+<a name="faq.impl"></a>
+<h3>Implementation Specifics</h3>
+-->
+
+</dl>
+
+<!-- ================================================================ -->
+<a name="help"></a>
+<h2>Trouble Shooting</h2>
+
+<dl class="faq">
+
+<dt><a name="help.ssh"></a>
+<i>SSH Says "Permission denied".</i>
+
+<dd><b>CASE</b>: ssh seems to fail to start processes.
+
+<blockquote><pre>
+$ gridmpirun -np 4 ./pi
+Permission denied (publickey,keyboard-interactive).
+Permission denied (publickey,keyboard-interactive).
+Permission denied (publickey,keyboard-interactive).
+Permission denied (publickey,keyboard-interactive).
+</pre></blockquote>
+
+<p><b>FIX</b>: If you are using <b>ssh-agent</b> to avoid typing a
+passphase, then you need to allow forwarding of a secret for ssh.  Add
+the following lines in "~/.ssh/config" or "/etc/ssh/ssh_config":
+
+<blockquote><pre>
+Host *
+   ForwardAgent yes
+</pre></blockquote>
+
+To verify the setting, issue the following command:
+
+<blockquote><pre>
+ssh localhost ssh localhost date
+</pre></blockquote>
+
+<p><b>RATIONALE</b>: This happens because <b>mpirun</b> forks
+processes as a tree via rsh/ssh, and thus a secret needs to be
+forwarded.  The name of the forker program is <b>mpifork</b>.
+Directly calling <b>mpifork -v -np <i>n</i> hostname</b> may print
+helpful messages.
+
+<dt><a name="help.fujitsu.aprun"></a>
+<i><b>mpirun</b> on Fujitsu Solaris8/SPARC64V stops with a message
+"/opt/FJSVmpi2/bin/mpiexec[15]: aplpg: not found".</i>
+
+<dd><b>CASE</b>: GridMPI on Fujitsu Solaris8/SPARC64V uses Fujitsu MPI
+as an underlying transport (known as Vendor&nbsp;MPI).  <b>mpirun</b>
+invokes <b>mpiexec</b> of Fujitsu MPI, and <b>mpiexec</b> subsequently
+invokes <b>aplpg</b> and <b>aprun</b> commands, both of which should
+be found in the PATH.
+
+<p><b>FIX</b>: Add <b>/opt/FSUNaprun/bin</b> to the PATH.
+
+</dl>
+
+<!-- ================================================================ -->
+<a name="tips"></a>
+<h2>Tips</h2>
+
+<a name="tip.pit"></a>
+<h3>Pitfalls in Heterogeneous Environemnt</h3>
+
+<dl class="faq">
+
+<dt><i>Machines have different precision in floating point.</i>
+
+<dd>Communicating floating point data may cause mismatch in precision,
+because some processors divert from the IEEE floating format.  Intel
+IA32 (32bit) has extra precision due to its 80bit register format.
+IBM Power has extra precision in the multiply-add (fma) operation.
+Fujitsu SPARC64V also has extra precision in the multiply-add
+operation.  Thus, errors occur in precision in a heterogeneous
+environment.
+
+<p>The IEEE comforming behavior is the compiler option.  Use the
+following:
+
+<ul>
+<li>Intel IA32 (with GCC): <b>-msse2 -mfpmath=sse</b>
+<li>IBM Power (with XLC): <b>-qfloat=nomaf -qstrict</b>
+<li>Fujitsu SPARC64V (with Fujitsu compilers): <b>-Kfast_GP=0</b>
+</ul>
+
+<p>Other processors: Ultra-SPARC follows the IEEE.  x86_64 uses the
+SSE registers by default and follows the IEEE.  IA64 has the
+multiply-add operation.
+
+<p><i>IBM XLC aggressively optimizes and <b>-qfloat=nomaf</b> alone
+does not work except at <b>-O (-O2)</b>.  <b>-qstrict</b> is also
+needed for <b>-O3</b> or above (for XLC Version 6)</i>.
+
+<p><b>CG from the NPB (NAS Parallel Benchmarks) fails without these
+options (verification fails)</b>.
+
+<dt><i>Long integer types are packed in 64bits.</i>
+
+<dd>GridMPI packs <b>long</b> data in 64bits in the <i>external32
+format</i>, whereas the MPI-2 standard specifies it should be packed
+in 32bits.  The default non-standard behavior is chosen because
+sending/receiving using long data (<b>MPI_LONG</b> and
+<b>MPI_UNSIGNED_LONG</b>) may loose bits on 64bit machines.  The
+standard behavior is selected by setting the environment variable
+<b>_YAMPI_COMMON_PACK_SIZE</b>.
+
+<!--
+<h4><b>MPI_Aint</b> is defined as <b>long long</b> in GridMPI</h4>
+The size of <b>MPI_Aint</b> of GridMPI is 64 bits even on 32 bits
+machines.  MPI programs sometimes assume <b>MPI_Aint</b> is of the
+same size as pointers, but it is not the case for GridMPI.
+-->
+
+</dl>
+
+<!-- ================ -->
+<a name="tip.npb"></a>
+<h3>Running NPB (NAS Parallel Benchmarks)</h3>
+
+<h4>CG Benchmark (NPB2.3/NPB2.4/NPB3.2)</h4>
+
+<p>CG does not converge in a heterogeneous environemnt, with any
+combinations of Intel IA32, IBM Power, Sun SPARC.  It is due to the
+floating precision of the processors which have more precision than
+specified by the IEEE float.  Also, some aggressive optimizations need
+be disabled.
+
+See <a href="#tip.pit">Pitfalls in Heterogeneous Environment</a>.
+
+<h4>LU Benchmark (NPB2.3/NPB2.4/NPB3.2)</h4>
+
+<p>LU badly uses datatypes.  It is a simple mistake.  Integers are
+exchagend as double floats.  Fix is the following:
+
+<a href="faq.lu.diff.txt">faq.lu.diff.txt</a>
+
+<h4>FT Benchmark (NPB3.2)</h4>
+
+<p>Compiling with GNU g77 fails due to duplicate declaration generated
+by "sys/setparams.c".  It is a simple mistake.  Fix is the following:
+
+<a href="faq.ft.diff.txt">faq.ft.diff.txt</a>
+
+<h4>MG Benchmark (NPB2.3/NPB2.4/NPB3.2)</h4>
+
+<p>MG uses ambiguous message tags for NPROCS&ge;16.  Tags are assigned
+for a pair of dimension and direction, but they do not uniquely
+determine the processes when the mesh structure collapses at the
+lowest-level.  Fix is the following:
+
+<a href="faq.mg.diff.bar.txt">faq.mg.diff.bar.txt</a> or
+<a href="faq.mg.diff.tag.txt">faq.mg.diff.tag.txt</a>
+
+<!--
+IBM AIX
+OS Parameters: maxuproc
+-->
+
+<!-- ================================================================ -->
+<a name="platforms"></a>
+<h2>Odds on Specific Platforms</h2>
+
+<h4>Compiler Options to IBM AIX and Hitachi SR11000</h4>
+
+<dl class="faq">
+
+<dt><i>Why <b>-qstaticinline</b> is passed to the IBM XL compilers in
+mpicc?</i>
+
+<dd>It suppresses warning "WARNING: Duplicate symbol" while linking
+C++ programs.  GridMPI defines inline methods in the C++ binding,
+which generate many warnings at linking.  The XL C++ compiler emits an
+associated external definition for each inline method (it is an ISO
+specified behavior).  See
+<a href="http://www-1.ibm.com/support/docview.wss?uid=swg21044588">
+IBM support document</a>.
+
+<dt><i>Why <b>-parallel=0</b> is passed to the Hitachi f90 compiler in
+mpicc?</i>
+
+<dd>It disables auto-parallelization which is enabled by default
+(default can be set by site).  Aggressive setting makes many programs
+fail.
+
+</dl>
+
+<h4>Compiler Options to Fujitsu Solaris/SPARC64</h4>
+
+<dl class="faq">
+
+<dt><i>Why <b>-Knouse_rodata</b> or <b>-Ar</b> is passed to the
+Fujitsu compilers in mpicc?</i>
+
+<dd><b>-Knouse_rodata</b> (in C) or <b>-Ar</b> (in Fortran) disables
+to place constants in read-only area.  They are necessary to use
+Fujitsu MPI and should always be specified.
+
+<dt><i>Why <b>-f2004,1321</b> is passed to the Fujitsu Fortran in
+mpicc?</i>
+
+<dd>It is just to surpress many warnings in Fortran.
+
+</dl>
+
+<h4>Compiler Options to NEC SX</h4>
+
+<dl class="faq">
+
+<dt><i>What options can I use, when a vectorized program aborts on the
+limit of the number of loops with the message like the following:</i>
+
+<pre class="screen">
+**** 96 Loop count is greater than that assumed by the compiler:
+loop-count=274625 eln=2342 PROG=input ELN=2366(40004064c) TASKID=1
+Called from main_ ELN=275(40000654c)
+</pre>
+
+<dd>The options <b>-Wf,-pvctl,loopcnt=2147483647</b> or
+<b>-Wf,-pvctl,vwork=stack</b> to <b>f90/sxf90</b> may work (note that
+2147483647=0x7fffffff).  Here, <b>-Wf</b> is a prefix to pass complex
+options to the compiler.
+
+</dl>
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2006-08-22 03:12:11 $)</i></font>
+
+<!-- **** BODY PART **** -->
+
+<td width="20%">
+
+</td>
+</table>
+</body>
+

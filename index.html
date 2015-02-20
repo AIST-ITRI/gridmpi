@@ -1,0 +1,337 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="keywords" content="Computer">
+<meta name="keywords" content="Parallel Processing">
+<meta name="keywords" content="High Performance Computing">
+<meta name="keywords" content="Networking">
+<meta name="keywords" content="Grid">
+<meta name="keywords" content="MPI">
+<meta name="keywords" content="Message Passing Interface">
+<meta name="keywords" content="GridMPI">
+
+<link rel="stylesheet" type="text/css" href="./psyche.css">
+<title>GridMPI</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody>
+<tr align="left" valign="top">
+<td class="topmenu">
+   <a href="./index.html">Home</a>
+ | <a href="./gridmpi.html">GridMPI</a>
+ | <a href="./gridtcp.html">GridTCP</a>
+ | <a href="./publications/">Publications</a>
+ | Download
+<tr><td class="topmenu2">
+<tr><td height="4pt">
+</tbody></table>
+
+<table class="wholepage">
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<td class="maincolumn">
+<table class=banner><tbody>
+<tr><td class=banner11><td class=banner12>&nbsp;GridMPI&trade;
+<td class=banner13>&nbsp;</tr>
+<tr><td class=banner21 colspan=2><td class=banner22></tr>
+<tr><td class=banner31><td class=banner32 colspan=2><i>A Project of the
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid Technology
+Research Center, AIST</a>&nbsp;</i></tr>
+</tbody></table>
+<br>
+
+</tr>
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<p align=center><font color=red>Curret Release: GridMPI-2.1.3</font></p>
+<ul class="sidebar">
+<li class="sidebartitle">Contents
+<li class="section"><a href="./index.html">Home</a>
+<li class="section"><a href="./gridmpi.html">Project GridMPI</a>
+<li class="subsection"><a href="./gridmpi-2-x/index.html">GridMPI 2.1</a><br>
+<li class="subsection"><a href="./gridmpi-2-x/faq.html">GridMPI 2.1 FAQ</a><br>
+<li class="subsection"><a href="./gridmpi-1-1/index.html">GridMPI 1.1</a>
+<li class="subsection"><a href="./gridmpi-1-1/faq.html">GridMPI FAQ</a>
+<li class="section"><a href="./gridtcp.en.html">Project GridTCP</a>
+<li class="subsection"><a href="./pspacer/index.en.html">PSPacer 3.0</a>
+<li class="subsection"><a href="./pspacer-ht/index.html">PSPacer/HT 1.0</a>
+<!--<li class="subsection"><a href="./pspacer-2.1/index.en.html">PSPacer 2.1.2</a>-->
+<!--<li class="subsection"><a href="./pspacer-1.0/index.en.html">PSPacer 1.2</a>-->
+<li class="subsection"><a href="./pspacer/faq.en.html">PSPacer FAQ</a>
+<li class="section"><a href="./publications/index.html">Publications</a>
+<li class="section">Download
+<!--<li class="section"><a href="/related.html">Related Links</a>-->
+<li class="section"><a href="./contact.html">Contact</a>
+</ul>
+
+<td class="maincolumn">
+
+
+<!-- **** BODY PART **** -->
+
+<h2>Project in Brief</h2>
+
+<p><b>GridMPI</b> is an implementation of the MPI (Message Passing
+Interface) standard designed for high performance computing in the
+Grid.  It establishes a synthesized cluster computer by binding
+multiple cluster computers distributed geographically.  Users are able
+to seamlessly deploy their application programs from a local system to
+the Grid environment for processing a very large data set, which is
+too large to run on a single system.
+
+<p>GridMPI targets to make global communications efficient, by
+optimizing the behavior of protocols over the links with non-uniform
+latency and bandwidth, and also to hide the details of the lower-level
+network geometry from users.  The GridMPI project is working on to
+provide variations of collective communication algorithms and an
+abstract layer to hide network geometry, and an interface to the
+TCP/IP communication layer to make it adaptive to those algorithms.
+
+<!--
+<p><b>Cheaper</b> (<u>che</u>ckpoint <u>a</u> <u>p</u>rocess and
+<u>e</u>nvironment, and <u>r</u>estart) is a user-level
+checkpoint/restart library for Linux.
+-->
+
+<p><b>PSPacer</b> is a precise software pacer of IP traffic for Linux,
+which controls IP traffic to regulate bandwidth and smooth bursty
+traffic.  It is implemented as a Linux loadable kernel module, but it
+controls the traffic at a very high precision (less than a
+micro-second!) which was only possible by using a special hardware.
+PSPacer is a standalone module and not bound to GridMPI.  Its
+application varies widely, for example, high-bandwidth TCP/IP
+streaming, and traffic control of low-bandwidth lines.
+
+<p>GridMPI and PSPacer are open-source free-software.  The software is
+downloadable from the <a href="/software/downloads.html">download</a>
+page.
+
+<h2>News</h2>
+
+<p><b>PSPacer version 3.0 is Released on Mar 31, 2010</b>.
+This is a major release and includes dectd 1.0.1.
+
+For more information, see the <a href="./gridtcp.html">PSPacer Project page</a>.
+
+<p><b>Dectd version 1.0.0 is Released on Dec 22, 2009</b>.
+This is an extra utility package of PSPacer.  Dectd (dynamic execute
+and configure traffic control command daemon) is a daemon program that
+automatically configures the Linux traffic control mechanism so as to
+support IP flow-based traffic control.
+
+The traffic control mechanism of the Linux operating system is
+basically based on the class-based QoS.  To achieve the flow-based QoS
+on top of the class-based QoS mechanism, the issue of the high
+operational cost when the number of flows is large should be solved.
+In this system, the system administrator specifies simple rules (e.g.,
+range of IP addresses and port numbers) in advance.  The system
+detects IP flows by interposing system calls and automatically
+configure flow queues (combination of a qdisc and a filter) according
+to the specified rules.  In this way, the operational cost is
+significantly reduced.
+
+For more information, see the <a href="./gridtcp.html">PSPacer Project page</a>.
+
+<p><b>PSPacer version 2.1.2 is Released on Aug 19, 2009</b>.
+This is a minor release and fixes the installation problem on x86_64
+machines.
+For more information, see the <a href="./gridtcp.html">PSPacer Project page</a>.
+
+<p><b>GridMPI version 2.1.3 is released on Mar 17, 2009</b>.
+This minor release includes some bug fixes.
+GridMPI version 2.1.3 is fully tested in a heterogeneous environment
+for combinations of Linux/IA32, AIX/Power, and Solaris/SPARC64V.
+
+<p><b>GridMPI version 2.1.1 is released on Apr 10, 2008</b>.
+This minor release includes some bug fixes.
+GridMPI version 2.1.1 is fully tested in a heterogeneous environment
+for combinations of Linux/IA32, AIX/Power, and Solaris/SPARC64V.
+
+<p><b>GridMPI version 2.1 is released on Mar 31, 2008</b>.
+This minor release includes some enhancements and bug fixes.
+GridMPI version 2.1 is fully tested in a heterogeneous environment
+for combinations of Linux/IA32, AIX/Power, and Solaris/SPARC64V.
+
+<p><b>GridMPI version 2.0 is released on Nov 10, 2007</b>.
+This is a major release for the first time in one and half years.
+GridMPI version 2.0 is fully tested in a heterogeneous environment
+for combinations of Linux/IA32, AIX/Power, and Solaris/SPARC64V.
+
+<p><b>PSPacer version 2.1 is Released on Mar 15, 2007</b>.
+PSPacer version 2.1 provides libnl (netlink library) support
+and minor bug fixes.
+For more information, see the <a href="./gridtcp.html">GridTCP Project page</a>.
+
+<p><b>PSPacer version 2.0.1 and 1.2 are Released on Apr 17, 2006</b>.
+PSPacer version 2.0 supports a new feature: dynamic pacing mode.
+PSPacer version 1.2 is a stable release.  And both releases include
+pspd (PSPacer control daemon) support.
+The source tarball and the binary RPM for FedoraCore 5 are available.
+For more information, see the <a href="./gridtcp.html">GridTCP Project page</a>.
+
+<p><b>GridMPI version 1.0 is released on Apr 13, 2006</b>, after
+eleven minor releases of version 0.x series.  GridMPI version 1.0 is fully
+tested in a heterogeneous environment for combinations of Linux/IA32,
+AIX/Power, and Solaris/SPARC64V.  It now includes major MPI-2.0
+features.
+
+<p><b>PSPacer version 1.1 is Released on Sep 20, 2005</b>.  Some bugs are
+fixed.  If you use the older version, please update it.
+The source tarball and the binary RPM for FedoraCore 4 are available.
+For more information, see the <a href="./gridtcp.html">GridTCP Project page</a>.
+
+<p><b>PSPacer version 1.0.2 is Released on Jul 25, 2005</b>.  A new version
+of PSPacer is available.  The binary RPM for FedoraCore 4 is also available.
+For more information, see the <a href="./gridtcp.html">GridTCP Project page</a>.
+
+<p><b>PSPacer version 1.0.1 is Released on Jun 22, 2005</b>.  A new version
+of PSPacer is available.  The binary RPM for FedoraCore 4 is also available.
+For more information, see the <a href="./gridtcp.html">GridTCP Project page</a>.
+
+<p><b>PSPacer version 1.0 is Released on Jun 6, 2005</b>.  Precise
+Software Pacer (PSPacer) achieves precise network bandwidth control
+and smoothing of bursty traffic without any special hardware.
+PSPacer is implemented as a Linux loadable kernel module.  Therefore,
+it is independent of the device driver, and kernel re-compilation
+is not required for the installation.
+
+<p>PSPacer is an open-source free-software, and the software is distributed
+under the GNU GPL License.  For more information, see the
+<a href="./gridtcp.html">GridTCP Project page</a> and the
+<a href="http://www.aist.go.jp/aist_e/latest_research/2005/20050622/20050622.html">
+press release</a>
+(<a href="http://www.aist.go.jp/aist_j/press_release/pr2005/pr20050606/pr20050606.html">in Japanese</a>).
+
+<p><b>GridMPI version 0.2 is Released on Nov 7, 2004</b>.  The first
+release of GridMPI is on the public.  It is a full MPI-1.2
+implementation and supports both cluster systems and collections of
+multiple clusters.  It supports the IMPI (Interoperable MPI) protocol
+for connecting multiple clusters over TCP/IP.  GridMPI is an extension
+to YAMPI, an MPI library for cluster systems, which is independently
+developed by Yutaka Ishikawa Laboratory of the University of Tokyo.
+
+<ul>
+<li>For more information, see the
+<a href="/software/">Software Release Page</a>.
+
+<li>For more information on YAMPI, please visit the
+<a href="http://www.il.is.s.u-tokyo.ac.jp/yampi/">YAMPI Official
+Home Page</a>.
+</ul>
+
+<!--<h2>Previous News</h2>-->
+
+<h2>Disclaimer</h2>
+
+<p><font size=-2>DISCLAIMER</font>
+<p><font size=-2>
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY, OF SATISFACTORY QUALITY, AND
+FITNESS FOR A PARTICULAR PURPOSE OR USE ARE DISCLAIMED.  THE COPYRIGHT
+HOLDERS MAKES NO REPRESENTATION THAT THE SOFTWARE, MODIFICATIONS,
+ENHANCEMENTS OR DERIVATIVE WORKS THEREOF, WILL NOT INFRINGE ANY PATENT,
+COPYRIGHT, TRADEMARK, TRADE SECRET OR OTHER PROPRIETARY RIGHT.
+</font>
+
+<p><font size=-2>LIMITATION OF LIABILITY</font>
+<p><font size=-2>
+THE COPYRIGHT HOLDERS SHALL HAVE NO LIABILITY TO LICENSEE OR OTHER
+PERSONS FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL,CONSEQUENTIAL,
+EXEMPLARY, OR PUNITIVE DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT
+LIMITATION, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, LOSS OF USE,
+DATA OR PROFITS, OR BUSINESS INTERRUPTION, HOWEVER CAUSED AND ON ANY
+THEORY OF CONTRACT, WARRANTY, TORT(INCLUDING NEGLIGENCE), PRODUCT
+LIABILITY OR OTHERWISE, ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE OR DOCUMENTATION, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGES.</font>
+
+<h2>Credit</h2>
+
+<hr>
+
+<p align=center>
+<b>Developers</b><br>
+YUTAKA&nbsp;ISHIKAWA (provided YAMPII)<br>
+MASAHIKO&nbsp;EDAMOTO,
+YOSHITAKA&nbsp;KANEO<br>
+HIDETAKA&nbsp;KOIE,
+MOTOHIKO&nbsp;Z.&nbsp;MATSUDA<br>
+FUMIHIRO&nbsp;OKAZAKI,
+MASAYA&nbsp;SAITOU,<br>
+RYOUSEI&nbsp;TAKANO
+</p>
+
+<!--
+<table align=center border=0 cellpadding=4>
+<tr><td hight=0 width=30%><td hight=0 width=30%>
+<tr><th colspan=2 align=center><b><u>Developers</u></b>
+<tr><td align=right><b>YUTAKA</b><td align=left><b>ISHIKAWA</b>
+<tr><td align=right><b>MASAHIKO</b><td align=left><b>EDAMOTO</b>
+<tr><td align=right><b>YOSHITAKA</b><td align=left><b>KANEO</b>
+<tr><td align=right><b>HIDETAKA</b><td align=left><b>KOIE</b>
+<tr><td align=right><b>MOTOHIKO&nbsp;Z.</b><td align=left><b>MATSUDA</b>
+<tr><td align=right><b>FUMIHIRO</b><td align=left><b>OKAZAKI</b>
+<tr><td align=right><b>MASAYA</b><td align=left><b>SAITOU</b>
+<tr><td align=right><b>RYOUSEI</b><td align=left><b>TAKANO</b>
+</table>
+-->
+
+<hr>
+
+<p><i>This work is being done at the National Institute of Advanced
+Industrial Science and Technology (AIST), Japan, under the contract
+with the National Research Grid Initiative, NAREGI, Project.</i>
+
+<ul>
+
+<li><a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid
+Technology Research Center</a>, National Institute of Advanced
+Industrial Science and Technology (AIST)
+
+<li><a href="http://www.il.is.s.u-tokyo.ac.jp/">Yutaka Ishikawa
+Laboratory</a> of the University of Tokyo; Graduate School of
+Information Science and Technology, University of Tokyo
+
+<li><a href="http://www.il.is.s.u-tokyo.ac.jp/yampi/"> YAMPI
+Official Home Page</a>: An open-source MPI implementation project
+page
+
+<li><a href="http://www.naregi.org/index_e.html">National Research
+GRID Initiative (NAREGI)</a>
+
+</ul>
+
+<table>
+<tr>
+<td align=center>
+<img src="./gtrc.gif" alt="GTRC logo"><br>
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">
+<font size=-2>Grid Technology Research Center, AIST</font></a><br>
+<td align=center>
+<img src="./aist.gif" alt="AIST logo"><br>
+<a href="http://www.aist.go.jp/index_en.html">
+<font size=-2>National Institute of Advanced Industrial Science and
+Technology (AIST)</font></a><br>
+<td align=center>
+<img src="./naregi.gif" alt="NAREGI logo"><br>
+<a href="http://www.naregi.org/index_e.html">
+<font size=-2>National Research GRID Initiative (NAREGI)</font></a>
+</table>
+
+<p><i>GridMPI is a registered trademark in Japan.</i>
+
+<hr>
+<font size=-2><i>($Date: 2010-03-31 09:40:27 $)</i></font>
+<!-- $Id: index.html,v 1.60 2010-03-31 09:40:27 takano Exp $ -->
+
+<!-- **** BODY PART **** -->
+
+<td width="20%">
+<!-- include file="/outset2.inc" -->
+
+</td>
+</table>
+</body>

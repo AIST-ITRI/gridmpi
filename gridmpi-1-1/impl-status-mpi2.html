@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="man.css">
+</head>
+<body>
+
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Implementation Status</td>
+<td align="right">
+</table>
+
+<h2>MPI Implementation Status</h2>
+
+<p>
+<i>(This document roughly follows the format of the memo
+<a href="http://www-unix.mcs.anl.gov/mpi/mpich/mpi2-status.html">
+<b>Status of the MPICH implementation of MPI-1 and MPI-2.</b></a>
+It is organized by sections of the
+<a href="http://www.mpi-forum.org/docs/docs.html">MPI-2 Standard</a>).</i>
+
+<p>
+<table border="1" rules="all" cellpadding="5">
+<thead><tr bgcolor="darkblue">
+<th colspan="2" align="center" width="40%">
+<font color="white"><b>Section</b></font></th>
+<th align="center" width="60%">
+<font color="white"><b>Support</b></font></th>
+</tr>
+</thead>
+<tbody>
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-1.2</b>
+<tr><td><br><td>All<td>Yes</tr>
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Miscellany</b></tr>
+<tr><td>4.1<td>Portable MPI Process Startup (mpiexec)
+	<td><font color=red>No</font>
+<tr><td>4.2<td>Passing NULL to MPI_Init<td>Yes
+<tr><td>4.4<td>MPI_TYPE_CREATE_INDEXED_BLOCK<td>Yes
+<tr><td>4.5<td>MPI_STATUS_IGNORE<br>MPI_STATUSES_IGNORE<td>Yes
+<tr><td>4.6<td>Error Class for Invalid Keyval
+	<td><font color=red>No</font>. GridMPI does not
+	distinguish target objects of keyvals.
+<tr><td>4.7<td>Committing a Committed Datatype
+	<td>Yes.  GridMPI does nothing by commit.
+<tr><td>4.8<td>Allowing User Functions at Process Termination
+	<td><font color=red>No</font>
+<tr><td>4.9<td>Determining Whether MPI Has Finished<td>Yes
+<tr><td>4.10<td>The Info Object<td>Yes
+<tr><td>4.11<td>Memory Allocation
+	<td>Yes.  GridMPI implements memory allocators by malloc/free.
+<tr><td>4.12<td>Language Interoperability
+	<td><font color=red>No</font>.
+	Fortran KIND is not yet	implemented.
+<tr><td>4.13<td>Error Handlers (on communicators, windows, and datatypes)
+	<td>Yes.  GridMPI does not distinguish target objects of error
+	handlers, and no errors are signaled when an error handler is
+	set to an inappropriate object.
+<tr><td>4.14<td>New Datatype Manipulation Functions<td>Yes
+<tr><td>4.15<td>New Predefined Datatypes<td>Yes
+<tr><td>4.16<td>Canonical MPI_PACK and MPI_UNPACK<td>Yes
+<tr><td>4.17<td>Functions and Macros
+	<td>Yes.  GridMPI implements all interfaces as functions.
+<tr><td>4.18<td>Profiling Interface<td>Yes
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Process Creation and Management</b>
+<tr><td>5.3<td>Process Manager Interface<td>Yes. Lightly tested. (*Note1)
+<tr><td>5.4<td>Establishing Communication<td>Yes. Lightly tested. (*Note1)
+<tr><td>5.5<td>Other Functionality<td>Yes. Lightly tested. (*Note1)
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: One-Sided Communications</b>
+<tr><td>6.2<td>Initialization
+	<td>Yes. Lightly tested. (*Note3)
+<tr><td>6.3<td>Communication Calls
+	<td>Yes. Lightly tested. (*Note3)
+<tr><td>6.4<td>Synchronization Calls
+	<td>Yes. Lightly tested. (*Note3)
+<tr><td>6.6<td>Error Handling
+	<td>Yes. Lightly tested. (*Note3)
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Extended Collective Operations</b>
+<tr><td>7.2<td>Intercommunucator Constructors<td>Yes
+<tr><td>7.3<td>Extended Collective Operations<td>Yes
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: External Interfaces</b>
+<tr><td>8.2<td>Generalized Requests<td>Yes
+<tr><td>8.3<td>Associating Information with Status<td>Yes
+<tr><td>8.4<td>Naming Objects<td>Yes
+<tr><td>8.5<td>Error Classes, Codes, and Handlers<td>Yes
+<tr><td>8.6<td>Decoding a Datatype<td>Yes
+<tr><td>8.7<td>MPI and Threads<td>Yes. Lightly tested. (*Note2)
+<tr><td>8.8<td>New Attribute Caching Functions<td>Yes
+<tr><td>8.9<td>Duplicating a Datatype<td>Yes
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: MPI-I/O</b>
+<tr><td>9.2<td>File Manipulation
+	<td>Yes. Lightly tested. (*Note3, *Note4)
+<tr><td>9.3<td>File Views
+	<td>Yes. Lightly tested. (*Note3, *Note4)
+<tr><td>9.4<td>Data Access
+	<td>Yes. Lightly tested. (*Note3, *Note4)
+<tr><td>9.5<td>File Interoperability
+	<td>Yes. Lightly tested. (*Note3, *Note4)
+<tr><td>9.6<td>Consistency and Semantics
+	<td>Yes. Lightly tested. (*Note3, *Note4)
+<tr><td>9.7<td>I/O Error Handling
+	<td>Yes. Lightly tested. (*Note3, *Note4)
+<tr><td>9.8<td>I/O Error Classes
+	<td>Yes. Lightly tested. (*Note3, *Note4)
+<tr bgcolor="lavender">
+<td colspan="3"><b>MPI-2: Language Bindings</b>
+<tr><td>10.1<td>C++ <td>Yes
+<tr><td>10.2<td>Fortran Support
+	<td><font color=red>No</font> (includes MPI module)
+</tbody>
+</table>
+
+<p>NOTES:
+<ul>
+
+<li>Note1: GridMPI supports DPM (Dynamic Process Management), but
+YAMPII does not support DPM yet.
+
+<li>Note2: Thread support is only for YAMPII with socket.  Others are
+not tested at all for GridMPI, Vendor MPI, and YAMPII/SCore.
+
+<li>Note3: It needs threads.  Reconfiguration with threads and using
+MPI_Init_thread (or setting environment variable _YAMPI_THREADS) is
+needed.
+
+<li>Note4: It only supports NFS mounted file systems (or similar ones
+with POSIX), currently.
+
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2006/06/07 15:56:42 $)</i></font>
+<!-- $Id: impl-status-mpi2.html,v 1.1 2006/06/07 15:56:42 matu Exp $ -->
+
+<!--
+Local Variables:
+Mode: Fundamental
+End:
+-->
+
+</body>
+</html>

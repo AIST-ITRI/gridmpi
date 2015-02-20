@@ -1,0 +1,467 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="man.css">
+</head>
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">Environment Variables</td>
+<td align="right">(1MPI)</td>
+</table>
+
+<!-- ================================================================ -->
+
+<h2>ENVIRONMENT VARIABLES</h2>
+
+<blockquote><table border=1 rules=all cellpadding=5>
+<tr><th bgcolor=lightgrey>ENVIRONMENT VARIABLES OF GENERAL BEHAVIOR
+<tr><td>
+MPIROOT  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_ABORT_ON_CLOSE  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_BACKTRACE  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_BACKTRACE_CMDFILE  &nbsp;&nbsp;&nbsp;&nbsp;
+(NOCKPT/_YAMPI_CKPT)  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_COMMON_PACK_SIZE  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_CONFIG_FILE  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_COPS  &nbsp;&nbsp;&nbsp;&nbsp;
+(_YAMPI_CWD)  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_DEBUG  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_DISABLE_UNIX  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_DUMPCORE  &nbsp;&nbsp;&nbsp;&nbsp;
+(_YAMPI_EXTS)  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_NOFLUSH  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_PORT_RANGE  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_PRINTINFO  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_PROGNAME  &nbsp;&nbsp;&nbsp;&nbsp;
+(_YAMPI_QDUMP)  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_RSH  &nbsp;&nbsp;&nbsp;&nbsp;
+(_YAMPI_RSIZE)  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_SOCBUF  &nbsp;&nbsp;&nbsp;&nbsp;
+(_YAMPI_STATISTICS)  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_THREADS  &nbsp;&nbsp;&nbsp;&nbsp;
+
+<tr><td>
+CKPT_RESTART  &nbsp;&nbsp;&nbsp;&nbsp;
+_PSP_OPT
+
+<tr><th bgcolor=lightgrey>ENVIRONMENT VARIABLES TO CONTROL IMPI BEHAVIOUR
+
+<tr><td>
+IMPI_AUTH_KEY  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_AUTH_NONE  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_CHILD_PROC  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_CLIENT_ID  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_COLL_MAXLINEAR  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_COLL_XSIZE  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_C_DATALEN  &nbsp;&nbsp;&nbsp;&nbsp;
+(IMPI_DEBUG)  &nbsp;&nbsp;&nbsp;&nbsp;
+(IMPI_DEBUG_RANK)  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_H_ACKMARK  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_H_HIWATER  &nbsp;&nbsp;&nbsp;&nbsp;
+(IMPI_INTER_RSH)  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_MPIVER  &nbsp;&nbsp;&nbsp;&nbsp;
+(IMPI_NAME_PORT)  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_NETWORK  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_PARENT_PORT  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_PORT_RANGE  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_SERVER_PORT  &nbsp;&nbsp;&nbsp;&nbsp;
+IMPI_SERVER_PORT_RANGE  &nbsp;&nbsp;&nbsp;&nbsp;
+
+<tr><th bgcolor=lightgrey>ENVIRONMENT VARIABLES TO CONTROL COMPILER DRIVER
+
+<tr><td>
+MP_PREFIX  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_CC  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_CXX  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_F77  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_F90  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_EXTCOPT  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_EXTFOPT  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_EXTLIBS  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_CKPTCOPT  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_CKPTLIBS  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_SCORELIB  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_CC32FLAG  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_CC64FLAG  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_LD64FLAG  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_AR64FLAG  &nbsp;&nbsp;&nbsp;&nbsp;
+</blockquote>
+
+<tr><th bgcolor=lightgrey>ENVIRONMENT VARIABLES OF SPECIFIC PLATFORMS
+
+<tr><td>
+_YAMPI_AIX_FULLCORE  &nbsp;&nbsp;&nbsp;&nbsp;
+_YAMPI_SCORE_SCHDHINT  &nbsp;&nbsp;&nbsp;&nbsp;
+(_YAMPI_SCORE_WAITTICK)  &nbsp;&nbsp;&nbsp;&nbsp;
+(GMP_SQ_CHECK)  &nbsp;&nbsp;&nbsp;&nbsp;
+
+<tr><th bgcolor=lightgrey>ENVIRONMENT VARIABLES INTERNALLY USED
+<tr><td>
+</table>
+</blockquote>
+
+<!-- ================================================================ -->
+<h3>ENVIRONMENT VARIABLES OF GENERAL BEHAVIOR</h3>
+
+<p>GridMPI and YAMPII have many configurable settings which are all
+set through environment variables.  Some variables are set internally
+by <b>mpirun</b> and <b>mpiexec</b> commands.  A few variables are
+mandatory, especially <b>MPIROOT</b> and <b>IMPI_AUTH_NONE</b> are.
+
+<dl>
+
+<p><dt><b>MPIROOT</b>=<i>directory</i>
+
+<dd>Specifies a GridMPI installation directory.  Commands such as
+<b>mpirun</b> and <b>mpicc</b> searches under the directory for
+necessary binary and library files.
+
+<p><dt><b>IMPI_AUTH_NONE</b>=<i>any</i>
+
+<dd>Specifies not to use authentication in the IMPI Server.  The value
+is ignored.  The IMPI specifies two weak methods of authentication:
+<b>IMPI_AUTH_NONE</b> and <b>IMPI_AUTH_KEY</b>.  Either of these is
+required, and both of a run of IMPI Server and a run <b>mpirun</b>
+should set matching variables.
+
+<p><dt><b>_YAMPI_RSH</b>=<i>remote-shell-command</i>
+
+<dd>Specifies a remote shell command.  Typical choice is "rsh" or
+"ssh".  RSH is the default.
+
+<p><dt><b>_YAMPI_CONFIG_FILE</b>=<i>file-name</i>
+
+<dd>Specifies a file name of a host configuration file for YAMPII.
+Default is a "mpi_conf" in the current directory.
+
+<p><dt><b>_YAMPI_SOCBUF</b>=<i>number</i>
+
+<dd>Specifies a buffer size of sockets (SNDBUF/RCVBUF) in decimal
+bytes. It calls sockopt with a specified value. (1) Specifying a number
+sets the value.  If the value is non-numerical or negative, it sets the
+OS default.  (2) Unspecifying this sets a YAMPII default 64KB.  (3)
+Empty string or "0" sets the OS default.
+
+<p><dt><b>_YAMPI_PORT_RANGE</b>=<i>start:end</i>
+
+<dd>Specifies a port range to listen to for intra-cluster connection.
+Port numbers from <i>start</i> to <i>end</i> (inclusive) are tried.
+
+<p><dt><b>IMPI_PORT_RANGE</b>=<i>start:end</i>
+
+<dd>Specifies a port range to listen to for IMPI connection.  Port
+numbers from <i>start</i> to <i>end</i> (inclusive) are tried.
+
+<p><dt><b>IMPI_SERVER_PORT_RANGE</b>=<i>start:end</i>
+
+<dd>Specifies a port range to listen to for IMPI server connection.  Port
+numbers from <i>start</i> to <i>end</i> (inclusive) are tried.
+
+<p><dt><b>IMPI_NETWORK</b>=<i>network-number</i>
+
+<dd>Specifies the network interface by the network address.  It is
+used when the machines have multiple network interfaces and the global
+connection is on other than the primary interface.  It is specified by
+the format of the address like "163.220.2.0", and it is matched after
+masking by the netmask.
+
+<!-- FROM HERE BELOW ENTRIES ARE SORTED BY NAME -->
+
+<p><dt><b>IMPI_MPIVER</b>=<i>1/2</i>
+
+<dd>(USED IN THE MPI-2 IMPLEMENTATION).
+
+<p><dt><b>_YAMPI_ABORT_ON_CLOSE</b>=<i>0/1/2</i>
+
+<dd>Specifies a behaviour on close of sockets.
+
+<b>_YAMPI_ABORT_ON_CLOSE=0</b> specifies not to abort,
+<b>_YAMPI_ABORT_ON_CLOSE=1</b> (default) specifies to abort siliently,
+and <b>_YAMPI_ABORT_ON_CLOSE=2</b> aborts with signaling an error.  It
+is effective for TCP/IP transport (including IMPI protocol).
+
+<p><dt><b>_YAMPI_BACKTRACE</b>=<i>0/1</i>
+
+<dd>Specifies to print backtrace at errors.
+
+<p><dt><b>_YAMPI_BACKTRACE_CMDFILE</b>=<i>command</i>
+
+<dd>(Specifies a command to print backtrace at errors.)
+
+<p><dt><b>_YAMPI_COMMON_PACK_SIZE</b>=<i>any</i>
+
+<dd>Specifies to use the standard packing for <b>long double</b>.  The
+default is NOT standard conforming: It packs long double to
+sizeof(long double) instead of standard-specified 16 bytes, even in
+the external32 format.  This breaks data exchange in a heterogeneous
+environment.  For conforming packing, set this variable to any value.
+The default is chosen to make often-occurring badly-coded programs
+work in a homogeneous environment.
+
+<p><dt><b>_YAMPI_COPS</b>=<i>number</i>
+
+<dd>Specifies a collective operation option.  GridMPI may define some
+algorithms for collective operations, and this value chooses one.  It
+is very implementation specific.
+
+<p><dt><b>_YAMPI_DISABLE_UNIX</b>=<i>any</i>
+
+<dd>Specifies to disable using UNIX domain sockets.
+
+<p><dt><b>_YAMPI_DUMPCORE</b>=<i>0/1</i>
+
+<dd>Specifies to dump cores at MPI_Abort.
+
+<p><dt><b>_YAMPI_THREADS</b>=<i>0/1</i>
+
+<dd>Specifies to enable threads always without regard to the use of
+MPI_Init.  It is effective only when configured with threads.
+
+<p><dt><b>_YAMPI_NOFLUSH</b>=<i>any</i>
+
+<dd>Specifies to disable buffering on stdout/stderr.  This controls
+<b>setlinebuf(3C)</b> on stdout/stderr.  Default is line-by-line
+flushing.  When _YAMPI_NOFLUSH is set, flushing is disabled, which
+makes dumping via stdout faster for a large amount of data.
+
+<p><dt><b>_YAMPI_PRINTINFO</b>=<i>0/1</i>
+
+<dd>Specifies to print some information verbosely at startup.
+
+</dl>
+
+<!-- ================================================================ -->
+<h3>ENVIRONMENT VARIABLES TO CONTROL IMPI BEHAVIOUR</h3>
+
+<p>GridMPI has control of the parameters defined in the IMPI
+specification through environment variables.  The precise meaning of
+the parameters can be found in the IMPI specification.
+
+<p>The values are unsigned 32-bit values (except IMPI_AUTH_KEY), but
+specifying too large values will break the resource limit.  The
+implementation does not force a limit on the values.
+
+<dl>
+
+<p><dt><b>IMPI_AUTH_NONE</b>=<i>any</i>
+
+<dd>Specifies NOT to use any authentication in connecting to the IMPI
+Server. The value is ignored.  (See the IMPI specification).
+
+<p><dt><b>IMPI_AUTH_KEY</b>=<i>value</i>
+
+<dd>Specifies to use the simple KEY authentication protocol in
+connecting to the IMPI Server.  The key value is given as 64-bit decimal
+integer. It is matched between IMPI Server invocation and MPI process
+invocation. (See the IMPI specification).
+
+<p><dt><b>IMPI_C_DATALEN</b>=<i>value</i> (default 65536 bytes)
+
+<dd>Specifies the maximum data bytes (payload size) in a packet.  The
+smallest value from the clients is negotiated.  (See the IMPI
+specification).
+
+<p><dt><b>IMPI_COLL_XSIZE</b>=<i>value</i> (default 1024 bytes)
+
+<dd>Specifies a cross-over point of collective algorithms by message
+size.  This specifies the least byte size to use <i>long</i>
+algorithms.  All clients must specify the same value, or an error is
+signalled.  (See the IMPI specification).
+
+<p><dt><b>IMPI_COLL_MAXLINEAR</b>=<i>value</i> (default 4)
+
+<dd>Specifies a cross-over point of collective algorithms by the
+number of hosts (In GridMPI-0.2, the number of hosts equals to the total
+number of procs).  This specifies the least number of hosts to use
+"non-linear (hypercube)" algorithms.  All clients must specify the same
+value, or an error is signalled.  (See the IMPI specification).
+
+<p><dt><b>IMPI_H_ACKMARK</b>=<i>value</i> (default 10 packets)
+
+<dd>Specifies a flow control parameter.  Acks are returned at every
+ack-mark packets.  The smallest value from the clients is negotiated.
+(See the IMPI specification with errata).
+
+<p><dt><b>IMPI_H_HIWATER</b>=<i>value</i> (default 20 packets)
+
+<dd>Specifies a flow control parameter.  It is an upper limit of
+received packets without sending an ack.  The smallest value from the
+clients is negotiated.  (See the IMPI specification with errata).
+
+<p>The following constraint is maintained: (1 &le; IMPI_H_ACKMARK &le;
+IMPI_H_HIWATER).
+
+<p><dt><b>IMPI_C_TAGUB</b>=<i>value</i>
+
+<dd><i>Unspecifiable</i>.  The value of TAGUB of YAMPII (0x7fffffff)
+is used.
+
+</dl>
+
+<!-- ================================================================ -->
+<h3>ENVIRONMENT VARIABLES TO CONTROL COMPILER DRIVER</h3>
+
+<p>These override the default set at configuration time.
+
+<dl>
+
+<p><dt><b>MP_PREFIX</b>=<i>directory path</i>
+<dd><br>
+
+<p><dt><b>_YAMPI_CC</b>=<i>compiler</i>
+
+<dd>Specifies a C compiler for <b>mpicc</b>.  
+
+<p><dt><b>_YAMPI_CXX</b>=<i>compiler</i>
+
+<dd>Specifies a C++ compiler for <b>mpic++</b>.
+
+<p><dt><b>_YAMPI_F77</b>=<i>compiler</i>
+
+<dd>Specifies a F77 compiler for <b>mpif77</b>.
+
+<p><dt><b>_YAMPI_F90</b>=<i>compiler</i>
+
+<dd>Specifies a F90 compiler for <b>mpif90</b>.
+
+<p><dt><b>_YAMPI_EXTCOPT</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_EXTFOPT</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_EXTLIBS</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_CKPTCOPT</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_CKPTLIBS</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_SCORELIB</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_CC32FLAG</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_CC64FLAG</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_LD64FLAG</b>=<i>options</i>
+<dd><br>
+<p><dt><b>_YAMPI_AR64FLAG</b>=<i>options</i>
+<dd><br>
+
+</dl>
+
+<!-- ================================================================ -->
+<h3>ENVIRONMENT VARIABLES OF SPECIFIC PLATFORMS</h3>
+
+<dl>
+
+<p><dt><b>_YAMPI_AIX_FULLCORE</b>=<i>0/1</i>
+
+<dd>Setting 1 to this makes to dump full core in AIX.  AIX dumps only
+the stack by default, which does not include the data.
+
+<p><dt><b>_YAMPI_SCRUN</b>=<i>command</i>
+<dd><br>
+
+<p><dt><b>_YAMPI_SCORE_SCHDHINT</b>=<i>0/1</i>
+
+<dd>Setting 1 to this variable lets the transport layer call
+<b>SCORE_BECOME_BUSY/IDLE</b> to notify the activity to the SCore
+deamon.  It is off by default.
+
+<!--_YAMPI_SCORE_WAITTICK-->
+
+<p><dt><b>GMP_SQ_CHECK</b>
+<dd>(undocuemnted)
+
+</dl>
+
+<!-- ================================================================ -->
+<h3>ENVIRONMENT VARIABLES INTERNALLY USED</h3>
+
+<p>Environment variables are used to pass information from commands
+like <b>mpirun</b> to MPI processes.  These are listed for the
+information purpose and are not intended for direct use.  These
+variables may change or be missing in the future releases.
+
+<dl>
+
+<p><dt><b>_YAMPI_DEBUG</b>=<i>0/1</i> (<b>mpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>_YAMPI_NPROC</b>=<i>nprocs</i> (<b>mpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>_YAMPI_PROGNAME</b>=<i>name</i> (<b>mpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>_YAMPI_MYRANK</b>=<i>rank</i> (<b>mpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>_YAMPI_PHOST</b>=<i>host</i> (<b>mpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>_YAMPI_PPORT</b>=<i>port</i>  (<b>mpirun</b> sets this)
+
+<dd> <br>
+
+<p><dt><b>_YAMPI_ARCH</b>=<i>hostname</i>  (<b>mpirun</b> sets this)
+
+<dd>Specifies a transport. The default is 0 (YAMPII/TCP).
+
+<ul>
+<li>0 for YAMPII/TCP
+<li>1 for YAMPII/SCore
+<li>2 for GridMPI/TCP
+<li>3 for GridMPI/VendorMPI
+</ul>
+
+<p><dt><b>IMPI_SERVER_PORT</b>=<i>port</i>  (<b>mpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>IMPI_CLIENT_ID</b>=<i>id</i>  (<b>mpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>IMPI_PARENT_PORT</b>=<i>port</i>  (--)
+
+<dd><br>
+
+<p><dt><b>IMPI_CHILD_PROC</b>=<i>rank?</i>  (--)
+
+<dd><br>
+
+<p><dt><b>CKPT_DIR</b>=<i>dir</i>  (<b>gridmpirun</b> sets this)
+
+<dd>Checkpoint files are stored in the directory $CKPT_DIR. (= ".")
+
+<p><dt><b>CKPT_FILE</b>=<i>name</i>  (<b>gridmpirun and mpirun</b> set this)
+
+<dd><br>
+
+<p><dt><b>CKPT_RESTART</b>=<i>0/1</i>  (<b>gridmpirun</b> sets this)
+
+<dd><br>
+
+<p><dt><b>_PSP_OPT</b>=<i>interface:classid[,...]</i>
+
+<dd>Specifies pairs of interface device such as eth0 and class-id such 
+as 1:1.  See tc(8) man page about class-id.  (SUPPORT LINUX ONLY)
+
+<dd><br>
+
+</dl>
+
+<hr> <font size="-2"><i>($Date: 2006/12/01 10:03:07 $)</i></font><!-- $Id: man.environ.html,v 1.2 2006/12/01 10:03:07 takano Exp $ -->
+</body>
+</html>
+
+<!--
+Local Variables:
+mode: Fundamental
+End:
+-->

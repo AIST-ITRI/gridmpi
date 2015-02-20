@@ -1,0 +1,283 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="keywords" content="Computer">
+<meta name="keywords" content="Parallel Processing">
+<meta name="keywords" content="High Performance Computing">
+<meta name="keywords" content="Networking">
+<meta name="keywords" content="Grid">
+<meta name="keywords" content="MPI">
+<meta name="keywords" content="Message Passing Interface">
+<meta name="keywords" content="GridMPI">
+
+<link rel="stylesheet" type="text/css" href="../psyche.css">
+<title>GridMPI</title>
+</head>
+
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody>
+<tr align="left" valign="top">
+<td class="topmenu">
+   <a href="../index.html">Home</a>
+ | <a href="../gridmpi.html">GridMPI</a>
+ | <a href="../gridtcp.html">GridTCP</a>
+ | <a href="../publications/index.html">Publications</a>
+ | Download
+<tr><td class="topmenu2">
+<tr><td height="4pt">
+</tbody></table>
+
+<table class="wholepage">
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<td class="maincolumn">
+<table class=banner><tbody>
+<tr><td class=banner11><td class=banner12>&nbsp;GridMPI&trade;
+<td class=banner13>&nbsp;</tr>
+<tr><td class=banner21 colspan=2><td class=banner22></tr>
+<tr><td class=banner31><td class=banner32 colspan=2><i>A Project of the
+<a href="http://projects.gtrc.aist.go.jp/en/index.html">Grid Technology
+Research Center, AIST</a>&nbsp;</i></tr>
+</tbody></table>
+<br>
+
+</tr>
+<tr align="left" valign="top">
+<td class="leftcolumn">
+<p align=center><font color=red>Curret Release: GridMPI-2.1.3</font></p>
+<ul class="sidebar">
+<li class="sidebartitle">Contents
+<li class="section"><a href="../index.html">Home</a>
+<li class="section"><a href="../gridmpi.html">Project GridMPI</a>
+<li class="subsection"><a href="../gridmpi-2-1/index.html">GridMPI 2.1</a><br>
+<li class="subsection"><a href="../gridmpi-2-x/faq.html">GridMPI 2.1 FAQ</a><br>
+<li class="subsection"><a href="../gridmpi-1-1/index.html">GridMPI 1.1</a>
+<li class="subsection"><a href="../gridmpi-1-1/faq.html">GridMPI FAQ</a>
+<li class="section"><a href="../gridtcp.en.html">Project GridTCP</a>
+<li class="subsection"><a href="../pspacer/index.en.html">PSPacer 3.0</a>
+<li class="subsection"><a href="../pspacer-ht/index.html">PSPacer/HT 1.0</a>
+<!--<li class="subsection"><a href="../pspacer-2.1/index.en.html">PSPacer 2.1.2</a>-->
+<!--<li class="subsection"><a href="../pspacer-1.0/index.en.html">PSPacer 1.2</a>-->
+<li class="subsection"><a href="../pspacer/faq.en.html">PSPacer FAQ</a>
+<li class="section"><a href="../publications/index.html">Publications</a>
+<li class="section">Download
+<!--<li class="section"><a href="/related.html">Related Links</a>-->
+<li class="section"><a href="../contact.html">Contact</a>
+</ul>
+
+<td class="maincolumn">
+
+
+<!-- **** BODY PART **** -->
+
+<!-- ================================================================ -->
+<h2>GridMPI version 1.1</h2>
+
+<p>The version 1.1 release GridMPI implements fully the specification
+of MPI-1.2 and major MPI-2.0 features.  The MPI-1.2 part is fully
+tested with the test suites from ANL and Intel.  GridMPI passes 100%
+of the functional tests of the suites.  The MPI-2.0 part is lightly
+tested.  We tested this package in: (1) Linux/IA32 packages RedHat 9,
+and Fedora Core 3; (2) IBM pSeries and Hitachi SR11000 using IBM-MPI
+as an underlying point-to-point communication layer; (3)
+Solaris8/SPARC64V using Fujitsu MPI and compilers; (4)
+NEC SX6 using NEC MPI and compilers.
+
+<p>To download the GridMPI version 1.1, go to the
+<a href="/software/downloads.jsp">download</a> page.
+
+<!-- ================================================================ -->
+<h3>Implemented/Unimplemented Features</h3>
+
+<p>The following lists the features.
+
+<ul>
+
+<li>Full MPI-1.2 support.
+
+<li>IMPI (Interoperable MPI) support: IMPI is supported for
+inter-cluster communication.  IMPI is a standard protocol for
+connecting multiple instances of MPI.
+
+<li>Checkpointing support: Checkpointing (fault tolerance by
+restarting) is available on Linux/IA32 platforms with 2.4 and 2.6
+kernels.
+
+<li>"Vendor MPI" support: Vendor MPI uses platform-supplied MPI for
+local communication.  Vendor MPI is available for IBM pSeries and
+Hitachi SR11000.
+
+</ul>
+
+<!-- ================================================================ -->
+<h3>Supported Platforms</h3>
+
+<table border=1 rules=all cellpadding=3>
+<tr><th bgcolor=lightgrey>Platform
+<th bgcolor=lightgrey>Compilers
+<th bgcolor=lightgrey>Test Status
+<th bgcolor=lightgrey>Notes
+<tr><td>Linux/IA32, RedHat 9<td>GCC<td>fully tested<td>&nbsp;
+<tr><td>Linux/IA32, Fedora Core 4<td>GCC<td>compile-and-run<td>(1)
+<tr><td>Linux/IA32<td>Intel<td>compile-and-run<td>&nbsp;
+<tr><td>Linux/x86_64 (Opteron)<td>GCC, PGI, Pathscale<td>compile-and-run<td>&nbsp;
+<tr><td>Linux/IA64<td>GCC<td>compile-and-run<td>&nbsp;
+<tr><td>IBM AIX/Power<td>IBM<td>fully tested<td>(2)
+<tr><td>Hitachi SR11K (AIX/Power)<td>Hitachi f90<td>compile-and-run<td>(2)
+<tr><td>Fujitsu Solaris8/SPARC64V<td>Fujitsu<td>fully tested<td>(3)
+<tr><td>Solaris10/SPARC<td>Sun, GCC<td>compile-and-run<td>&nbsp;
+<tr><td>NEC SX6<td>NEC<td>compile-and-run<td>(4)
+</table>
+<ul>
+<li>(1) Requires gcc-4.0.1 or above
+<li>(2) Uses IBM MPI as a vendor MPI
+<li>(3) Uses Fujitsu MPI as a vendor MPI
+<li>(4) Uses NEC MPI as a vendor MPI
+</ul>
+
+<!-- ================================================================ -->
+<h3>Network and Other Configurations</h3>
+
+<p>Configuration restrictions:
+
+<ul>
+
+<li>The every host in clusters need to be IP global address reachable.
+[<a href="faq.html#faq.ipaddress">faq</a>]
+
+</ul>
+
+<!-- ================================================================ -->
+<h3>Simple and Startup Usage</h3>
+
+<p><a href="install.html">Installation Procedure</a> describes a
+step-by-step installation and test procedure to run simple tests.
+
+<p><a href="quickuse.html">Quick Usage</a> describes a simple usage
+and a very brief overview of the GridMPI.
+
+<!--<p><a href="readme.html">README</a> describes a simpler installation
+procedure.-->
+
+<!-- ================================================================ -->
+<h3>Commands</h3>
+
+<ul>
+
+<li><a href="man.mpirun.html">mpirun</a>: MPI process starter.  It
+starts MPI processes in a cluster.  It includes an option to specify a
+cluster number in a multi-cluster configuration in addition to
+ordinary options.
+
+<li><a href="man.mpicc.html">mpicc</a>: Compiler frontend.
+
+<li><a href="man.mpicc.html">mpic++</a>: Compiler fontend (supporting C++ binding).
+
+<li><a href="man.mpicc.html">mpif77</a>: Compiler frontend.
+
+<li><a href="man.mpicc.html">mpif90</a>: Compiler frontend.
+
+<li><a href="man.impi-server.html">impi-server</a>: IMPI server.  A
+contact point to join clusters in a multi-cluster configuration.  It
+is specified in the IMPI specification.
+
+<li><a href="man.gridmpirun.html">gridmpirun</a>: Simple frontend to
+<b>mpirun</b>.  It can run <b>mpirun</b> across multiple cluster
+sites.
+
+<li><b>canquit</b>: Command wrapper to set signal state of a
+background process.  It sets interrupt and quit signals to default
+state, and runs a command.
+
+<li><b>detach</b>: Command wrapper to set session of a background
+process.  It sets a session and runs a command.
+
+<li><b>nsd</b>: Network signal deliverer to start checkpointing.  It
+is used by <b>gridmpirun</b> to pass caught signals to remote sites.
+It resides at the both ends of SSH and encodes and passes signals
+through a pipe of stdio.
+
+<li><b>gnamesv</b>: Simple MPI-2.0 name server for process spawning.
+
+<li><b>mpifork</b>: Static process spawner for <b>mpirun</b>.  Type
+<b>mpifork -h</b> for online help.
+
+<li><b>pspd</b>: PSPacer control daemon.  It delegates bandwidth
+control requests to the <a href="http://www.gridmpi.org/pspacer-2.0/">
+PSPacer</a> kernel module.
+
+</ul>
+
+<!-- ================================================================ -->
+<h3>Environment Variables</h3>
+
+<p>A few environment variables are important and some are mandatory.
+The following is an extract from the full list.
+
+<p>See the <a href="man.environ.html">full-list</a> of the environment
+variables.
+
+<ul>
+<li><b>MPIROOT</b> <i>directory</i>:
+
+Specifies a GridMPI installation directory.  Commands such as
+<b>mpirun</b> and <b>mpicc</b> searches in the directory for necessary
+binary and library files.
+
+<li><b>IMPI_AUTH_NONE</b> <i>any</i>:
+
+Specifies NOT to use any authentication in connecting to the IMPI
+Server.  The value is ignored.  This is required, and both of a run of
+IMPI Server and a run of <b>mpirun</b> should set this.  Other
+authentication protocols are described in the full list of the
+environment variables.
+
+<li><b>_YAMPI_RSH</b> <i>remote-shell-command</i>:
+
+Specifies a remote shell command.  Typical choice is "rsh" or
+"ssh".  RSH is the default.
+
+</ul>
+
+<!-- ================================================================ -->
+<h3>Configure Options (for Administrators)</h3>
+
+<p>Configuration at compile time is specified by the configure.  The
+following configure options are available:
+
+<p><a href="man.configure.html">configure</a>
+[--with-binmode=<i>no/32/64</i>]
+[--with-vendormpi=<i>no/ibmmpi/mpich/mpich2/intelmpi/fjmpi/mpisx</i>]
+[--with-libckpt=<i>yes/no</i>]
+[--with-libpsp=<i>yes/no</i>]
+[--enable-debug]
+[--enable-threads]
+[--disable-unix]
+[--disable-prof-feature]
+
+<!-- ================================================================ -->
+<h3>Implementation Problemns and Issues</h3>
+
+<p>See <a href="impl-status.html">Implementation Status</a> for known
+problems, compatibility issues, and open issues.
+
+<p>See <a href="impl-status-mpi2.html">MPI Implementation Status</a> for
+support levels of MPI-2 features.
+
+<p>See <a href="impl-status-ckpt.html">Checkpoint/Restart
+Implementation Status</a> for support levels of checkpointing feature.
+
+<!-- ================================================================ -->
+<hr>
+<font size=-2><i>($Date: 2006-09-12 09:44:38 $)</i></font>
+<!-- $Id: index.jsp,v 1.5 2006-09-12 09:44:38 takano Exp $ -->
+
+<!-- **** BODY PART **** -->
+
+<td width="20%">
+
+</td>
+</table>
+</body>
+

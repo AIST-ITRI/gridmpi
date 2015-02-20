@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<link rel="stylesheet" type="text/css" href="ref.css">
+</head>
+<body>
+
+<!-- $Id: usingrelay.html,v 1.17 2009/03/29 15:08:16 takano Exp $ -->
+
+<h2>How to use IMPI Relay</h2>
+
+<p>This document describes a step-by-step installation and test
+procedure of GridMPI using IMPI Relay.
+
+<p><font size=-2><i>($Date: 2009/03/29 15:08:16 $)</i></font>
+
+<h3>Contents</h3>
+
+<ul>
+<li><a href="#pcc">1. Installation</a>
+	<ul>
+	<li>1.1. Prerequisite
+	<li>1.2. Compilation and Installation
+	</ul>
+<li><a href="#mpirun">2. Starting a Program</a>
+	<ul>
+	<li>2.1. Method 1
+	<li>2.2. Method 2
+	</ul>
+<li><a href="#portrange">3. Port range</a>
+<li><a href="#todo">4. TODO</a>
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+
+<a name="pcc"></a>
+<h2>1. Installation</h2>
+
+<!-- ================================ -->
+<h3>1.1. Prerequisite</h3>
+<!-- ================================ -->
+
+<p>IMPI Relay allows running GridMPI on clusters only with non-globally 
+reachable IP addresses.  It is included in GridMPI-2.0 and later.  
+In previous releases, the every host in clusters needed to be 
+IP global address reachable 
+[<a href="faq.html#faq.ipaddress">faq</a>].
+
+<p>A host which IMPI Relay is running (called <i>relay host</i>) must be 
+IP reachable with not only an internal (privately addressed) cluster 
+but also external clusters, which means a relay host must have at least 
+one private IP address and one global IP address.
+
+<p>IMPI Relay is supported only Linux platforms.
+
+<p>For further information, please see <a href="whatisrelay.html">
+"Overview of IMPI Relay"</a>.
+
+<a name="pcc_make"></a>
+<!-- ================================ -->
+<h3>1.2. Compilation and Installation</h3>
+<!-- ================================ -->
+
+<p>No additional procedure is required.  
+See <a href="install.html">Installation Procedure of GridMPI</a>.
+
+<p>Check the executable binary (<i>impi-relay</i>) in $MPIROOT/bin.
+
+<a name="mpirun"></a>
+<h2>2. Starting a Program</h2>
+
+<!-- ================================ -->
+<h3>2.1. Method 1</h3>
+<!-- ================================ -->
+
+<p>In this example, there are two clusters.  One cluster (<i>ID = 0</i>) 
+has one compute host with a global IP address (<i>host1</i>), and the 
+other cluster (<i>ID = 1</i>) has one compute host with a private IP 
+address (<i>host2</i>) and one relay host (<i>hostR</i>).
+
+<p>1. Create configuration files.  Here, two <b>localhost</b> entries
+in <b>mpi_conf1</b>, and two <b>localhsot</b> entries in
+<b>mpi_conf2</b>.
+
+<p>Content of <b>mpi_conf1</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+localhost
+localhost
+</pre></table></blockquote>
+
+<p>Content of <b>mpi_conf2</b>:
+<blockquote><table border=1 rules=none cellpadding=5><tr><td><pre>
+localhost
+localhost
+</pre></table></blockquote>
+
+<p>2. Run an application (a.out).
+
+<pre class="screen">
+host1$ export IMPI_AUTH_NONE=0		...(1)
+host1$ impi-server -server 2 &amp;		...(2)
+host1$ mpirun -client 0 <i>addr1:port1</i> -np 2 -c mpi_conf1 ./a.out	...(3)
+
+hostR$ impi-relay -relay 0 <i>addr1:port1</i>	...(4)
+
+host2$ export IMPI_AUTH_NONE=0		...(1)
+host2$ mpirun -client 1 <i>addr2:port2</i> -np 2 -c mpi_conf2 ./a.out	...(5)
+</pre>
+
+<p>(1) Set <b>IMPI_AUTH_NONE</b> environment variable.  It specifies
+the authentication method of the impi-server.  The value can be
+anything, because it is ignored.
+
+<p>(2) Start the <b>impi-server</b>.  <b>impi-server</b> is a process
+to make a contact and to exchange information between MPI processes.
+<b>impi-server</b> shall be started each time, because it exits at the
+end of an execution of an MPI program.  The <b>-server</b> argument
+specifies the number of MPI jobs (invocations of mpirun command).
+<b>impi-server</b> prints the IP address/port pair (<i>addr1:port1</i>) 
+to the stdout.
+
+<p>(4) Start the <b>impi-relay</b>.  This is an additional procedure to
+a normal GridMPI execution.
+As well as <b>impi-server</b>, <b>impi-relay</b> shall be started each 
+time on a relay host.  The <b>-relay</b> argument specifies the relay ID, 
+and the IP address/port pair of <b>impi-server</b>. 
+<b>impi-relay</b> prints the IP address/port pair (<i>addr2:port2</i>)
+to the stdout.
+
+<p>(3,5) Start MPI jobs by mpirun.  The <b>-client</b> argument
+specifies the MPI job ID, and the IP address/port pair of
+<b>impi-server</b> or <b>impi-relay</b>.  
+Job ID is from 0 to the number of jobs minus one
+to distinguish mpirun invocations.  The <b>-c</b> option specifies the
+list of nodes.  It starts an MPI program with NPROCS=4 (2+2).
+
+<!-- ================================ -->
+<h3>2.2. Method 2</h3>
+<!-- ================================ -->
+
+If the environment variables IMPI_RELAYADDR or IMPI_RELAY_RSH="#" are set,
+<b>mpirun</b> executes <b>impi-relay</b> at the inside.
+
+<pre class="screen">
+host1$ export IMPI_AUTH_NONE=0		...(1)
+host1$ impi-server -server 2 &amp;		...(2)
+host1$ mpirun -client 0 <i>addr1:port1</i> -np 2 -c mpi_conf1 ./a.out	...(3)
+
+host2$ export IMPI_AUTH_NONE=0		...(1)
+host2$ export IMPI_RELAY_RSH="#"	...(4)
+host2$ mpirun -client 1 <i>addr1:port1</i> -np 2 -c mpi_conf2 ./a.out	...(5)
+</pre>
+
+<p> (1), (2), and (3) are same as the method 1.
+
+<p> (4) Set the environment variable IMPI_RELAY_RSH to "#", which means
+impi-relay is launched on the host executed mpirun.<br>
+You can also specify both the address and the port number of the relay 
+host by setting the environment variables IMPI_RELAYADDR and IMPI_RELAYPORT.
+
+<p> (5) Pass impi-server's <i>addr1:port1</i>.
+
+<p> <b>NOTE</b>: <s>In the case of the method 2, only one MPI job can be
+executed at the same time, since a IMPI Relay's port number is specified by
+the environment variable IMPI_RELAYPORT.</s>
+This restriction is lifted in the GridMPI 2.0.x.
+
+<a name="portrange"></a>
+<h2>3. Port range</h2>
+
+<p>Generally on IMPI, ports for communication can be limited to a
+specified range by two environment variables: <b>IMPI_PORT_RANGE</b>
+and <b>IMPI_SERVER_PORT_RANGE</b>.  See <a
+href="envvarlist.html">Environment Variables</a>.  Furthermore, IMPI
+relay provides <b>IMPI_RELAY_REMPORT_RANGE</b> to specify a range of
+ports to listen to for IMPI connections between clusters.
+
+<blockquote><pre class="screen">
+IMPI_RELAY_REMPORT_RANGE=<i>start:end</i>
+</pre></blockquote>
+
+<p><i>start</i> and <i>end</i> are inclusive.
+
+<a name="todo"></a>
+<h2>4. TODO</h2>
+<ul>
+<li> Support checkpoint/restart.
+</ul>
+
+<!-- ================================================================ -->
+<hr>
+</body></html>
+
+<!--
+Local Variables:
+mode: Fundamental
+End:
+-->

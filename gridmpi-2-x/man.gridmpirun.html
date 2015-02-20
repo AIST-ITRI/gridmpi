@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Commands
+<td align="right">gridmpirun (1MPI)
+</tr></tbody></table>
+
+<h3>NAME</h3>
+
+<p>gridmpirun - start MPI processes across clusters <b>(deprecated)</b>
+
+<h3>SYNOPSIS</h3>
+
+<p>gridmpirun [-np <i>nprocs</i>] [-allcpu]
+[-machinefile <i>configuration-file</i>]
+[-rsh <i>remote-shell</i>]
+[-ckptdir <i>directory</i>] [-restart]
+[-nameport <i>ip-addr:port</i>]
+[-nounix]
+[-h]
+[<i>program</i>...]
+
+<h3>DESCRIPTION</h3>
+
+<p><b>gridmpirun</b> is a simple frontend to ease starting multiple
+jobs across clusters.  It reads a configuration file and first starts
+<b>impi-server</b>, and then invokes <b>mpirun</b> jobs at specified
+clusters.  <b>impi-server</b> is a contact point of multiple MPI jobs.
+A configuration file is specified either (1) by a
+<b>-machinefile</b> option, (2) by the environment variable
+<b>IMPI_CONF</b>, or (3) the default <b>$MPIROOT/etc/config</b>, which
+are preferred in this order.
+
+<p>The program may be specified in the configuration file, and it is
+optional.  The program and its arguments are place at the last.
+
+<!-- ================ -->
+
+<h3>OPTIONS</h3>
+
+<p>The following options are supported:</p>
+
+<dl>
+
+<dt><b>-np</b> <i>nprocs</i>
+
+<dd>Specifies the number of MPI processes to start.  The configuration
+file should include the same or more process specifications than the
+<i>nprocs</i> argument.
+
+<dt><b>-allcpu</b>
+
+<dd>Specifies to use all processes in the configuration file. This
+forces to ignore the <b>-np</b> option.
+
+<dt><b>-machinefile</b> <i>configuration-file</i>
+
+<dd>Specifies a configuration file.  The description of a line in a
+configuration file is described below.  The configuration file
+defaults to <b>$MPIROOT/etc/config</b>.
+
+<dt><b>-rsh</b> <i>remote-shell</i>
+
+<dd>Specifies a remote shell command to invoke <b>mpirun</b> remotely.
+It is possibly an rsh or ssh in most cases.
+
+<dt><b>-ckptdir</b> <i>directory</i>
+
+<dd>Specifies a directory to place a checkpoint save file.
+
+<dt><b>-restart</b>
+
+<dd>Specifies to restart from a saved checkpoint.
+
+<dt><b>-nameport</b> <i>ip-addr:port</i>
+
+<dd>Specifies a name server for the MPI-2 DPM (Dynamic Process
+Management) by the IP address and port.
+
+<dt><b>-nounix</b>
+
+<dd>Specifies to use TCP between locally allocated processes.
+
+<dt><b>-h</b>
+
+<dd>Prints a usage.
+
+</dl>
+
+<!-- ================ -->
+
+<h3>CONFIGURATION FILE SYNOPSIS</h3>
+
+<p><b>gridmpirun</b> starts one MPI job for each line in the
+configuration file.  The configuration file consists of a line with
+the following options:
+
+<p>
+-np <i>nprocs</i>
+[-rsh <i>remote-shell</i>]
+[-rh <i>host-name</i>]
+[-wd  <i>directory</i>]
+[-lmpirun <i>mpirun-command</i>]
+[-c <i>configuration-file</i>]
+[-ckptdir <i>directory</i>]
+[<i>program</i>...]
+
+<h3>CONFIGURATION FILE OPTIONS</h3>
+
+<dl>
+
+<dt><b>-np</b> <i>nprocs</i>
+
+<dd>Specifies the upper limit of the number of MPI processes for a
+cluster.  <b>gridmpirun</b> uses this number from the top until
+summing up to a speicifed number by the command line argument
+<i>nproces</i>.  This argument is mandatory.
+
+<dt><b>-rsh</b> <i>remote-shell</i>
+
+<dd>Specifies a remote shell passed to the <b>mpirun</b> command.
+
+<dt><b>-rh</b> <i>host-name</i>
+
+<dd>Specifies a host to start MPI processes.
+
+<dt><b>-wd</b> <i>directory</i>
+
+<dd>Specifies a current working directory on a specified host.
+
+<dt><b>-lmpirun</b> <i>mpirun-command</i>
+
+<dd>Specifies a command to start MPI processes with.  Each line of a
+configuration file invokes one <b>mpirun</b> command on a specified
+host.
+
+<dt><b>-c</b> <i>configuration-file</i>
+
+<dd>Specifies a configuration file passed to the <b>mpirun</b>
+command.
+
+<dt><b>-ckptdir</b> <i>directory</i>
+
+<dd>Specifies a directory in which to place a checkpoint save file.
+
+<dt><i>program</i>...
+
+<dd>Specifies a program and its arguments.  This is optional.
+
+</dl>
+
+<p>The other elements on a line are passed verbatim as command line
+arguments.  Note that the program cannot take arguments same as the
+above options, because they are consumed by gridmpirun.
+
+<!-- ================ -->
+
+<h3>ENVIRONMENT VARIABLES</h3>
+
+<dl>
+
+<dt><b>MPIROOT</b>
+
+<dd>Specifies the GridMPI installation directory.  It is used to
+search for the default configuration file.
+
+<dt><b>IMPI_CONF</b>
+
+<dd>Specifies a default configuration file.  It corresponds to the
+command line option <b>-machinefile</b>.
+
+<dt><b>IMPI_INTER_RSH</b>
+
+<dd>Specifies a remote shell command to start <b>mpirun</b> remotely.
+It corresponds to the command line option <b>-rsh</b>.
+
+</dl>
+
+<!-- ================ -->
+
+<h3>EXIT STATUS</h3>
+
+<p><b>gridmpirun</b> returns 0 always, except for the error case
+occurred inside <b>gridmpirun</b>.
+
+<!-- ================ -->
+
+<h3>EXAMPLE</h3>
+
+<p>The following example shows to start five processes in two
+clusters, two for SiteA and three for SiteB.  SiteA cluster consists
+of two hosts <tt>host_a0</tt> and <tt>host_a1</tt>; and SiteB cluster
+consists of three hosts <tt>host_b0</tt>, <tt>host_b1</tt>, and
+<tt>host_b2</tt>.
+
+<p>Assume the configuration file <b>$MPIROOT/etc/config</b> contains:
+
+<blockquote><pre>
+-rh host_a0 -c $MPIROOT/etc/mpi_conf1 -np 2 /home/edamoto/a.out -k
+-rh host_b0 -c $MPIROOT/etc/mpi_conf2 -np 3 /home/edamoto/b.out -n
+</pre></blockquote>
+
+<p>Also assume at SiteA the configuration file
+<b>$MPIROOT/etc/mpi_confA</b> contains:
+
+<blockquote><pre>
+host_a0
+host_a1
+</pre></blockquote>
+
+<p>Also assume at SiteB the configuration file
+<b>$MPIROOT/etc/mpi_confB</b> contains:
+
+<blockquote><pre>
+host_b0
+host_b1
+host_b2
+</pre></blockquote>
+
+<p>Invoking <b>gridmpirun -np 5</b> first starts an IMPI server
+process at an invoking site, and then starts five MPI processes across
+two sites as: two on SiteA, and three on SiteB.  The IP address and
+port number of an IMPI server process is passed to the both MPI
+processes started at two sites.
+
+<p>Each line in the configuration file is considered simply as a
+command line replaced <b>-rh</b> by rsh or ssh, but whose <b>-np</b>
+option is modified to meet the specified sum of the processes.  The
+process count is taken from the top: the next specification line is
+used when the sum is not match to the specified number.
+
+<p>Specifying larger number of processes than the sum of the
+<b>-np</b> options in the configuration file is an error.
+
+<p>The number of processes that can be invoked in this example are
+summarised as:
+
+<blockquote>
+<table border=1 cellspacing=1 cellpadding=10>
+<thead>
+<tr><th bgcolor="lightgray">-np:<th>1<th>2<th>3<th>4<th>5<th>&ge;6</tr>
+</thead>
+<tr><td bgcolor="lightgray">SiteA:<td>1<td>2<td>2<td>2<td>2<td>error</tr>
+<tr><td bgcolor="lightgray">SiteB:<td>0<td>0<td>1<td>2<td>3<td>error</tr>
+</table>
+</blockquote>
+
+<!-- ================ -->
+
+<h3>SEE ALSO</h3>
+
+<p><a href="man.mpirun.html">mpirun</a>
+
+<h3>AUTHOR</h3>
+
+<p>Masahiko Edamoto
+
+<hr>
+<font size=-2><i>($Date: 2008/04/22 07:43:14 $)</i></font>
+<!-- $Id: man.gridmpirun.html,v 1.3 2008/04/22 07:43:14 takano Exp $ -->
+
+</body></html>

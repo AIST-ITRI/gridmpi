@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+<head><link rel="stylesheet" type="text/css" href="man.css"></head>
+
+<body>
+<table width="100%"><tbody>
+<tr width="100%">
+<td align="left">MPI Commands
+<td align="right">mpinamed (1MPI)
+</tr></tbody></table>
+
+<h3>NAME</h3>
+
+<p>mpinamed - Very simple MPI name service
+
+<h3>SYNOPSIS</h3>
+
+<p>mpinamed [-h] [-d] [-v]
+
+<h3>DESCRIPTION</h3>
+
+<p><b>mpinamed</b> minimally implements MPI name service defined in
+MPI-2.0.  It should be run with an environment variable
+<b>_YAMPI_NAMESERVER</b>=<i>host:port</i>.  It starts a name service
+on the <i>port</i>, ignoring the <i>host</i> part.  Running name
+service is necessary when to use <b>MPI_Publish_name</b>,
+<b>MPI_Unpublish_name</b>, and <b>MPI_Lookup_name</b>.  MPI processes
+connects to the name service specified by
+<b>_YAMPI_NAMESERVER</b>.
+
+<h3>OPTIONS</h3>
+
+<p>The following options are supported:
+
+<dl>
+
+<dt><b>-h</b>
+
+<dd>Prints help.
+
+<dt><b>-d</b> or <b>-v</b>
+
+<dd>Prints verbose information on actions.
+
+</dl>
+
+<h3>EXIT STATUS</h3>
+
+<p><b>mpinamed</b> never ends.
+
+<h3>ENVIRONMENT VARIABLES</h3>
+
+<br>
+<dl>
+
+<dt><b>_YAMPI_NAMESERVER</b>=<i>host:port</i>
+
+<dd>Specifies the port the name server listens on.  The <i>host</i>
+part is ignored.
+
+<dt><b>IMPI_AUTH_KEY</b>=<i>64bit-decimal-integer</i>
+
+<dd>Specifies an optional pseudo authentication.  If it is set,
+<b>mpinamed</b> first requires a client of the sevice (an MPI process)
+to send the value of the variable to match the keys between
+<b>mpinamed</b> and a client.
+
+</dl>
+
+<h3>SIGNALS</h3>
+
+<p><b>mpinamed</b> dumps key-value pairs currently held on receiving a
+QUIT signal.
+
+<hr>
+<font size=-2><i>($Date: 2007/08/20 10:51:42 $)</i></font>
+<!-- $Id: man.mpinamed.html,v 1.3 2007/08/20 10:51:42 matu Exp $ -->
+
+</body></html>
